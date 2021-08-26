@@ -33,7 +33,7 @@ namespace Cashbox.Model
 
         public void Dispose()
         {
-            db.Dispose();
+            db.Dispose(); 
         }
     }
 }
