@@ -1,7 +1,9 @@
 ﻿using Cashbox.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,17 +22,28 @@ namespace Cashbox.Visu
     /// <summary>
     /// Логика взаимодействия для AuthorizationWindow.xaml
     /// </summary>
-    public partial class AuthorizationWindow : Window
+    public partial class AuthorizationWindow : Window, INotifyPropertyChanged
     {
-        private DB db = new();
+        private DB db = new();  
+        private bool _okButtonVis;
 
         public string SelectedUser { get; set; }
         public string EnteredPassword { get; set; }
+        public bool OkButtonVis
+        {
+            get => _okButtonVis;
+            set
+            {
+                _okButtonVis = value;
+                OnPropertyChanged();
+            }
+        }
 
         public AuthorizationWindow()
         {
             InitializeComponent();
             GetUsersAsync();
+            DataContext = this;
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)
@@ -43,7 +56,7 @@ namespace Cashbox.Visu
             }
             else
                 ShowPopup("Неверный пароль");
-        }             
+        }
 
         private async void GetUsersAsync()
         {
@@ -61,6 +74,7 @@ namespace Cashbox.Visu
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
             EnteredPassword = ((PasswordBox)sender).Password;
+            OkButtonVis = db.IsConnectionEstablished && EnteredPassword.Length > 0;
         }
 
         private void ShowPopup(string text)
@@ -72,6 +86,12 @@ namespace Cashbox.Visu
         protected override void OnClosed(EventArgs e)
         {
             db.Dispose();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

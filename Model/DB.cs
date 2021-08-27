@@ -9,7 +9,8 @@ namespace Cashbox.Model
 {
     public class DB : IDisposable
     {
-        ApplicationContext db = new();
+        private readonly ApplicationContext db = new();
+        public bool IsConnectionEstablished { get; private set; }
 
         public DB()
         {
@@ -49,7 +50,10 @@ namespace Cashbox.Model
             {
                 Thread.Sleep(500);
                 if (db.Database.CanConnect())
+                {
+                    IsConnectionEstablished = true;
                     return;
+                }
             }
         }
     }

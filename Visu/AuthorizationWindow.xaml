@@ -54,6 +54,7 @@
                         HorizontalAlignment="Center"
                         Content="ОК"
                         FontSize="25"
+                        IsEnabled="{Binding OkButtonVis, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource MaterialDesignFlatButton}" Click="Ok_Click" Cursor="Hand"/>
                 <materialDesign:PopupBox Name="MyPopup"
                                          HorizontalAlignment="Center"
