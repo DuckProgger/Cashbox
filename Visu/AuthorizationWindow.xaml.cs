@@ -22,7 +22,7 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class AuthorizationWindow : Window
     {
-        private readonly DB db = new();
+        private DB db = new();
 
         public string SelectedUser { get; set; }
         public string EnteredPassword { get; set; }
@@ -30,7 +30,7 @@ namespace Cashbox.Visu
         public AuthorizationWindow()
         {
             InitializeComponent();
-            Users.ItemsSource = db.GetUserNames();
+            GetUsersAsync();
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)
@@ -42,12 +42,15 @@ namespace Cashbox.Visu
                 Close();
             }
             else
-                WrongPassPopup.IsPopupOpen = true;
-        }
+                ShowPopup("Неверный пароль");
+        }             
 
-        protected override void OnClosed(EventArgs e)
+        private async void GetUsersAsync()
         {
-            db.Dispose();
+            ShowPopup("Подключение к БД");
+            db = await Task.Run(() => DB.CreateDB());
+            Users.ItemsSource = await db.GetUserNamesAsync();
+            MyPopup.IsPopupOpen = false;
         }
 
         private void UserChanged(object sender, SelectionChangedEventArgs e)
@@ -58,6 +61,17 @@ namespace Cashbox.Visu
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
             EnteredPassword = ((PasswordBox)sender).Password;
+        }
+
+        private void ShowPopup(string text)
+        {
+            MyPopup.IsPopupOpen = true;
+            PopupText.Text = text;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            db.Dispose();
         }
     }
 }

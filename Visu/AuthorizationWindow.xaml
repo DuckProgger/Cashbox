@@ -54,13 +54,11 @@
                         HorizontalAlignment="Center"
                         Content="ОК"
                         FontSize="25"
-                        Style="{StaticResource MaterialDesignFlatButton}" Click="Ok_Click"/>
-                <materialDesign:PopupBox Name="WrongPassPopup"
+                        Style="{StaticResource MaterialDesignFlatButton}" Click="Ok_Click" Cursor="Hand"/>
+                <materialDesign:PopupBox Name="MyPopup"
                                          HorizontalAlignment="Center"
-                                         PlacementMode="RightAndAlignTopEdges" >
-                    <TextBlock Name="myPopupText" Margin="5">
-                        Неверный пароль
-                    </TextBlock>
+                                         PlacementMode="BottomAndAlignCentres" >
+                    <TextBlock Name="PopupText" Margin="5"/>
                 </materialDesign:PopupBox>
             </StackPanel>
         </Border>
