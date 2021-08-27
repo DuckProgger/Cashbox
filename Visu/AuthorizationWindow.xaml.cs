@@ -22,7 +22,10 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class AuthorizationWindow : Window
     {
-        readonly DB db = new();
+        private readonly DB db = new();
+
+        public string SelectedUser { get; set; }
+        public string EnteredPassword { get; set; }
 
         public AuthorizationWindow()
         {
@@ -32,12 +35,8 @@ namespace Cashbox.Visu
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            // Получение введенных данных
-            string selectedUser = Users.SelectedValue as string;
-            string enteredPassword = PasswordEnter.Password;
-
             // Проверка правильности введённого пароля
-            if (db.CheckPassword(selectedUser, enteredPassword))
+            if (db.CheckPassword(SelectedUser, EnteredPassword))
             {
                 new MainWindow().Show();
                 Close();
@@ -49,6 +48,16 @@ namespace Cashbox.Visu
         protected override void OnClosed(EventArgs e)
         {
             db.Dispose();
+        }
+
+        private void UserChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SelectedUser = ((ComboBox)sender).SelectedValue as string;
+        }
+
+        private void PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            EnteredPassword = ((PasswordBox)sender).Password;
         }
     }
 }

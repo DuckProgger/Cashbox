@@ -37,13 +37,15 @@
                           Margin="10"
                           HorizontalAlignment="Center"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                          materialDesign:HintAssist.Hint="Пользователь"/>
+                          SelectedValue="{Binding SelectedUser, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
+                          materialDesign:HintAssist.Hint="Пользователь" SelectionChanged="UserChanged"/>
                 <PasswordBox x:Name="PasswordEnter"
                          HorizontalAlignment="Center"
                          MinHeight="30"
                          MinWidth="350"
                          Margin="10"
-                         Style="{StaticResource MaterialDesignOutlinedPasswordBox}"
+                         Style="{StaticResource MaterialDesignOutlinedPasswordBox}" 
+                         PasswordChanged="PasswordChanged"
                          materialDesign:HintAssist.Hint="Пароль"/>
                 <Button x:Name="Ok"
                         MinHeight="50"
