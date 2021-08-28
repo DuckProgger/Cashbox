@@ -9,13 +9,7 @@ namespace Cashbox.Model
 {
     public class DB : IDisposable
     {
-        private readonly ApplicationContext db = new();
-        public bool IsConnectionEstablished { get; private set; }
-
-        public DB()
-        {
-            db.Database.EnsureCreatedAsync();
-        }
+        private readonly ApplicationContext db = new();     
 
         public async Task<List<string>> GetUserNamesAsync()
         {
@@ -24,6 +18,18 @@ namespace Cashbox.Model
             var userNames = from user in db.Users
                             select user.Name;
             return userNames.ToList();
+        }
+
+        public User GetUser(string userName)
+        {
+            return (from u in db.Users
+                    where u.Name == userName
+                    select new User() 
+                    { 
+                        Name = u.Name,
+                        Access = u.Access,
+                        Password = null
+                    }).FirstOrDefault();
         }
 
         public bool CheckPassword(string userName, string enteredPass)
@@ -39,7 +45,7 @@ namespace Cashbox.Model
             db.Dispose();
         }
 
-        static public DB CreateDB()
+        public static DB CreateDB()
         {
             return new DB();
         }
@@ -50,10 +56,7 @@ namespace Cashbox.Model
             {
                 Thread.Sleep(500);
                 if (db.Database.CanConnect())
-                {
-                    IsConnectionEstablished = true;
                     return;
-                }
             }
         }
     }

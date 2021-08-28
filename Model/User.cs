@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Cashbox.Model
+﻿namespace Cashbox.Model
 {
-   public class User
+    public class User
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
+        public Accesses Access { get; set; }
+
+        public enum Accesses { Usual, Administrator }
     }
 }

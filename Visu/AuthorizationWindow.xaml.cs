@@ -24,7 +24,7 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class AuthorizationWindow : Window, INotifyPropertyChanged
     {
-        private DB db = new();  
+        private DB db = new();
         private bool _okButtonVis;
 
         public string SelectedUser { get; set; }
@@ -51,7 +51,7 @@ namespace Cashbox.Visu
             // Проверка правильности введённого пароля
             if (db.CheckPassword(SelectedUser, EnteredPassword))
             {
-                new MainWindow().Show();
+                new MainWindow(SelectedUser).Show();
                 Close();
             }
             else
@@ -69,18 +69,24 @@ namespace Cashbox.Visu
         private void UserChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedUser = ((ComboBox)sender).SelectedValue as string;
+            CheckOkButtonVis();
         }
 
         private void PasswordChanged(object sender, RoutedEventArgs e)
         {
             EnteredPassword = ((PasswordBox)sender).Password;
-            OkButtonVis = db.IsConnectionEstablished && EnteredPassword.Length > 0;
+            CheckOkButtonVis();
         }
 
         private void ShowPopup(string text)
         {
             MyPopup.IsPopupOpen = true;
             PopupText.Text = text;
+        }
+
+        private void CheckOkButtonVis()
+        {
+            OkButtonVis = SelectedUser != null && EnteredPassword != null && EnteredPassword.Length > 0;
         }
 
         protected override void OnClosed(EventArgs e)

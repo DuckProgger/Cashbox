@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cashbox.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,14 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public User User { get; set; }
+
+        private DB db = new();
+
+        public MainWindow(string user)
         {
             InitializeComponent();
-        }
+            User = db.GetUser(user);
+        }      
     }
 }
