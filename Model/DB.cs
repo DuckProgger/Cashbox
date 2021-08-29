@@ -9,7 +9,7 @@ namespace Cashbox.Model
 {
     public class DB : IDisposable
     {
-        private readonly ApplicationContext db = new();     
+        private readonly ApplicationContext db = new();
 
         public async Task<List<string>> GetUserNamesAsync()
         {
@@ -19,9 +19,13 @@ namespace Cashbox.Model
 
         public List<string> GetUserNames()
         {
-            var userNames = from user in db.Users
-                            select user.Name;
-            return userNames.ToList();
+            return (from user in db.Users
+                    select user.Name).ToList();
+        }
+
+        public List<User> GetUsers()
+        {
+            return db.Users.ToList();
         }
 
         public User GetUser(string userName)
@@ -31,20 +35,53 @@ namespace Cashbox.Model
                     select u).FirstOrDefault();
         }
 
-        //public Permissions GetAccesses(string userName)
-        //{
-        //    return (from user in db.Users
-        //            where userName == user.Name
-        //            select user.Permissions).First();
-        //}
+        public Shift GetShift(DateTime date)
+        {
+            return (from s in db.Shifts
+                    where date.Date == s.Date
+                    select s).First();
+        }
 
-        //public bool CheckPassword(string userName, string enteredPass)
-        //{
-        //    string rightPass = (from user in db.Users
-        //                        where user.Name == userName
-        //                        select user.Password).FirstOrDefault();
-        //    return rightPass == enteredPass;
-        //}
+        public void SaveShift(Shift newShift, List<Worker> workers)
+        {
+            foreach (var user in GetUsers())
+            {
+                // Найти работника по имени.
+                Worker worker = workers.First(w => w.Name == user.Name);
+                // Добавить в смену отмеченного галочкой, если такого ещё нет.
+                if (worker.Participated && !newShift.Users.Contains(user))
+                    newShift.Users.Add(user);
+                // Убрать из смены работника без галочки, если он был.
+                else if (!worker.Participated && newShift.Users.Contains(user))
+                    newShift.Users.Remove(user);
+            }
+            Shift curShift = GetShift(newShift.Date);
+            curShift = newShift;
+            db.SaveChanges();
+        }
+
+        public List<Worker> GetWorkers(Shift shift)
+        {
+            List<Worker> workers = new();
+            foreach (User user in GetUsers())
+            {
+                Worker worker = new()
+                {
+                    Name = user.Name
+                };
+                // Поставить галочки работчикам, которые были в смене.
+                if (shift.Users.Contains(user))
+                    worker.Participated = true;
+                workers.Add(worker);
+            }
+            return workers;
+        }
+
+        public void AddShift(Shift shift)
+        {
+            db.Shifts.Add(shift);
+            db.SaveChanges();
+        }
 
         public void Dispose()
         {

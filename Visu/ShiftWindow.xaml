@@ -14,12 +14,37 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition Height="0.2*"/>
         </Grid.RowDefinitions>
-        <DataGrid Name="WorkersTable">
+        <DataGrid Name="WorkersTable" 
+                  ItemsSource="{Binding Workers}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn />
-                <DataGridTextColumn/>
+                <DataGridTemplateColumn Header="Сотрудники">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding Participated, UpdateSourceTrigger=PropertyChanged}"
+                                          Grid.Column="0"
+                                          Width="20"
+                                          Margin="5"/>
+                                <TextBlock Text="{Binding Name}"
+                                           Grid.Column="1"
+                                           Margin="5"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button Grid.Column="0"
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Content="Сохранить" Click="SaveShift"/>
     </Grid>
 </Window>
