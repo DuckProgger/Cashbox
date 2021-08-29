@@ -14,7 +14,7 @@
         Background="#e3e3e3"
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="CanMinimize"
-         Height="350" Width="600">
+         Height="300" Width="500">
     <Grid>
         <Border MinWidth="400" 
                 Margin="20" 
@@ -36,24 +36,18 @@
                           MinWidth="350"
                           Margin="10"
                           HorizontalAlignment="Center"
+                          SelectedIndex="0"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           SelectedValue="{Binding SelectedUser, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
                           materialDesign:HintAssist.Hint="Пользователь" SelectionChanged="UserChanged"/>
-                <PasswordBox x:Name="PasswordEnter"
-                         HorizontalAlignment="Center"
-                         MinHeight="30"
-                         MinWidth="350"
-                         Margin="10"
-                         Style="{StaticResource MaterialDesignOutlinedPasswordBox}" 
-                         PasswordChanged="PasswordChanged"
-                         materialDesign:HintAssist.Hint="Пароль"/>
-                <Button x:Name="Ok"
+                <Button x:Name="OkButton"
                         MinHeight="50"
                         MinWidth="100"
                         Margin="10"
                         HorizontalAlignment="Center"
                         Content="ОК"
                         FontSize="25"
+                        IsDefault="True"
                         IsEnabled="{Binding OkButtonVis, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource MaterialDesignFlatButton}" Click="Ok_Click" Cursor="Hand"/>
                 <materialDesign:PopupBox Name="MyPopup"

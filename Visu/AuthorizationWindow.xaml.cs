@@ -28,7 +28,7 @@ namespace Cashbox.Visu
         private bool _okButtonVis;
 
         public string SelectedUser { get; set; }
-        public string EnteredPassword { get; set; }
+        //public string EnteredPassword { get; set; }
         public bool OkButtonVis
         {
             get => _okButtonVis;
@@ -49,13 +49,13 @@ namespace Cashbox.Visu
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
             // Проверка правильности введённого пароля
-            if (db.CheckPassword(SelectedUser, EnteredPassword))
-            {
+            //if (db.CheckPassword(SelectedUser, EnteredPassword))
+            //{
                 new MainWindow(SelectedUser).Show();
                 Close();
-            }
-            else
-                ShowPopup("Неверный пароль");
+            //}
+            //else
+            //    ShowPopup("Неверный пароль");
         }
 
         private async void GetUsersAsync()
@@ -72,11 +72,11 @@ namespace Cashbox.Visu
             CheckOkButtonVis();
         }
 
-        private void PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            EnteredPassword = ((PasswordBox)sender).Password;
-            CheckOkButtonVis();
-        }
+        //private void PasswordChanged(object sender, RoutedEventArgs e)
+        //{
+        //    EnteredPassword = ((PasswordBox)sender).Password;
+        //    CheckOkButtonVis();
+        //}
 
         private void ShowPopup(string text)
         {
@@ -86,7 +86,7 @@ namespace Cashbox.Visu
 
         private void CheckOkButtonVis()
         {
-            OkButtonVis = SelectedUser != null && EnteredPassword != null && EnteredPassword.Length > 0;
+            OkButtonVis = SelectedUser != null;
         }
 
         protected override void OnClosed(EventArgs e)
@@ -98,6 +98,6 @@ namespace Cashbox.Visu
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
+        }       
     }
 }

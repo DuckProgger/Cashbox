@@ -24,7 +24,21 @@ namespace Cashbox.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<User>()
+            modelBuilder.Entity<User>(UserConfigure);
+            modelBuilder.Entity<Permissions>(PermissionsConfigure);
+        }
+
+        private void UserConfigure(EntityTypeBuilder<User> builder)
+        {
+            builder.
+                HasOne(u => u.Permissions).
+                WithOne(p => p.User).
+                HasForeignKey<Permissions>(k => k.Id);
+        }
+
+        private void PermissionsConfigure(EntityTypeBuilder<Permissions> builder)
+        {
+            builder.ToTable(nameof(Users));
         }
 
         private static string GetConnectionString()

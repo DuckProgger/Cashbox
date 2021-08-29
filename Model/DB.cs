@@ -14,7 +14,11 @@ namespace Cashbox.Model
         public async Task<List<string>> GetUserNamesAsync()
         {
             await Task.Run(() => WaitForConnect());
-            // Получение всех пользователей из БД
+            return GetUserNames();
+        }
+
+        public List<string> GetUserNames()
+        {
             var userNames = from user in db.Users
                             select user.Name;
             return userNames.ToList();
@@ -24,21 +28,23 @@ namespace Cashbox.Model
         {
             return (from u in db.Users
                     where u.Name == userName
-                    select new User() 
-                    { 
-                        Name = u.Name,
-                        Access = u.Access,
-                        Password = null
-                    }).FirstOrDefault();
+                    select u).FirstOrDefault();
         }
 
-        public bool CheckPassword(string userName, string enteredPass)
-        {
-            string rightPass = (from user in db.Users
-                                where user.Name == userName
-                                select user.Password).FirstOrDefault();
-            return rightPass == enteredPass;
-        }
+        //public Permissions GetAccesses(string userName)
+        //{
+        //    return (from user in db.Users
+        //            where userName == user.Name
+        //            select user.Permissions).First();
+        //}
+
+        //public bool CheckPassword(string userName, string enteredPass)
+        //{
+        //    string rightPass = (from user in db.Users
+        //                        where user.Name == userName
+        //                        select user.Password).FirstOrDefault();
+        //    return rightPass == enteredPass;
+        //}
 
         public void Dispose()
         {
