@@ -34,42 +34,32 @@ namespace Cashbox.Model
         /// <summary>
         /// Наличные.
         /// </summary>
-        public decimal Cash { get; set; }
+        public int Cash { get; set; }
 
         /// <summary>
         /// Терминал.
         /// </summary>
-        public decimal Terminal { get; set; }
+        public int Terminal { get; set; }
 
         /// <summary>
         /// Расходы.
         /// </summary>
-        public decimal Expenses { get; set; }
+        public int Expenses { get; set; }
 
         /// <summary>
         /// Сумма на начало дня.
         /// </summary>
-        public decimal StartDay { get; set; }
+        public int StartDay { get; set; }
 
         /// <summary>
         /// Сумма на конец дня.
         /// </summary>
-        public decimal EndDay { get; set; }
+        public int EndDay { get; set; }
 
         /// <summary>
         /// Сдано денег.
         /// </summary>
-        public decimal HandedOver { get; set; }
-
-        /// <summary>
-        /// Общая выручка.
-        /// </summary>
-        //public decimal Total { get; set; }
-
-        /// <summary>
-        /// Расхождение.
-        /// </summary>
-        //public decimal Difference { get; set; }
+        public int HandedOver { get; set; }     
 
         /// <summary>
         /// Комментарий.

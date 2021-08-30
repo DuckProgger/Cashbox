@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,9 +28,14 @@ namespace Cashbox.Visu
         private decimal _difference;
         private string _differenceText;
         private Color diffBackgroung = Color.FromRgb(245, 94, 83);
+        private const string zero = "0";
+
 
         public ObservableCollection<Worker> Workers { get; private set; }
         public Shift Shift { get; set; }
+        /// <summary>
+        /// Общая выручка.
+        /// </summary>
         public decimal Total
         {
             get => _total;
@@ -39,6 +45,9 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+        /// <summary>
+        /// Расхождение.
+        /// </summary>
         public decimal Difference
         {
             get => _difference;
@@ -61,7 +70,8 @@ namespace Cashbox.Visu
         public ShiftWindow()
         {
             InitializeComponent();
-            Shift = db.GetShift(DateTime.Now.Date);
+            db.CreateShift();
+            Shift = db.GetShift(DateTime.Now.Date);            
             Workers = new(db.GetWorkers(Shift));
             DataContext = this;
         }
@@ -82,23 +92,25 @@ namespace Cashbox.Visu
             }
         }
 
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (textBox.Text == decimal.Zero.ToString())
-                textBox.Text = string.Empty;
-        }
-
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = sender as TextBox;
             if (textBox.Text?.Length == 0)
-                textBox.Text = decimal.Zero.ToString();
+                textBox.Text = zero;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CalcTotalAndDifference();
+            TextBox textBox = sender as TextBox;
+            textBox.Text = Formatter.Format(textBox.Text, Formatter.Type.MoneyEnter);
+            textBox.SelectionStart = textBox.Text.Length;
+            Calculations();
+        }
+
+        private void Calculations()
+        {
+            Total = Shift.Cash + Shift.Terminal;
+            Difference = Shift.Cash - Shift.Expenses + Shift.StartDay - Shift.EndDay - Shift.HandedOver;
             if (Difference > 0)
             {
                 DifferenceText = "Недостача:";
@@ -114,12 +126,7 @@ namespace Cashbox.Visu
                 DifferenceText = "Расхождение:";
                 DifferenceBorder.Background = new SolidColorBrush(Colors.White);
             }
-        }
-
-        private void CalcTotalAndDifference()
-        {
-            Total = Shift.Cash + Shift.Terminal;
-            Difference = Shift.Cash - Shift.Expenses + Shift.StartDay - Shift.EndDay - Shift.HandedOver;
+            Difference = Math.Abs(Difference);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

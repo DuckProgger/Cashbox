@@ -39,7 +39,16 @@ namespace Cashbox.Model
         {
             return (from s in db.Shifts
                     where date.Date == s.Date
-                    select s).First();
+                    select s).FirstOrDefault();
+        }
+
+        public void CreateShift()
+        {
+            if (GetShift(DateTime.Now) == null)
+            {
+                db.Shifts.Add(new Shift() { Date = DateTime.Now });
+                db.SaveChanges();
+            }            
         }
 
         public void SaveShift(Shift newShift, List<Worker> workers)
