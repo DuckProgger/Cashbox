@@ -24,19 +24,15 @@ namespace Cashbox.Visu
     public partial class ShiftWindow : Window, INotifyPropertyChanged
     {
         private DB db = new();
-        private decimal _total;
-        private decimal _difference;
+        private int _total;
+        private int _difference;
         private string _differenceText;
-        private Color diffBackgroung = Color.FromRgb(245, 94, 83);
-        private const string zero = "0";
-
+        private readonly SolidColorBrush redBackground = new(Color.FromRgb(245, 94, 83));
+        private readonly SolidColorBrush whiteBackground = new(Colors.White);
 
         public ObservableCollection<Worker> Workers { get; private set; }
         public Shift Shift { get; set; }
-        /// <summary>
-        /// Общая выручка.
-        /// </summary>
-        public decimal Total
+        public int Total
         {
             get => _total;
             set
@@ -45,10 +41,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
-        /// <summary>
-        /// Расхождение.
-        /// </summary>
-        public decimal Difference
+        public int Difference
         {
             get => _difference;
             set
@@ -71,7 +64,8 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             db.CreateShift();
-            Shift = db.GetShift(DateTime.Now.Date);            
+            Shift = db.GetShift(DateTime.Now.Date);
+            UpdateValues();
             Workers = new(db.GetWorkers(Shift));
             DataContext = this;
         }
@@ -96,37 +90,43 @@ namespace Cashbox.Visu
         {
             TextBox textBox = sender as TextBox;
             if (textBox.Text?.Length == 0)
-                textBox.Text = zero;
+                textBox.Text = "0";
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Отформатировать введенный текст
             TextBox textBox = sender as TextBox;
             textBox.Text = Formatter.Format(textBox.Text, Formatter.Type.MoneyEnter);
+            // Переместить курсор в конец
             textBox.SelectionStart = textBox.Text.Length;
-            Calculations();
-        }
 
-        private void Calculations()
-        {
-            Total = Shift.Cash + Shift.Terminal;
-            Difference = Shift.Cash - Shift.Expenses + Shift.StartDay - Shift.EndDay - Shift.HandedOver;
+            // Рассчитать новые значения
+            DB.CaclShift(Shift);
+            UpdateValues();
+
+            // Установить фон в поле Расхождения
             if (Difference > 0)
             {
                 DifferenceText = "Недостача:";
-                DifferenceBorder.Background = new SolidColorBrush(diffBackgroung);
+                DifferenceBorder.Background = redBackground;
             }
             else if (Difference < 0)
             {
                 DifferenceText = "Излишек:";
-                DifferenceBorder.Background = new SolidColorBrush(diffBackgroung);
+                DifferenceBorder.Background = redBackground;
             }
             else
             {
                 DifferenceText = "Расхождение:";
-                DifferenceBorder.Background = new SolidColorBrush(Colors.White);
+                DifferenceBorder.Background = whiteBackground;
             }
-            Difference = Math.Abs(Difference);
+        }
+
+        private void UpdateValues()
+        {
+            Total = Shift.Total;
+            Difference = Shift.Difference;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

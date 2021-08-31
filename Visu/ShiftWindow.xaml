@@ -15,7 +15,7 @@
         ResizeMode="CanMinimize"
         Title="ShiftWindow" Height="400" Width="450">
     <Window.Resources>
-        <c:DigitsConverter x:Key="DigitsConverter"/>
+        <c:DifferenceConverter x:Key="DifferenceConverter"/>
         <Style x:Key="MaterialDesignOutlinedTextBox" 
                BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
                TargetType="TextBox">
@@ -187,7 +187,7 @@
                         <TextBlock Text="{Binding DifferenceText}"                                   
                                    FontSize="15"                                   
                                    Style="{StaticResource MyTextBlock}"/>
-                        <TextBlock Text="{Binding Difference}"
+                        <TextBlock Text="{Binding Difference, Converter={StaticResource DifferenceConverter}}"
                                Style="{StaticResource MyTextBlock2}"/>
                     </StackPanel>
                 </Border> 

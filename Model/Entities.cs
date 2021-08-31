@@ -23,7 +23,32 @@ namespace Cashbox.Model
 
     public class Shift
     {
+        public Shift()
+        {
+        }
+
+        public Shift(Shift shift)
+        {
+            Version = shift.Version;
+            Date = shift.Date;
+            Cash = shift.Cash;
+            Terminal = shift.Terminal;
+            Expenses = shift.Expenses;
+            StartDay = shift.StartDay;
+            EndDay = shift.EndDay;
+            HandedOver = shift.HandedOver;
+            Total = shift.Total;
+            Difference = shift.Difference;
+            Comment = shift.Comment;
+            Users = new List<User>(shift.Users);
+        }
+
         public int Id { get; set; }
+
+        /// <summary>
+        /// Версия смены.
+        /// </summary>
+        public int Version { get; set; }
 
         /// <summary>
         /// Дата.
@@ -59,7 +84,17 @@ namespace Cashbox.Model
         /// <summary>
         /// Сдано денег.
         /// </summary>
-        public int HandedOver { get; set; }     
+        public int HandedOver { get; set; }
+
+        /// <summary>
+        /// Общая выручка.
+        /// </summary>
+        public int Total { get; set; }
+
+        /// <summary>
+        /// Расхождение.
+        /// </summary>
+        public int Difference { get; set; }
 
         /// <summary>
         /// Комментарий.

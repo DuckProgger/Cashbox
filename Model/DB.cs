@@ -37,9 +37,10 @@ namespace Cashbox.Model
 
         public Shift GetShift(DateTime date)
         {
-            return (from s in db.Shifts
-                    where date.Date == s.Date
-                    select s).FirstOrDefault();
+            return new Shift((from s in db.Shifts
+                              where date.Date == s.Date
+                              orderby s.Version descending
+                              select s).FirstOrDefault());
         }
 
         public void CreateShift()
@@ -48,11 +49,12 @@ namespace Cashbox.Model
             {
                 db.Shifts.Add(new Shift() { Date = DateTime.Now });
                 db.SaveChanges();
-            }            
+            }
         }
 
-        public void SaveShift(Shift newShift, List<Worker> workers)
+        public void SaveShift(Shift shift, List<Worker> workers)
         {
+            Shift newShift = new(shift);
             foreach (var user in GetUsers())
             {
                 // Найти работника по имени.
@@ -64,9 +66,16 @@ namespace Cashbox.Model
                 else if (!worker.Participated && newShift.Users.Contains(user))
                     newShift.Users.Remove(user);
             }
-            Shift curShift = GetShift(newShift.Date);
-            curShift = newShift;
+
+            newShift.Version = GetActualShiftVersion() + 1;
+            db.Shifts.Add(newShift);
             db.SaveChanges();
+        }
+
+        public static void CaclShift(Shift shift)
+        {
+            shift.Total = shift.Cash + shift.Terminal;
+            shift.Difference = shift.Cash - shift.Expenses + shift.StartDay - shift.EndDay - shift.HandedOver;
         }
 
         public List<Worker> GetWorkers(Shift shift)
@@ -100,6 +109,14 @@ namespace Cashbox.Model
         public static DB CreateDB()
         {
             return new DB();
+        }
+
+        private int GetActualShiftVersion()
+        {
+            return (from s in db.Shifts
+                    where s.Date == DateTime.Now.Date
+                    orderby s.Version descending
+                    select s.Version).FirstOrDefault();
         }
 
         private void WaitForConnect()
