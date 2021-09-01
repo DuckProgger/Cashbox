@@ -9,16 +9,9 @@ namespace Cashbox.Model
         public int Id { get; set; }
         [Column(TypeName = "nvarchar(50)")]
         public string Name { get; set; }
-        //public virtual Permissions.Accesses Access { get; set; }
 
         public virtual Permissions Permissions { get; set; }
-        public virtual List<Shift> Shifts { get; set; }
-
-
-        //public string Password { get; set; }
-        //public Accesses Access { get; set; }
-
-        //public enum Accesses { Usual, Administrator }
+        public virtual List<Shift> Shifts { get; set; }       
     }    
 
     public class Shift
@@ -29,18 +22,24 @@ namespace Cashbox.Model
 
         public Shift(Shift shift)
         {
-            Version = shift.Version;
-            Date = shift.Date;
-            Cash = shift.Cash;
-            Terminal = shift.Terminal;
-            Expenses = shift.Expenses;
-            StartDay = shift.StartDay;
-            EndDay = shift.EndDay;
-            HandedOver = shift.HandedOver;
-            Total = shift.Total;
-            Difference = shift.Difference;
-            Comment = shift.Comment;
-            Users = new List<User>(shift.Users);
+            if (shift != null)
+            {
+                Version = shift.Version;
+                Date = shift.Date;
+                Cash = shift.Cash;
+                Terminal = shift.Terminal;
+                Expenses = shift.Expenses;
+                StartDay = shift.StartDay;
+                EndDay = shift.EndDay;
+                HandedOver = shift.HandedOver;
+                Total = shift.Total;
+                Difference = shift.Difference;
+                Comment = shift.Comment;
+                Users = shift.Users != null ? new(shift.Users) : new();
+            }
+            else
+                Date = DateTime.Today;
+
         }
 
         public int Id { get; set; }

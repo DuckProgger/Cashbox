@@ -43,9 +43,16 @@ namespace Cashbox.Visu
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)
         {
-            ShiftWindow shiftWindow = new ShiftWindow();
+            ShiftWindow shiftWindow = new();
             shiftWindow.Owner = this;
             shiftWindow.Show();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            LogWindow lodWindow = new();
+            lodWindow.Owner = this;
+            lodWindow.Show();
         }
     }
 }

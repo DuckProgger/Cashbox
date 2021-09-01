@@ -4,7 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cashbox.Visu"
+        xmlns:m="clr-namespace:Cashbox.Model"
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
+        Background="AliceBlue"
         Title="LogWindow" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -12,6 +15,49 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <ListView Name="LogView"
-                  ItemsSource="{Binding LogItems}"/>
+                  ItemsSource="{Binding Log}"
+                  Grid.Column="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Date}" Header="1"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Workers}" Header="2"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding TotalCash}" Header="3"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="4"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <!--<ListView Name="phonesList" ItemsSource="{DynamicResource ResourceKey=phones}" Grid.Column="1" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Workers}" >Модель</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=TotalCash}" Width="100">Компания</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Difference}">Цена</GridViewColumn>
+                </GridView>
+            </ListView.View>
+            <ListView.Resources>
+                <col:ArrayList x:Key="phones">
+                    <m:LogItem Workers="iPhone 6S" TotalCash="105" Difference="200" />
+                    <m:LogItem Workers="iPhone 6S" TotalCash="105" Difference="200" />
+                    <m:LogItem Workers="iPhone 6S" TotalCash="105" Difference="200" />
+                    <m:LogItem Workers="iPhone 6S" TotalCash="105" Difference="200" />
+
+                </col:ArrayList>
+            </ListView.Resources>
+        </ListView>-->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="1"
+                    Click="Button_GetLog"/>
+            <StackPanel Orientation="Horizontal">
+                <DatePicker SelectedDate="{Binding Begin}"                            
+                            MinWidth="150"/>
+                <DatePicker SelectedDate="{Binding End}"
+                             MinWidth="150"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

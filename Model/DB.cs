@@ -58,13 +58,16 @@ namespace Cashbox.Model
             foreach (var user in GetUsers())
             {
                 // Найти работника по имени.
-                Worker worker = workers.First(w => w.Name == user.Name);
+                Worker worker = workers.FirstOrDefault(w => w.Name == user.Name);
                 // Добавить в смену отмеченного галочкой, если такого ещё нет.
-                if (worker.Participated && !newShift.Users.Contains(user))
-                    newShift.Users.Add(user);
-                // Убрать из смены работника без галочки, если он был.
-                else if (!worker.Participated && newShift.Users.Contains(user))
-                    newShift.Users.Remove(user);
+                if (worker != null)
+                {
+                    if (worker.Participated && !newShift.Users.Contains(user))
+                        newShift.Users.Add(user);
+                    // Убрать из смены работника без галочки, если он был.
+                    else if (!worker.Participated && newShift.Users.Contains(user))
+                        newShift.Users.Remove(user);
+                }                
             }
 
             newShift.Version = GetActualShiftVersion() + 1;
@@ -88,9 +91,11 @@ namespace Cashbox.Model
                     Name = user.Name
                 };
                 // Поставить галочки работчикам, которые были в смене.
-                if (shift.Users.Contains(user))
+                if (shift.Users != null && shift.Users.Contains(user))
+                {
                     worker.Participated = true;
-                workers.Add(worker);
+                    workers.Add(worker);
+                }
             }
             return workers;
         }
@@ -101,6 +106,39 @@ namespace Cashbox.Model
             db.SaveChanges();
         }
 
+        public List<LogItem> GetLog(DateTime begin, DateTime end)
+        {
+            List<LogItem> logItems = new();
+
+            var shifts = from shift in db.Shifts.AsEnumerable()
+                         where shift.Date >= begin && shift.Date <= end
+                         orderby shift.Date descending, shift.Version descending
+                         group shift by shift.Date
+                         into gr
+                         let s = gr.FirstOrDefault()
+                         select new
+                         {
+                             s.Date,
+                             s.Users,
+                             s.Total,
+                             s.Difference
+                         };
+
+            foreach (var shift in shifts)
+            {
+                LogItem logItem = new()
+                {
+                    Date = shift.Date.Date,
+                    TotalCash = shift.Total,
+                    Difference = shift.Difference,
+                    Workers = TransformUsersToString(shift.Users)
+                };
+                logItems.Add(logItem);
+            }
+
+            return logItems;
+        }
+
         public void Dispose()
         {
             db.Dispose();
@@ -109,6 +147,18 @@ namespace Cashbox.Model
         public static DB CreateDB()
         {
             return new DB();
+        }
+
+        private static string TransformUsersToString(List<User> users)
+        {
+            StringBuilder builder = new();
+            for (int i = 0; i < users.Count; i++)
+            {
+                builder.Append(users[i].Name);
+                if (i < users.Count - 1)
+                    builder.Append(',');
+            }
+            return builder.ToString();
         }
 
         private int GetActualShiftVersion()
