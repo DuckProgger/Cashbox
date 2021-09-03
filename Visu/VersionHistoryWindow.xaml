@@ -1,0 +1,41 @@
+﻿<Window x:Class="Cashbox.Visu.VersionHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:Cashbox.Visu.Converters"
+        xmlns:local="clr-namespace:Cashbox.Visu"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto" 
+        ResizeMode="CanMinimize"
+        mc:Ignorable="d"
+        Title="VersionHistoryWindow" Height="300" Width="300">
+    <Window.Resources>
+        <c:TimeConverter x:Key="TimeConverter"/>
+    </Window.Resources>
+    <Grid>
+        <ListView Name="VersionHistoryView"                  
+                  Grid.Column="1">
+            <ListView.View>
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn DisplayMemberBinding="{Binding Time, Converter={StaticResource TimeConverter}}" Header="Время" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Version}" Header="Версия" />
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <!--<MenuItem Header="История версий" Click="VersionHistory_Click"/>-->
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </Grid>
+</Window>

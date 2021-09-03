@@ -32,7 +32,7 @@ namespace Cashbox.Model
             if (shift != null)
             {
                 Version = shift.Version;
-                Date = shift.Date;
+                DateAndTime = shift.DateAndTime;
                 Cash = shift.Cash;
                 Terminal = shift.Terminal;
                 Expenses = shift.Expenses;
@@ -45,7 +45,7 @@ namespace Cashbox.Model
                 Staff = shift.Staff != null ? new(shift.Staff) : new();
             }
             else
-                Date = DateTime.Today;
+                DateAndTime = DateTime.Now;
 
         }
 
@@ -59,8 +59,8 @@ namespace Cashbox.Model
         /// <summary>
         /// Дата.
         /// </summary>
-        [Column(TypeName = "date")]
-        public DateTime Date { get; set; }
+        //[Column(TypeName = "date")]
+        public DateTime DateAndTime { get; set; }
 
         /// <summary>
         /// Наличные.

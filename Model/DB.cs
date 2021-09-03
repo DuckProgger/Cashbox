@@ -43,7 +43,7 @@ namespace Cashbox.Model
         public Shift GetShift(DateTime date)
         {
             return new Shift((from s in db.Shifts
-                              where date.Date == s.Date
+                              where date.Date == s.DateAndTime.Date
                               orderby s.Version descending
                               select s).FirstOrDefault());
         }
@@ -52,10 +52,10 @@ namespace Cashbox.Model
         {
             if (GetShift(DateTime.Now) == null)
             {
-                db.Shifts.Add(new Shift() { Date = DateTime.Now });
+                db.Shifts.Add(new Shift() { DateAndTime = DateTime.Now });
                 db.SaveChanges();
             }
-        }       
+        }
 
         public void SaveNewShift(Shift shift, List<WorkerItem> staff)
         {
@@ -77,6 +77,7 @@ namespace Cashbox.Model
             }
 
             newShift.Version = GetActualShiftVersion() + 1;
+            newShift.DateAndTime = DateTime.Now;
             db.Shifts.Add(newShift);
             db.SaveChanges();
         }
@@ -104,21 +105,21 @@ namespace Cashbox.Model
                 workers.Add(worker);
             }
             return workers;
-        }   
+        }
 
         public List<object> GetLog(DateTime begin, DateTime end)
         {
             List<object> logItems = new();
 
             var items = from shift in db.Shifts.AsEnumerable()
-                        where shift.Date >= begin && shift.Date <= end
-                        orderby shift.Date descending, shift.Version descending
-                        group shift by shift.Date
+                        where shift.DateAndTime.Date >= begin && shift.DateAndTime.Date <= end
+                        orderby shift.DateAndTime descending, shift.Version descending
+                        group shift by shift.DateAndTime.Date
                          into gr
                         let s = gr.FirstOrDefault()
                         select new
                         {
-                            s.Date,
+                            Date = s.DateAndTime,
                             Staff = TransformWorkersToString(s.Staff),
                             s.Total,
                             s.Difference
@@ -128,6 +129,19 @@ namespace Cashbox.Model
                 logItems.Add(item);
             return logItems;
         }
+
+        public List<object> GetShiftVersionHistory(DateTime date)
+        {
+            List<object> logItems = new();
+            var items = from s in db.Shifts.AsEnumerable()
+                        where s.DateAndTime.Date == date
+                        select new { Time = s.DateAndTime, s.Version };
+
+            foreach (var item in items)
+                logItems.Add(item);
+            return logItems;
+        }
+
 
         public void Dispose()
         {
@@ -154,7 +168,7 @@ namespace Cashbox.Model
         private int GetActualShiftVersion()
         {
             return (from s in db.Shifts
-                    where s.Date == DateTime.Now.Date
+                    where s.DateAndTime.Date == DateTime.Now.Date
                     orderby s.Version descending
                     select s.Version).FirstOrDefault();
         }

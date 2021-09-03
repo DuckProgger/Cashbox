@@ -7,6 +7,13 @@
         xmlns:m="clr-namespace:Cashbox.Model"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto" 
+        ResizeMode="CanMinimize"
         mc:Ignorable="d"
         Background="AliceBlue"
         Title="LogWindow" Height="450" Width="800">
@@ -18,8 +25,7 @@
             <ColumnDefinition Width="0.7*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListView Name="LogView"
-                  
+        <ListView Name="LogView"                  
                   Grid.Column="1">
             <ListView.View>
                 <GridView>
@@ -29,6 +35,16 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="4"/>
                 </GridView>
             </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="История версий" Click="VersionHistory_Click"/>
+                </ContextMenu> 
+            </ListView.ContextMenu>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
         
         <Grid Grid.Column="0">
