@@ -15,6 +15,7 @@ namespace Cashbox.Model
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Shift> Shifts { get; set; }
+        public DbSet<Worker> Staff { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,6 +28,7 @@ namespace Cashbox.Model
         {
             modelBuilder.Entity<User>(UserConfigure);
             modelBuilder.Entity<Permissions>(PermissionsConfigure);
+            modelBuilder.Entity<Worker>(WorkerConfigure);
         }
 
         private void UserConfigure(EntityTypeBuilder<User> builder)
@@ -34,13 +36,22 @@ namespace Cashbox.Model
             builder.
                 HasOne(u => u.Permissions).
                 WithOne(p => p.User).
-                HasForeignKey<Permissions>(k => k.Id);
+                HasForeignKey<Permissions>(k => k.Id);           
         }
 
         private void PermissionsConfigure(EntityTypeBuilder<Permissions> builder)
         {
             builder.ToTable(nameof(Users));
         }
+
+        private void WorkerConfigure(EntityTypeBuilder<Worker> builder)
+        {
+            builder.
+                HasOne(w => w.User).
+                WithMany(u => u.Staff).
+                HasForeignKey(k => k.Id);
+        }
+
 
         private static string GetConnectionString()
         {

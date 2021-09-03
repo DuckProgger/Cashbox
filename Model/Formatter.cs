@@ -19,6 +19,8 @@ namespace Cashbox.Model
             };
         }
 
+        public static string AddZero(int value) => value < 10 ? '0' + value.ToString() : value.ToString();
+
         private static string FormatMoneyEnter(string str)
         {
             if (str?.Length == 0)

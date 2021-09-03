@@ -52,9 +52,10 @@
                 <RowDefinition Height="1.5*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            
             <DataGrid Name="WorkersTable" 
                       Margin="10"
-                      ItemsSource="{Binding Workers}"
+                      ItemsSource="{Binding Staff}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       Background="White"
@@ -71,14 +72,14 @@
                                         <ColumnDefinition Width="0.2*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{Binding Participated, UpdateSourceTrigger=PropertyChanged}"
-                                          Grid.Column="0"
-                                          Width="20"
-                                          Margin="2"/>
+                                    <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
+                                              Grid.Column="0"
+                                              Width="20"
+                                              Margin="2"/>
                                     <TextBlock Text="{Binding Name}"
-                                           Grid.Column="1"
-                                           Margin="2"
-                                           Padding="0"/>
+                                               Grid.Column="1"
+                                               Margin="2"
+                                               Padding="0"/>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -190,7 +191,7 @@
                         <TextBlock Text="{Binding Difference, Converter={StaticResource DifferenceConverter}}"
                                Style="{StaticResource MyTextBlock2}"/>
                     </StackPanel>
-                </Border> 
+                </Border>
             </StackPanel>
         </StackPanel>
 

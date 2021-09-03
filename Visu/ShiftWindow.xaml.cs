@@ -30,7 +30,7 @@ namespace Cashbox.Visu
         private readonly SolidColorBrush redBackground = new(Color.FromRgb(245, 94, 83));
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
 
-        public ObservableCollection<Worker> Workers { get; private set; }
+        public ObservableCollection<WorkerItem> Staff { get; private set; }
         public Shift Shift { get; set; }
         public int Total
         {
@@ -66,13 +66,13 @@ namespace Cashbox.Visu
             db.CreateShift();
             Shift = db.GetShift(DateTime.Now.Date);
             UpdateValues();
-            Workers = new(db.GetWorkers(Shift));
+            Staff = new(db.GetWorkerItems(Shift));
             DataContext = this;
         }
 
         private void SaveShift(object sender, RoutedEventArgs e)
         {
-            db.SaveShift(Shift, Workers.ToList());
+            db.SaveNewShift(Shift, Staff.ToList());
         }
 
         private void Comment_KeyDown(object sender, KeyEventArgs e)

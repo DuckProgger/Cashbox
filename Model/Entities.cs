@@ -11,14 +11,21 @@ namespace Cashbox.Model
         public string Name { get; set; }
 
         public virtual Permissions Permissions { get; set; }
-        public virtual List<Shift> Shifts { get; set; }       
-    }    
+        public virtual List<Worker> Staff { get; set; }
+    }
+
+    public class Worker
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public virtual User User { get; set; }
+        public virtual List<Shift> Shifts { get; set; }
+    }
 
     public class Shift
     {
-        public Shift()
-        {
-        }
+        public Shift() { }
 
         public Shift(Shift shift)
         {
@@ -35,7 +42,7 @@ namespace Cashbox.Model
                 Total = shift.Total;
                 Difference = shift.Difference;
                 Comment = shift.Comment;
-                Users = shift.Users != null ? new(shift.Users) : new();
+                Staff = shift.Staff != null ? new(shift.Staff) : new();
             }
             else
                 Date = DateTime.Today;
@@ -104,7 +111,7 @@ namespace Cashbox.Model
         /// <summary>
         /// Сотрудники смены.
         /// </summary>
-        public virtual List<User> Users { get; set; }
+        public virtual List<Worker> Staff { get; set; }
     }
 
     public class Permissions
@@ -136,5 +143,18 @@ namespace Cashbox.Model
         //    Administrator = 0,
         //    Usual = 1,
         //}
+    }
+
+    public class WorkerItem
+    {
+        /// <summary>
+        /// Отмечен в смене.
+        /// </summary>
+        public bool Checked { get; set; }
+
+        /// <summary>
+        /// Имя работника.
+        /// </summary>
+        public string Name { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace Cashbox.Visu
     {
         private DB db = new();
 
-        public ObservableCollection<LogItem> Log { get; set; } = new();
+        public ObservableCollection<object> Log { get; set; } = new();
         public DateTime Begin { get; set; } = DateTime.Today;
         public DateTime End { get; set; } = DateTime.Today;
 
@@ -31,6 +31,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
+            LogView.ItemsSource = Log;
         }
 
 

@@ -23,9 +23,14 @@ namespace Cashbox.Model
                     select user.Name).ToList();
         }
 
-        public List<User> GetUsers()
+        public List<Worker> GetStaff()
         {
-            return db.Users.ToList();
+            return db.Staff.ToList();
+        }
+
+        public Worker GetWorker(string name)
+        {
+            return db.Staff.FirstOrDefault(w => w.Name == name);
         }
 
         public User GetUser(string userName)
@@ -50,24 +55,25 @@ namespace Cashbox.Model
                 db.Shifts.Add(new Shift() { Date = DateTime.Now });
                 db.SaveChanges();
             }
-        }
+        }       
 
-        public void SaveShift(Shift shift, List<Worker> workers)
+        public void SaveNewShift(Shift shift, List<WorkerItem> staff)
         {
             Shift newShift = new(shift);
-            foreach (var user in GetUsers())
+            foreach (var wi in staff)
             {
-                // Найти работника по имени.
-                Worker worker = workers.FirstOrDefault(w => w.Name == user.Name);
+                // Найти работника по имени. 
+                Worker worker = GetWorker(wi.Name);
+
                 // Добавить в смену отмеченного галочкой, если такого ещё нет.
                 if (worker != null)
                 {
-                    if (worker.Participated && !newShift.Users.Contains(user))
-                        newShift.Users.Add(user);
+                    if (wi.Checked && !newShift.Staff.Contains(worker))
+                        newShift.Staff.Add(worker);
                     // Убрать из смены работника без галочки, если он был.
-                    else if (!worker.Participated && newShift.Users.Contains(user))
-                        newShift.Users.Remove(user);
-                }                
+                    else if (!wi.Checked && newShift.Staff.Contains(worker))
+                        newShift.Staff.Remove(worker);
+                }
             }
 
             newShift.Version = GetActualShiftVersion() + 1;
@@ -81,61 +87,45 @@ namespace Cashbox.Model
             shift.Difference = shift.Cash - shift.Expenses + shift.StartDay - shift.EndDay - shift.HandedOver;
         }
 
-        public List<Worker> GetWorkers(Shift shift)
+        public List<WorkerItem> GetWorkerItems(Shift shift)
         {
-            List<Worker> workers = new();
-            foreach (User user in GetUsers())
+            List<WorkerItem> workers = new();
+            foreach (Worker user in GetStaff())
             {
-                Worker worker = new()
+                WorkerItem worker = new()
                 {
                     Name = user.Name
                 };
                 // Поставить галочки работчикам, которые были в смене.
-                if (shift.Users != null && shift.Users.Contains(user))
+                if (shift.Staff != null && shift.Staff.Contains(user))
                 {
-                    worker.Participated = true;
-                    workers.Add(worker);
+                    worker.Checked = true;
                 }
+                workers.Add(worker);
             }
             return workers;
-        }
+        }   
 
-        public void AddShift(Shift shift)
+        public List<object> GetLog(DateTime begin, DateTime end)
         {
-            db.Shifts.Add(shift);
-            db.SaveChanges();
-        }
+            List<object> logItems = new();
 
-        public List<LogItem> GetLog(DateTime begin, DateTime end)
-        {
-            List<LogItem> logItems = new();
-
-            var shifts = from shift in db.Shifts.AsEnumerable()
-                         where shift.Date >= begin && shift.Date <= end
-                         orderby shift.Date descending, shift.Version descending
-                         group shift by shift.Date
+            var items = from shift in db.Shifts.AsEnumerable()
+                        where shift.Date >= begin && shift.Date <= end
+                        orderby shift.Date descending, shift.Version descending
+                        group shift by shift.Date
                          into gr
-                         let s = gr.FirstOrDefault()
-                         select new
-                         {
-                             s.Date,
-                             s.Users,
-                             s.Total,
-                             s.Difference
-                         };
+                        let s = gr.FirstOrDefault()
+                        select new
+                        {
+                            s.Date,
+                            Staff = TransformWorkersToString(s.Staff),
+                            s.Total,
+                            s.Difference
+                        };
 
-            foreach (var shift in shifts)
-            {
-                LogItem logItem = new()
-                {
-                    Date = shift.Date.Date,
-                    TotalCash = shift.Total,
-                    Difference = shift.Difference,
-                    Workers = TransformUsersToString(shift.Users)
-                };
-                logItems.Add(logItem);
-            }
-
+            foreach (var item in items)
+                logItems.Add(item);
             return logItems;
         }
 
@@ -149,13 +139,13 @@ namespace Cashbox.Model
             return new DB();
         }
 
-        private static string TransformUsersToString(List<User> users)
+        private static string TransformWorkersToString(List<Worker> workers)
         {
             StringBuilder builder = new();
-            for (int i = 0; i < users.Count; i++)
+            for (int i = 0; i < workers.Count; i++)
             {
-                builder.Append(users[i].Name);
-                if (i < users.Count - 1)
+                builder.Append(workers[i].Name);
+                if (i < workers.Count - 1)
                     builder.Append(',');
             }
             return builder.ToString();
@@ -178,5 +168,30 @@ namespace Cashbox.Model
                     return;
             }
         }
+
+
+
+
+        //public void AddShift(Shift shift)
+        //{
+        //    db.Shifts.Add(shift);
+        //    db.SaveChanges();
+        //}
+
+        //public void AddWorkerToShift(DateTime shiftDate, WorkerItem workerItem)
+        //{
+        //    Shift shift = GetShift(shiftDate);
+        //    Worker worker = new() { Name = workerItem.Name };
+        //    shift.Staff.Add(worker);
+        //    //db.SaveChanges();
+        //}
+
+        //public void RemoveWorkerFromShift(DateTime shiftDate, WorkerItem workerItem)
+        //{
+        //    Shift shift = GetShift(shiftDate);
+        //    Worker worker = shift.Staff.First(w => w.Name == workerItem.Name);
+        //    shift.Staff.Remove(worker);
+        //    //db.SaveChanges();
+        //}
     }
 }
