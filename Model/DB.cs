@@ -55,7 +55,15 @@ namespace Cashbox.Model
                               where date.Date == s.DateAndTime.Date && s.Version == version
                               orderby s.Version descending
                               select s).FirstOrDefault());
-        }        
+        }
+
+        public int GetShiftId(DateTime date, int version)
+        {
+            return (from s in db.Shifts
+                    where date == s.DateAndTime.Date && s.Version == version
+                    orderby s.Version descending
+                    select s.Id).FirstOrDefault();
+        }
 
         public void CreateShift()
         {
@@ -79,13 +87,11 @@ namespace Cashbox.Model
 
         public void EditShift(Shift editedShift, List<WorkerItem> staff)
         {
+            //using ApplicationContext db = new();
             editedShift = PrepareShift(editedShift, staff);
 
             // Получить из БД нужную смену
-            int shiftId = (from s in db.Shifts
-                           where editedShift.DateAndTime.Date == s.DateAndTime.Date && s.Version == editedShift.Version
-                           orderby s.Version descending
-                           select s.Id).FirstOrDefault();
+            int shiftId = GetShiftId(editedShift.DateAndTime.Date, editedShift.Version);
             editedShift.Id = shiftId;
             Shift shift = db.Shifts.Find(shiftId);
 
@@ -93,6 +99,24 @@ namespace Cashbox.Model
             db.Entry(shift).CurrentValues.SetValues(editedShift); // не присваивает свойства ссылочных типов 
             shift.Staff = editedShift.Staff; // поэтому отдельно присваиваем список работников
 
+            db.SaveChanges();
+        }
+
+        public void RemoveShift(DateTime date, int version = 0)
+        {
+            if (version == 0)
+            {
+                var shiftsId = (from s in db.Shifts
+                                where date.Date == s.DateAndTime.Date
+                                select s.Id).ToList();
+                foreach (var id in shiftsId)
+                    db.Shifts.Remove(db.Shifts.Find(id));
+            }
+            else
+            {
+                int shiftId = GetShiftId(date, version);
+                db.Shifts.Remove(db.Shifts.Find(shiftId));
+            }
             db.SaveChanges();
         }
 

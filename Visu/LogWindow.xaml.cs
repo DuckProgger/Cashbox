@@ -39,7 +39,9 @@ namespace Cashbox.Visu
         }
 
 
-        private void Button_GetLog(object sender, RoutedEventArgs e)
+        private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();
+
+        private void UpdateLog()
         {
             Log.Clear();
             foreach (var item in DB.GetLog(Begin, End))
@@ -60,6 +62,12 @@ namespace Cashbox.Visu
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
             new ShiftWindow(selectedShiftDate, Mode.Edit).Show();
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            DB.RemoveShift(selectedShiftDate);
+            UpdateLog();
         }
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)

@@ -111,7 +111,7 @@ namespace Cashbox.Model
         /// <summary>
         /// Сотрудники смены.
         /// </summary>
-        public virtual List<Worker> Staff { get; set; }/* = new();*/
+        public virtual List<Worker> Staff { get; set; } = new();
 
 
         //public Shift DeepCopy()
