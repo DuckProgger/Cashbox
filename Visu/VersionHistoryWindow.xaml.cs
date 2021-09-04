@@ -24,8 +24,10 @@ namespace Cashbox.Visu
         private DB db;
         private LogWindow owner;
         private DateTime selectedDate;
+        private int selectedVersion;
 
         public ObservableCollection<object> VersionHistory { get; set; } = new();
+        public bool IsAdmin { get; set; } = false;
 
         public VersionHistoryWindow(DateTime date)
         {
@@ -43,13 +45,24 @@ namespace Cashbox.Visu
                 db = owner.DB;
                 foreach (var item in db.GetShiftVersionHistory(selectedDate.Date))
                     VersionHistory.Add(item);
+                IsAdmin = owner.IsAdmin;
             }
         }
 
-        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ListViewItem_Selected(object sender, RoutedEventArgs e)
         {
             var obj = Util.Cast((sender as ListViewItem).Content, new { Time = DateTime.Now, Version = 0 });
-            new ShiftWindow(selectedDate, Mode.Edit, obj.Version).Show();
+            selectedVersion = obj.Version;
+        }
+
+        private void WatchShift_Click(object sender, RoutedEventArgs e)
+        {
+            new ShiftWindow(selectedDate, Mode.WatchOnly, selectedVersion).Show();
+        }
+
+        private void EditShift_Click(object sender, RoutedEventArgs e)
+        {
+            new ShiftWindow(selectedDate, Mode.Edit, selectedVersion).Show();
         }
     }
 }

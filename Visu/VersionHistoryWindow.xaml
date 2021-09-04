@@ -26,16 +26,18 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Version}" Header="Версия" />
                 </GridView>
             </ListView.View>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <!--<MenuItem Header="История версий" Click="VersionHistory_Click"/>-->
+                    <MenuItem Header="Открыть" Click="WatchShift_Click"/>
+                    <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding IsAdmin}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
+                    <EventSetter Event="MouseDoubleClick" Handler="WatchShift_Click" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </Window>

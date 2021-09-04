@@ -52,7 +52,7 @@
                 <RowDefinition Height="1.5*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            
+
             <DataGrid Name="WorkersTable" 
                       Margin="10"
                       ItemsSource="{Binding Staff}"
@@ -60,9 +60,10 @@
                       CanUserAddRows="False"
                       Background="White"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="5"
-                       materialDesign:DataGridAssist.CornerRadius="5"
-                       BorderThickness="1"
-                      BorderBrush="Gray">
+                      materialDesign:DataGridAssist.CornerRadius="5"
+                      BorderThickness="1"
+                      BorderBrush="Gray"
+                      IsEnabled="{Binding EnableEntries}">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Сотрудники">
                         <DataGridTemplateColumn.CellTemplate>
@@ -95,26 +96,29 @@
                      materialDesign:HintAssist.HintOpacity="100"
                      BorderBrush="Gray"
                      KeyDown="Comment_KeyDown"
-                     Text="{Binding Shift.Comment}"/>
+                     Text="{Binding Shift.Comment}"
+                     IsEnabled="{Binding EnableEntries}"/>
         </Grid>
 
         <Button Grid.Column="0"
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
-                Content="Сохранить" Click="SaveShift"/>
+                Content="Сохранить" Click="SaveShift"
+                IsEnabled="{Binding EnableEntries}" Cursor="Hand"/>
 
         <StackPanel Grid.Column="0"
                     Grid.Row="0"
                     VerticalAlignment="Center">
-            <StackPanel DataContext="{Binding Shift}">
+            <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Наличные:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5"                         
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Text="{Binding Cash, UpdateSourceTrigger=PropertyChanged}"
-                         LostFocus="TextBox_LostFocus"
-                         TextChanged="TextBox_TextChanged" Cursor="IBeam"/>
+                    <TextBox Padding="5" 
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
+                             LostFocus="TextBox_LostFocus"
+                             TextChanged="TextBox_TextChanged" Cursor="IBeam"
+                             IsEnabled="{Binding EnableEntries}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
@@ -122,9 +126,10 @@
                            Style="{StaticResource MyTextBlock}"/>
                     <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Terminal, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged"/>
+                             TextChanged="TextBox_TextChanged"
+                             IsEnabled="{Binding EnableEntries}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
@@ -132,9 +137,10 @@
                            Style="{StaticResource MyTextBlock}"/>
                     <TextBox Padding="5" 
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Expenses, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged" Cursor="IBeam"/>
+                             TextChanged="TextBox_TextChanged" Cursor="IBeam"
+                             IsEnabled="{Binding EnableEntries}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
@@ -142,9 +148,10 @@
                            Style="{StaticResource MyTextBlock}"/>
                     <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding StartDay, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged"/>
+                             TextChanged="TextBox_TextChanged"
+                             IsEnabled="{Binding EnableEntries}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
@@ -152,9 +159,10 @@
                            Style="{StaticResource MyTextBlock}"/>
                     <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding EndDay, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged"/>
+                             TextChanged="TextBox_TextChanged"
+                             IsEnabled="{Binding EnableEntries}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
@@ -162,9 +170,10 @@
                            Style="{StaticResource MyTextBlock}"/>
                     <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding HandedOver, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged"/>
+                             TextChanged="TextBox_TextChanged"
+                             IsEnabled="{Binding EnableEntries}"/>
                 </StackPanel>
             </StackPanel>
 

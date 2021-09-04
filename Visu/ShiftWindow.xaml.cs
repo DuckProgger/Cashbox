@@ -34,6 +34,7 @@ namespace Cashbox.Visu
 
         public ObservableCollection<WorkerItem> Staff { get; private set; }
         public Shift Shift { get; set; }
+        public bool EnableEntries => viewMode != Mode.WatchOnly;
         public int Total
         {
             get => _total;
@@ -67,9 +68,9 @@ namespace Cashbox.Visu
             InitializeComponent();
             db.CreateShift();
             if (version == 0)
-                Shift = new(db.GetShift(date));
+                Shift = db.GetNewShift(date);
             else
-                Shift = new(db.GetShiftByVersion(date, version));
+                Shift = db.GetNewShiftByVersion(date, version);
             UpdateValues();
             Staff = new(db.GetWorkerItems(Shift));
             DataContext = this;
@@ -80,7 +81,7 @@ namespace Cashbox.Visu
         {
             switch (viewMode)
             {
-                case Mode.ReadOnly:
+                case Mode.WatchOnly:
                     break;
                 case Mode.Edit:
                     db.EditShift(Shift, Staff.ToList());

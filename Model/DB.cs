@@ -41,26 +41,26 @@ namespace Cashbox.Model
                     select u).FirstOrDefault();
         }
 
-        public Shift GetShift(DateTime date)
+        public Shift GetNewShift(DateTime date)
         {
-            return (from s in db.Shifts
-                    where date.Date == s.DateAndTime.Date
-                    orderby s.Version descending
-                    select s).FirstOrDefault();
+            return new Shift((from s in db.Shifts
+                              where date.Date == s.DateAndTime.Date
+                              orderby s.Version descending
+                              select s).FirstOrDefault());
         }
 
-        public Shift GetShiftByVersion(DateTime date, int version)
+        public Shift GetNewShiftByVersion(DateTime date, int version)
         {
-            return (from s in db.Shifts
-                    where date.Date == s.DateAndTime.Date && s.Version == version
-                    orderby s.Version descending
-                    select s).FirstOrDefault();
-        }
+            return new Shift((from s in db.Shifts
+                              where date.Date == s.DateAndTime.Date && s.Version == version
+                              orderby s.Version descending
+                              select s).FirstOrDefault());
+        }        
 
         public void CreateShift()
         {
             // Создать смену, если это первая смена за день
-            if (GetShift(DateTime.Now) == null)
+            if (GetNewShift(DateTime.Now) == null)
             {
                 db.Shifts.Add(new Shift() { DateAndTime = DateTime.Now });
                 db.SaveChanges();
@@ -80,20 +80,19 @@ namespace Cashbox.Model
         public void EditShift(Shift editedShift, List<WorkerItem> staff)
         {
             editedShift = PrepareShift(editedShift, staff);
+
             // Получить из БД нужную смену
-            Shift shift = GetShiftByVersion(editedShift.DateAndTime.Date, editedShift.Version);
+            int shiftId = (from s in db.Shifts
+                           where editedShift.DateAndTime.Date == s.DateAndTime.Date && s.Version == editedShift.Version
+                           orderby s.Version descending
+                           select s.Id).FirstOrDefault();
+            editedShift.Id = shiftId;
+            Shift shift = db.Shifts.Find(shiftId);
+
             // Присваиваем этой смене все поля изменённой смены
-            shift.Cash = editedShift.Cash;
-            shift.Comment = editedShift.Comment;
-            shift.DateAndTime = editedShift.DateAndTime;
-            shift.Difference = editedShift.Difference;
-            shift.EndDay = editedShift.EndDay;
-            shift.Expenses = editedShift.Expenses;
-            shift.HandedOver = editedShift.HandedOver;
-            shift.Staff = editedShift.Staff;
-            shift.StartDay = editedShift.StartDay;
-            shift.Terminal = editedShift.Terminal;
-            shift.Total = editedShift.Total;
+            db.Entry(shift).CurrentValues.SetValues(editedShift); // не присваивает свойства ссылочных типов 
+            shift.Staff = editedShift.Staff; // поэтому отдельно присваиваем список работников
+
             db.SaveChanges();
         }
 

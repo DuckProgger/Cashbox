@@ -22,17 +22,20 @@ namespace Cashbox.Visu
     public partial class LogWindow : Window
     {
         private DateTime selectedShiftDate;
+        private User user;
 
+        public bool IsAdmin => user.Permissions.IsAdmin;
         public DB DB { get; private set; } = new();
         public ObservableCollection<object> Log { get; set; } = new();
         public DateTime Begin { get; set; } = DateTime.Today;
         public DateTime End { get; set; } = DateTime.Today;
 
-        public LogWindow()
+        public LogWindow(User user)
         {
             InitializeComponent();
             DataContext = this;
             LogView.ItemsSource = Log;
+            this.user = user;
         }
 
 
@@ -49,8 +52,18 @@ namespace Cashbox.Visu
             versionHistoryWindow.Show();
         }
 
+        private void WatchShift_Click(object sender, RoutedEventArgs e)
+        {
+            new ShiftWindow(selectedShiftDate, Mode.WatchOnly).Show();
+        }
+
+        private void EditShift_Click(object sender, RoutedEventArgs e)
+        {
+            new ShiftWindow(selectedShiftDate, Mode.Edit).Show();
+        }
+
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
-        {            
+        {
             var obj = Util.Cast((sender as ListViewItem).Content, new { Date = DateTime.Now, Staff = "", Total = 0, Difference = 0 });
             selectedShiftDate = obj.Date;
         }

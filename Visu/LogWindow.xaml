@@ -37,12 +37,15 @@
             </ListView.View>
             <ListView.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="Открыть" Click="WatchShift_Click"/>
+                    <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding IsAdmin}"/>
                     <MenuItem Header="История версий" Click="VersionHistory_Click"/>
-                </ContextMenu> 
+                </ContextMenu>
             </ListView.ContextMenu>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
+                    <EventSetter Event="MouseDoubleClick" Handler="WatchShift_Click" />
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
