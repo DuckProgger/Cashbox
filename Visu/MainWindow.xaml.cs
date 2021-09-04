@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
+    public enum Mode : int { ReadOnly, Edit, New }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -31,8 +33,8 @@ namespace Cashbox.Visu
         }
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)
-        {
-            ShiftWindow shiftWindow = new(db.GetShift(DateTime.Today));
+        {            
+            ShiftWindow shiftWindow = new(DateTime.Today, Mode.New);
             shiftWindow.Owner = this;
             shiftWindow.Show();
         }

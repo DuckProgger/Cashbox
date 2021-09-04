@@ -111,15 +111,15 @@ namespace Cashbox.Model
         /// <summary>
         /// Сотрудники смены.
         /// </summary>
-        public virtual List<Worker> Staff { get; set; }
+        public virtual List<Worker> Staff { get; set; }/* = new();*/
 
 
-        public Shift DeepCopy()
-        {
-            Shift shift = (Shift)MemberwiseClone();
-            shift.Staff = Staff != null ? new(Staff) : new();
-            return shift;
-        }
+        //public Shift DeepCopy()
+        //{
+        //    Shift shift = (Shift)MemberwiseClone();
+        //    shift.Staff = Staff != null ? new(Staff) : new();
+        //    return shift;
+        //}
     }
 
     public class Permissions

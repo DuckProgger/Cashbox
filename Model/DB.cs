@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,22 +43,23 @@ namespace Cashbox.Model
 
         public Shift GetShift(DateTime date)
         {
-            return new Shift((from s in db.Shifts
-                              where date.Date == s.DateAndTime.Date
-                              orderby s.Version descending
-                              select s).FirstOrDefault());
+            return (from s in db.Shifts
+                    where date.Date == s.DateAndTime.Date
+                    orderby s.Version descending
+                    select s).FirstOrDefault();
         }
 
         public Shift GetShiftByVersion(DateTime date, int version)
         {
-            return new Shift((from s in db.Shifts
-                              where date.Date == s.DateAndTime.Date && s.Version == version
-                              orderby s.Version descending
-                              select s).FirstOrDefault());
+            return (from s in db.Shifts
+                    where date.Date == s.DateAndTime.Date && s.Version == version
+                    orderby s.Version descending
+                    select s).FirstOrDefault();
         }
 
         public void CreateShift()
         {
+            // Создать смену, если это первая смена за день
             if (GetShift(DateTime.Now) == null)
             {
                 db.Shifts.Add(new Shift() { DateAndTime = DateTime.Now });
@@ -70,20 +72,29 @@ namespace Cashbox.Model
             Shift newShift = new(PrepareShift(shift, staff));
             newShift.Version = GetActualShiftVersion() + 1;
             newShift.DateAndTime = DateTime.Now;
+
             db.Shifts.Add(newShift);
             db.SaveChanges();
         }
 
         public void EditShift(Shift editedShift, List<WorkerItem> staff)
         {
+            editedShift = PrepareShift(editedShift, staff);
             // Получить из БД нужную смену
             Shift shift = GetShiftByVersion(editedShift.DateAndTime.Date, editedShift.Version);
-
             // Присваиваем этой смене все поля изменённой смены
-
-            editedShift = PrepareShift(editedShift, staff);
-            shift = editedShift;
-
+            shift.Cash = editedShift.Cash;
+            shift.Comment = editedShift.Comment;
+            shift.DateAndTime = editedShift.DateAndTime;
+            shift.Difference = editedShift.Difference;
+            shift.EndDay = editedShift.EndDay;
+            shift.Expenses = editedShift.Expenses;
+            shift.HandedOver = editedShift.HandedOver;
+            shift.Staff = editedShift.Staff;
+            shift.StartDay = editedShift.StartDay;
+            shift.Terminal = editedShift.Terminal;
+            shift.Total = editedShift.Total;
+            db.SaveChanges();
         }
 
         public static void CaclShift(Shift shift)
@@ -95,18 +106,18 @@ namespace Cashbox.Model
         public List<WorkerItem> GetWorkerItems(Shift shift)
         {
             List<WorkerItem> workers = new();
-            foreach (Worker user in GetStaff())
+            foreach (Worker worker in GetStaff())
             {
-                WorkerItem worker = new()
+                WorkerItem workerItem = new()
                 {
-                    Name = user.Name
+                    Name = worker.Name
                 };
                 // Поставить галочки работчикам, которые были в смене.
-                if (shift.Staff != null && shift.Staff.Contains(user))
+                if (shift.Staff != null && IsWorkerExists(shift, worker.Id))
                 {
-                    worker.Checked = true;
+                    workerItem.Checked = true;
                 }
-                workers.Add(worker);
+                workers.Add(workerItem);
             }
             return workers;
         }
@@ -162,19 +173,20 @@ namespace Cashbox.Model
             {
                 // Найти работника по имени. 
                 Worker worker = GetWorker(wi.Name);
-
-                // Добавить в смену отмеченного галочкой, если такого ещё нет.
                 if (worker != null)
                 {
-                    if (wi.Checked && !shift.Staff.Contains(worker))
+                    // Добавить в смену отмеченного галочкой, если такого ещё нет.
+                    if (wi.Checked && !IsWorkerExists(shift, worker.Id))
                         shift.Staff.Add(worker);
                     // Убрать из смены работника без галочки, если он был.
-                    else if (!wi.Checked && shift.Staff.Contains(worker))
+                    else if (!wi.Checked && IsWorkerExists(shift, worker.Id))
                         shift.Staff.Remove(worker);
                 }
             }
             return shift;
         }
+
+        private static bool IsWorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
 
         private static string TransformWorkersToString(List<Worker> workers)
         {
@@ -205,8 +217,6 @@ namespace Cashbox.Model
                     return;
             }
         }
-
-
 
 
         //public void AddShift(Shift shift)

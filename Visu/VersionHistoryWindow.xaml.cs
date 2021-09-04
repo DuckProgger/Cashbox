@@ -49,7 +49,7 @@ namespace Cashbox.Visu
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var obj = Util.Cast((sender as ListViewItem).Content, new { Time = DateTime.Now, Version = 0 });
-            new ShiftWindow(db.GetShiftByVersion(selectedDate, obj.Version)).Show();
+            new ShiftWindow(selectedDate, Mode.Edit, obj.Version).Show();
         }
     }
 }

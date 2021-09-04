@@ -21,6 +21,7 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
+
     public partial class ShiftWindow : Window, INotifyPropertyChanged
     {
         private DB db = new();
@@ -29,6 +30,7 @@ namespace Cashbox.Visu
         private string _differenceText;
         private readonly SolidColorBrush redBackground = new(Color.FromRgb(245, 94, 83));
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
+        private readonly Mode viewMode;
 
         public ObservableCollection<WorkerItem> Staff { get; private set; }
         public Shift Shift { get; set; }
@@ -60,19 +62,35 @@ namespace Cashbox.Visu
             }
         }
 
-        public ShiftWindow(Shift shift)
+        public ShiftWindow(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
             db.CreateShift();
-            Shift = shift;
+            if (version == 0)
+                Shift = new(db.GetShift(date));
+            else
+                Shift = new(db.GetShiftByVersion(date, version));
             UpdateValues();
             Staff = new(db.GetWorkerItems(Shift));
             DataContext = this;
+            viewMode = mode;
         }
 
         private void SaveShift(object sender, RoutedEventArgs e)
         {
-            db.SaveNewShift(Shift, Staff.ToList());
+            switch (viewMode)
+            {
+                case Mode.ReadOnly:
+                    break;
+                case Mode.Edit:
+                    db.EditShift(Shift, Staff.ToList());
+                    break;
+                case Mode.New:
+                    db.SaveNewShift(Shift, Staff.ToList());
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void Comment_KeyDown(object sender, KeyEventArgs e)

@@ -21,7 +21,8 @@ namespace Cashbox.Model
         {
             optionsBuilder.
                 UseSqlServer(GetConnectionString()).
-                UseLazyLoadingProxies();
+                UseLazyLoadingProxies().
+                EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
