@@ -28,22 +28,11 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             User = db.GetUser(user);
-
-
-            //List<User> users = new();
-            //users.Add(db.GetUser("Администратор"));
-          
-            //Shift shift1 = new Shift()
-            //{
-            //    Date = DateTime.Now.Date,
-            //    Users = users
-            //};
-            //db.AddShift(shift1);
         }
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)
         {
-            ShiftWindow shiftWindow = new();
+            ShiftWindow shiftWindow = new(db.GetShift(DateTime.Today));
             shiftWindow.Owner = this;
             shiftWindow.Show();
         }

@@ -44,11 +44,12 @@ namespace Cashbox.Visu
                 foreach (var item in db.GetShiftVersionHistory(selectedDate.Date))
                     VersionHistory.Add(item);
             }
-        }           
+        }
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-
+            var obj = Util.Cast((sender as ListViewItem).Content, new { Time = DateTime.Now, Version = 0 });
+            new ShiftWindow(db.GetShiftByVersion(selectedDate, obj.Version)).Show();
         }
     }
 }

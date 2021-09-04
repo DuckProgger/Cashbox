@@ -51,10 +51,8 @@ namespace Cashbox.Visu
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
         {            
-            var obj = Cast((sender as ListViewItem).Content, new { Date = DateTime.Now, Staff = "", Total = 0, Difference = 0 });
+            var obj = Util.Cast((sender as ListViewItem).Content, new { Date = DateTime.Now, Staff = "", Total = 0, Difference = 0 });
             selectedShiftDate = obj.Date;
         }
-
-        private T Cast<T>(object obj, T type) => (T)obj; 
     }
 }

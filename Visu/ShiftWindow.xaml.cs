@@ -60,11 +60,11 @@ namespace Cashbox.Visu
             }
         }
 
-        public ShiftWindow()
+        public ShiftWindow(Shift shift)
         {
             InitializeComponent();
             db.CreateShift();
-            Shift = db.GetShift(DateTime.Now.Date);
+            Shift = shift;
             UpdateValues();
             Staff = new(db.GetWorkerItems(Shift));
             DataContext = this;
