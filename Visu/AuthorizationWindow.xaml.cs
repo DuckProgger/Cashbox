@@ -24,7 +24,7 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class AuthorizationWindow : Window, INotifyPropertyChanged
     {
-        private DB db = new();
+        //private DB db = new();
         private bool _okButtonVis;
 
         public string SelectedUser { get; set; }
@@ -61,8 +61,8 @@ namespace Cashbox.Visu
         private async void GetUsersAsync()
         {
             ShowPopup("Подключение к БД");
-            db = await Task.Run(() => DB.CreateDB());
-            Users.ItemsSource = await db.GetUserNamesAsync();
+            //await Task.Run(() => DB.CreateDB());
+            Users.ItemsSource = await DB.GetUserNamesAsync();
             MyPopup.IsPopupOpen = false;
         }
 
@@ -89,10 +89,10 @@ namespace Cashbox.Visu
             OkButtonVis = SelectedUser != null;
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            db.Dispose();
-        }
+        //protected override void OnClosed(EventArgs e)
+        //{
+        //    DB.Dispose();
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")

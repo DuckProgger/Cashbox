@@ -24,7 +24,7 @@ namespace Cashbox.Visu
 
     public partial class ShiftWindow : Window, INotifyPropertyChanged
     {
-        private DB db = new();
+        //private DB db = new();
         private int _total;
         private int _difference;
         private string _differenceText;
@@ -66,16 +66,35 @@ namespace Cashbox.Visu
         public ShiftWindow(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
-            db.CreateShift();
+            //DB.CreateShift();
             if (version == 0)
-                Shift = db.GetNewShift(date);
+                Shift = DB.GetShift(date);
             else
-                Shift = db.GetNewShiftByVersion(date, version);
+                Shift = DB.GetShift(date, version);
             UpdateValues();
-            Staff = new(db.GetWorkerItems(Shift));
+            Staff = new(DB.GetWorkerItems(Shift));
             DataContext = this;
             viewMode = mode;
         }
+
+
+        //private static List<Worker> PrepareStaff(List<Worker> oldStaff, List<WorkerItem> staff)
+        //{
+        //    List<Worker> newStaff = new(oldStaff);
+        //    foreach (var wi in newStaff)
+        //    {
+        //        // Найти работника по имени. 
+        //        Worker worker = newStaff.Find(w => w.Name == wi.Name);
+        //        // Добавить в смену отмеченного галочкой, если такого ещё нет.
+        //        if (wi.Checked && worker == null)
+        //            newStaff.Add(worker);
+        //        // Убрать из смены работника без галочки, если он был.
+        //        else if (!wi.Checked && worker != null)
+        //            newStaff.Remove(worker);
+        //    }
+        //    return shift;
+        //}
+
 
         private void SaveShift(object sender, RoutedEventArgs e)
         {
@@ -84,10 +103,11 @@ namespace Cashbox.Visu
                 case Mode.WatchOnly:
                     break;
                 case Mode.Edit:
-                    db.EditShift(Shift, Staff.ToList());
+                    //DB.EditShift(Shift, Staff.ToList());
                     break;
                 case Mode.New:
-                    db.SaveNewShift(Shift, Staff.ToList());
+                    //DB.SaveNewShift(Shift, Staff.ToList());
+                    Shift = DB.UpdateShift(Shift);
                     break;
                 default:
                     break;
@@ -153,6 +173,29 @@ namespace Cashbox.Visu
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
+            Worker worker = DB.GetWorker(selectedName);
+            if (!WorkerExists(worker.Id))
+                //Shift.Staff.Add(worker);
+                Shift = DB.AddWorkerToShift(Shift.Id, worker.Id);
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
+            Worker worker = DB.GetWorker(selectedName);
+            if (WorkerExists(worker.Id))
+                Shift = DB.RemoveWorkerFromShift(Shift.Id, worker.Id);
+
+            //Shift.Staff.Remove(worker);
+            //Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
+
+        }
+
+        private bool WorkerExists(int id) => Shift.Staff.Exists(w => w.Id == id);
     }
 }
 

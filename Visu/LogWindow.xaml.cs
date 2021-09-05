@@ -25,7 +25,7 @@ namespace Cashbox.Visu
         private User user;
 
         public bool IsAdmin => user.Permissions.IsAdmin;
-        public DB DB { get; private set; } = new();
+        //public DB DB { get; private set; } = new();
         public ObservableCollection<object> Log { get; set; } = new();
         public DateTime Begin { get; set; } = DateTime.Today;
         public DateTime End { get; set; } = DateTime.Today;

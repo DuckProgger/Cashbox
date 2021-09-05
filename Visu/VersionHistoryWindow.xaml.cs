@@ -21,7 +21,7 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class VersionHistoryWindow : Window
     {
-        private DB db;
+        //private DB db;
         private LogWindow owner;
         private DateTime selectedDate;
         private int selectedVersion;
@@ -42,8 +42,8 @@ namespace Cashbox.Visu
             {
                 VersionHistoryView.ItemsSource = VersionHistory;
                 owner = Owner as LogWindow;
-                db = owner.DB;
-                foreach (var item in db.GetShiftVersionHistory(selectedDate.Date))
+                //db = owner.DB;
+                foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
                     VersionHistory.Add(item);
                 IsAdmin = owner.IsAdmin;
             }

@@ -19,10 +19,10 @@ namespace Cashbox.Model
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.
-                UseSqlServer(GetConnectionString()).
-                UseLazyLoadingProxies().
-                EnableSensitiveDataLogging();
+            optionsBuilder
+                .UseSqlServer(GetConnectionString()/*, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)*/)
+                //.UseLazyLoadingProxies()
+                .EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,10 +34,10 @@ namespace Cashbox.Model
 
         private void UserConfigure(EntityTypeBuilder<User> builder)
         {
-            builder.
-                HasOne(u => u.Permissions).
-                WithOne(p => p.User).
-                HasForeignKey<Permissions>(k => k.Id);           
+            builder
+                .HasOne(u => u.Permissions)
+                .WithOne(p => p.User)
+                .HasForeignKey<Permissions>(k => k.Id);
         }
 
         private void PermissionsConfigure(EntityTypeBuilder<Permissions> builder)
@@ -47,10 +47,10 @@ namespace Cashbox.Model
 
         private void WorkerConfigure(EntityTypeBuilder<Worker> builder)
         {
-            builder.
-                HasOne(w => w.User).
-                WithMany(u => u.Staff).
-                HasForeignKey(k => k.Id);
+            builder
+                .HasOne(w => w.User)
+                .WithMany(u => u.Staff)
+                .HasForeignKey(k => k.Id);
         }
 
 

@@ -76,7 +76,9 @@
                                     <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
                                               Grid.Column="0"
                                               Width="20"
-                                              Margin="2"/>
+                                              Margin="2"
+                                              Checked="CheckBox_Checked"
+                                              Unchecked="CheckBox_Unchecked"/>
                                     <TextBlock Text="{Binding Name}"
                                                Grid.Column="1"
                                                Margin="2"

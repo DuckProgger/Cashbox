@@ -24,12 +24,12 @@ namespace Cashbox.Visu
     public partial class MainWindow : Window
     {
         private User user { get; set; }
-        private DB db = new();
+        //private DB db = new();
 
         public MainWindow(string userName)
         {
             InitializeComponent();
-            user = db.GetUser(userName);
+            user = DB.GetUser(userName);
         }
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)

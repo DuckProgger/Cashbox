@@ -10,8 +10,8 @@ namespace Cashbox.Model
         [Column(TypeName = "nvarchar(50)")]
         public string Name { get; set; }
 
-        public virtual Permissions Permissions { get; set; }
-        public virtual List<Worker> Staff { get; set; }
+        public /*virtual*/ Permissions Permissions { get; set; }
+        public /*virtual*/ List<Worker> Staff { get; set; }
     }
 
     public class Worker
@@ -19,8 +19,8 @@ namespace Cashbox.Model
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public virtual User User { get; set; }
-        public virtual List<Shift> Shifts { get; set; }
+        public /*virtual*/ User User { get; set; }
+        public /*virtual*/ List<Shift> Shifts { get; set; }
     }
 
     public class Shift
@@ -111,7 +111,7 @@ namespace Cashbox.Model
         /// <summary>
         /// Сотрудники смены.
         /// </summary>
-        public virtual List<Worker> Staff { get; set; } = new();
+        public /*virtual*/ List<Worker> Staff { get; set; } = new();
 
 
         //public Shift DeepCopy()
@@ -127,7 +127,7 @@ namespace Cashbox.Model
         public int Id { get; set; }
         public bool IsAdmin { get; set; }
 
-        public virtual User User { get; set; }
+        public /*virtual*/ User User { get; set; }
 
         //public Permissions GetAccesses(Accesses access)
         //{
