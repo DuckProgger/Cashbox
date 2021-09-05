@@ -42,7 +42,7 @@ namespace Cashbox.Model
                 Total = shift.Total;
                 Difference = shift.Difference;
                 Comment = shift.Comment;
-                Staff = shift.Staff != null ? new(shift.Staff) : new();
+                //Staff = shift.Staff != null ? new(shift.Staff) : new();
             }
             else
                 DateAndTime = DateTime.Now;
@@ -153,16 +153,4 @@ namespace Cashbox.Model
         //}
     }
 
-    public class WorkerItem
-    {
-        /// <summary>
-        /// Отмечен в смене.
-        /// </summary>
-        public bool Checked { get; set; }
-
-        /// <summary>
-        /// Имя работника.
-        /// </summary>
-        public string Name { get; set; }
-    }
 }

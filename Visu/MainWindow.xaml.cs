@@ -30,6 +30,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             user = DB.GetUser(userName);
+            using ApplicationContext db = new();
         }
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)

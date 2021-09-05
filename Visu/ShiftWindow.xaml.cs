@@ -24,7 +24,6 @@ namespace Cashbox.Visu
 
     public partial class ShiftWindow : Window, INotifyPropertyChanged
     {
-        //private DB db = new();
         private int _total;
         private int _difference;
         private string _differenceText;
@@ -66,35 +65,29 @@ namespace Cashbox.Visu
         public ShiftWindow(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
-            //DB.CreateShift();
             if (version == 0)
-                Shift = DB.GetShift(date);
+                Shift = DB.GetShift(date) ?? new() { DateAndTime = DateTime.Now};
             else
                 Shift = DB.GetShift(date, version);
             UpdateValues();
-            Staff = new(DB.GetWorkerItems(Shift));
+            Staff = new(GetWorkerItems(Shift));
             DataContext = this;
             viewMode = mode;
         }
 
-
-        //private static List<Worker> PrepareStaff(List<Worker> oldStaff, List<WorkerItem> staff)
-        //{
-        //    List<Worker> newStaff = new(oldStaff);
-        //    foreach (var wi in newStaff)
-        //    {
-        //        // Найти работника по имени. 
-        //        Worker worker = newStaff.Find(w => w.Name == wi.Name);
-        //        // Добавить в смену отмеченного галочкой, если такого ещё нет.
-        //        if (wi.Checked && worker == null)
-        //            newStaff.Add(worker);
-        //        // Убрать из смены работника без галочки, если он был.
-        //        else if (!wi.Checked && worker != null)
-        //            newStaff.Remove(worker);
-        //    }
-        //    return shift;
-        //}
-
+        public List<WorkerItem> GetWorkerItems(Shift shift)
+        {
+            List<WorkerItem> workers = new();
+            foreach (Worker worker in DB.GetStaff())
+            {
+                WorkerItem workerItem = new() { Name = worker.Name };
+                // Поставить галочки работчикам, которые были в смене.
+                if (shift.Staff != null && WorkerExists(worker.Id))
+                    workerItem.Checked = true;
+                workers.Add(workerItem);
+            }
+            return workers;
+        }
 
         private void SaveShift(object sender, RoutedEventArgs e)
         {
@@ -103,11 +96,10 @@ namespace Cashbox.Visu
                 case Mode.WatchOnly:
                     break;
                 case Mode.Edit:
-                    //DB.EditShift(Shift, Staff.ToList());
+                    DB.UpdateShift(Shift);
                     break;
                 case Mode.New:
-                    //DB.SaveNewShift(Shift, Staff.ToList());
-                    Shift = DB.UpdateShift(Shift);
+                    DB.CreateShift(Shift);
                     break;
                 default:
                     break;
@@ -168,19 +160,12 @@ namespace Cashbox.Visu
             Difference = Shift.Difference;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             if (!WorkerExists(worker.Id))
-                //Shift.Staff.Add(worker);
-                Shift = DB.AddWorkerToShift(Shift.Id, worker.Id);
+                Shift.Staff.Add(worker);
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -188,14 +173,16 @@ namespace Cashbox.Visu
             string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             if (WorkerExists(worker.Id))
-                Shift = DB.RemoveWorkerFromShift(Shift.Id, worker.Id);
-
-            //Shift.Staff.Remove(worker);
-            //Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
-
+                Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
         }
 
         private bool WorkerExists(int id) => Shift.Staff.Exists(w => w.Id == id);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
     }
 }
 
