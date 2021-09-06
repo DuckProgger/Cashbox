@@ -10,8 +10,9 @@ namespace Cashbox.Model
         [Column(TypeName = "nvarchar(50)")]
         public string Name { get; set; }
 
-        public /*virtual*/ Permissions Permissions { get; set; }
-        public /*virtual*/ List<Worker> Staff { get; set; }
+        public Permissions Permissions { get; set; }
+        public List<Worker> Staff { get; set; }
+        public List<Shift> Shifts { get; set; }
     }
 
     public class Worker
@@ -19,35 +20,36 @@ namespace Cashbox.Model
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public /*virtual*/ User User { get; set; }
-        public /*virtual*/ List<Shift> Shifts { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
+        public List<Shift> Shifts { get; set; }
     }
 
     public class Shift
     {
         public Shift() { }
 
-        public Shift(Shift shift)
-        {
-            if (shift != null)
-            {
-                Version = shift.Version;
-                DateAndTime = shift.DateAndTime;
-                Cash = shift.Cash;
-                Terminal = shift.Terminal;
-                Expenses = shift.Expenses;
-                StartDay = shift.StartDay;
-                EndDay = shift.EndDay;
-                HandedOver = shift.HandedOver;
-                Total = shift.Total;
-                Difference = shift.Difference;
-                Comment = shift.Comment;
-                //Staff = shift.Staff != null ? new(shift.Staff) : new();
-            }
-            else
-                DateAndTime = DateTime.Now;
+        //public Shift(Shift shift)
+        //{
+        //    if (shift != null)
+        //    {
+        //        Version = shift.Version;
+        //        DateAndTime = shift.DateAndTime;
+        //        Cash = shift.Cash;
+        //        Terminal = shift.Terminal;
+        //        Expenses = shift.Expenses;
+        //        StartDay = shift.StartDay;
+        //        EndDay = shift.EndDay;
+        //        HandedOver = shift.HandedOver;
+        //        Total = shift.Total;
+        //        Difference = shift.Difference;
+        //        Comment = shift.Comment;
+        //        //Staff = shift.Staff != null ? new(shift.Staff) : new();
+        //    }
+        //    else
+        //        DateAndTime = DateTime.Now;
 
-        }
+        //}
 
         public int Id { get; set; }
 
@@ -111,15 +113,21 @@ namespace Cashbox.Model
         /// <summary>
         /// Сотрудники смены.
         /// </summary>
-        public /*virtual*/ List<Worker> Staff { get; set; } = new();
+        public List<Worker> Staff { get; set; } = new();
 
+        public int UserId { get; set; }
+        public User User { get; set; }
 
-        //public Shift DeepCopy()
-        //{
-        //    Shift shift = (Shift)MemberwiseClone();
-        //    shift.Staff = Staff != null ? new(Staff) : new();
-        //    return shift;
-        //}
+        public static Shift Create(User user) => new() { DateAndTime = DateTime.Now, User = user, };
+
+        public Shift DeepCopy()
+        {
+            Shift shift = (Shift)MemberwiseClone();
+            shift.Id = default;
+            //shift.User = ;
+            //shift.Staff = Staff != null ? new(Staff) : new();
+            return shift;
+        }
     }
 
     public class Permissions
@@ -127,7 +135,7 @@ namespace Cashbox.Model
         public int Id { get; set; }
         public bool IsAdmin { get; set; }
 
-        public /*virtual*/ User User { get; set; }
+        public User User { get; set; }
 
         //public Permissions GetAccesses(Accesses access)
         //{

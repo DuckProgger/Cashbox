@@ -19,16 +19,11 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    /// <summary>
-    /// Логика взаимодействия для AuthorizationWindow.xaml
-    /// </summary>
     public partial class AuthorizationWindow : Window, INotifyPropertyChanged
     {
-        //private DB db = new();
         private bool _okButtonVis;
 
         public string SelectedUser { get; set; }
-        //public string EnteredPassword { get; set; }
         public bool OkButtonVis
         {
             get => _okButtonVis;
@@ -48,20 +43,13 @@ namespace Cashbox.Visu
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            // Проверка правильности введённого пароля
-            //if (db.CheckPassword(SelectedUser, EnteredPassword))
-            //{
-                new MainWindow(SelectedUser).Show();
-                Close();
-            //}
-            //else
-            //    ShowPopup("Неверный пароль");
+            new MainWindow(SelectedUser).Show();
+            Close();
         }
 
         private async void GetUsersAsync()
         {
             ShowPopup("Подключение к БД");
-            //await Task.Run(() => DB.CreateDB());
             Users.ItemsSource = await DB.GetUserNamesAsync();
             MyPopup.IsPopupOpen = false;
         }
@@ -71,13 +59,6 @@ namespace Cashbox.Visu
             SelectedUser = ((ComboBox)sender).SelectedValue as string;
             CheckOkButtonVis();
         }
-
-        //private void PasswordChanged(object sender, RoutedEventArgs e)
-        //{
-        //    EnteredPassword = ((PasswordBox)sender).Password;
-        //    CheckOkButtonVis();
-        //}
-
         private void ShowPopup(string text)
         {
             MyPopup.IsPopupOpen = true;
@@ -89,15 +70,10 @@ namespace Cashbox.Visu
             OkButtonVis = SelectedUser != null;
         }
 
-        //protected override void OnClosed(EventArgs e)
-        //{
-        //    DB.Dispose();
-        //}
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }       
+        }
     }
 }

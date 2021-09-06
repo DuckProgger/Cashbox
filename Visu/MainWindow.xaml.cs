@@ -16,31 +16,28 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    public enum Mode : int { WatchOnly, Edit, New }
+    public enum Mode : int { WatchOnly, EditVersion, NewVersion }
 
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private User user { get; set; }
-        //private DB db = new();
+        public User User { get; set; }
+
+        public MainWindow() { InitializeComponent(); }
 
         public MainWindow(string userName)
         {
             InitializeComponent();
-            user = DB.GetUser(userName);
-            using ApplicationContext db = new();
+            User = DB.GetUser(userName);
         }
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(DateTime.Today, Mode.New).Show();
+            new ShiftWindow(DateTime.Today, Mode.NewVersion).Show();
         }
 
         private void OpenLogWindow(object sender, RoutedEventArgs e)
         {
-            new LogWindow(user).Show();
+            new LogWindow(User).Show();
         }
     }
 }

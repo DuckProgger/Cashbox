@@ -21,9 +21,8 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class VersionHistoryWindow : Window
     {
-        //private DB db;
-        private LogWindow owner;
-        private DateTime selectedDate;
+        //private LogWindow owner;
+        private readonly DateTime selectedDate;
         private int selectedVersion;
 
         public ObservableCollection<object> VersionHistory { get; set; } = new();
@@ -33,21 +32,26 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
+            VersionHistoryView.ItemsSource = VersionHistory;
             selectedDate = date;
+            foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
+                VersionHistory.Add(item);
+            //foreach (Window window in App.Current.Windows)
+            //    if (window is LogWindow logWindow)                    
+            //        IsAdmin = logWindow.IsAdmin;
+            IsAdmin = (App.Current.MainWindow as MainWindow).User.Permissions.IsAdmin;
         }
 
-        protected override void OnActivated(EventArgs e)
-        {
-            if (VersionHistory.Count == 0)
-            {
-                VersionHistoryView.ItemsSource = VersionHistory;
-                owner = Owner as LogWindow;
-                //db = owner.DB;
-                foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
-                    VersionHistory.Add(item);
-                IsAdmin = owner.IsAdmin;
-            }
-        }
+        //protected override void OnActivated(EventArgs e)
+        //{
+        //    if (VersionHistory.Count == 0)
+        //    {
+        //        owner = Owner as LogWindow;
+        //        foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
+        //            VersionHistory.Add(item);
+        //        IsAdmin = owner.IsAdmin;
+        //    }
+        //}
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
         {
@@ -62,7 +66,7 @@ namespace Cashbox.Visu
 
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(selectedDate, Mode.Edit, selectedVersion).Show();
+            new ShiftWindow(selectedDate, Mode.EditVersion, selectedVersion).Show();
         }
     }
 }

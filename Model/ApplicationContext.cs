@@ -29,7 +29,8 @@ namespace Cashbox.Model
         {
             modelBuilder.Entity<User>(UserConfigure);
             modelBuilder.Entity<Permissions>(PermissionsConfigure);
-            modelBuilder.Entity<Worker>(WorkerConfigure);
+            modelBuilder.Entity<Shift>(ShiftConfigure);
+            //modelBuilder.Entity<Worker>(WorkerConfigure);
         }
 
         private void UserConfigure(EntityTypeBuilder<User> builder)
@@ -45,13 +46,22 @@ namespace Cashbox.Model
             builder.ToTable(nameof(Users));
         }
 
-        private void WorkerConfigure(EntityTypeBuilder<Worker> builder)
+        private void ShiftConfigure(EntityTypeBuilder<Shift> builder)
         {
             builder
-                .HasOne(w => w.User)
-                .WithMany(u => u.Staff)
-                .HasForeignKey(k => k.Id);
+                .HasOne(s => s.User)
+                .WithMany(u => u.Shifts)
+                .OnDelete(DeleteBehavior.NoAction);
         }
+
+
+        //private void WorkerConfigure(EntityTypeBuilder<Worker> builder)
+        //{
+        //    builder
+        //        .HasOne(w => w.User)
+        //        .WithMany(u => u.Staff)
+        //        .HasForeignKey(k => k.Id);
+        //}
 
 
         private static string GetConnectionString()

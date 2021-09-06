@@ -71,10 +71,15 @@ namespace Cashbox.Migrations
                     b.Property<int>("Total")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Shifts");
                 });
@@ -97,12 +102,19 @@ namespace Cashbox.Migrations
             modelBuilder.Entity("Cashbox.Model.Worker", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Staff");
                 });
@@ -133,11 +145,22 @@ namespace Cashbox.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Cashbox.Model.Shift", b =>
+                {
+                    b.HasOne("Cashbox.Model.User", "User")
+                        .WithMany("Shifts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Cashbox.Model.Worker", b =>
                 {
                     b.HasOne("Cashbox.Model.User", "User")
                         .WithMany("Staff")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -162,6 +185,8 @@ namespace Cashbox.Migrations
             modelBuilder.Entity("Cashbox.Model.User", b =>
                 {
                     b.Navigation("Permissions");
+
+                    b.Navigation("Shifts");
 
                     b.Navigation("Staff");
                 });

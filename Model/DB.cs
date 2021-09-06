@@ -63,11 +63,10 @@ namespace Cashbox.Model
         public static Shift GetShift(DateTime date)
         {
             using ApplicationContext db = new();
-            Shift shift = (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User)
-                           where date.Date == s.DateAndTime.Date
-                           orderby s.Version descending
-                           select s).FirstOrDefault();
-            return shift /*?? Create(new Shift() { DateAndTime = DateTime.Now, Staff = new() })*/;
+            return (from s in db.Shifts.Include(s => s.Staff)/*.ThenInclude(i => i.User)*/.Include(s => s.User)
+                    where date.Date == s.DateAndTime.Date
+                    orderby s.Version descending
+                    select s).FirstOrDefault();
         }
 
         public static Shift GetShift(DateTime date, int version)
@@ -91,7 +90,9 @@ namespace Cashbox.Model
         public static void CreateShift(Shift newShift)
         {
             using ApplicationContext db = new();
-            Shift shift = new(newShift);
+            //Shift shift = new(newShift);
+            Shift shift = newShift.DeepCopy();
+
             shift.Version++;
             foreach (var worker in db.Staff.ToList())
                 // Добавить в смену работника, если он есть в новой смене.

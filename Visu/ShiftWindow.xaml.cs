@@ -62,11 +62,14 @@ namespace Cashbox.Visu
             }
         }
 
-        public ShiftWindow(DateTime date, Mode mode, int version = 0)
+        public ShiftWindow(/*User user, */DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
+
+            var u = App.Current.MainWindow as MainWindow;
+
             if (version == 0)
-                Shift = DB.GetShift(date) ?? new() { DateAndTime = DateTime.Now};
+                Shift = DB.GetShift(date) ?? Shift.Create((App.Current.MainWindow as MainWindow).User);
             else
                 Shift = DB.GetShift(date, version);
             UpdateValues();
@@ -74,6 +77,7 @@ namespace Cashbox.Visu
             DataContext = this;
             viewMode = mode;
         }
+
 
         public List<WorkerItem> GetWorkerItems(Shift shift)
         {
@@ -95,10 +99,10 @@ namespace Cashbox.Visu
             {
                 case Mode.WatchOnly:
                     break;
-                case Mode.Edit:
+                case Mode.EditVersion:
                     DB.UpdateShift(Shift);
                     break;
-                case Mode.New:
+                case Mode.NewVersion:
                     DB.CreateShift(Shift);
                     break;
                 default:

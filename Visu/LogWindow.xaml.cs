@@ -22,9 +22,9 @@ namespace Cashbox.Visu
     public partial class LogWindow : Window
     {
         private DateTime selectedShiftDate;
-        private User user;
+        //private User user;
 
-        public bool IsAdmin => user.Permissions.IsAdmin;
+        public bool IsAdmin { get; set; } = false; /*=> user.Permissions.IsAdmin;*/
         public ObservableCollection<object> Log { get; set; } = new();
         public DateTime Begin { get; set; } = DateTime.Today;
         public DateTime End { get; set; } = DateTime.Today;
@@ -34,7 +34,8 @@ namespace Cashbox.Visu
             InitializeComponent();
             DataContext = this;
             LogView.ItemsSource = Log;
-            this.user = user;
+            IsAdmin = (App.Current.MainWindow as MainWindow).User.Permissions.IsAdmin;
+            //this.user = user;
         }
 
         private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();
@@ -59,7 +60,7 @@ namespace Cashbox.Visu
 
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(selectedShiftDate, Mode.Edit).Show();
+            new ShiftWindow(selectedShiftDate, Mode.EditVersion).Show();
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
