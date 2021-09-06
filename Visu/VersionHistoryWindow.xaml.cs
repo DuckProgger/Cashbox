@@ -16,42 +16,23 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    /// <summary>
-    /// Логика взаимодействия для VersionHistoryWindow.xaml
-    /// </summary>
     public partial class VersionHistoryWindow : Window
     {
-        //private LogWindow owner;
         private readonly DateTime selectedDate;
         private int selectedVersion;
 
-        public ObservableCollection<object> VersionHistory { get; set; } = new();
-        public bool IsAdmin { get; set; } = false;
+        public List<object> VersionHistory { get; set; }
+        public Permissions Permissions { get; private set; }
 
         public VersionHistoryWindow(DateTime date)
         {
             InitializeComponent();
             DataContext = this;
-            VersionHistoryView.ItemsSource = VersionHistory;
+            Permissions = Permissions.GetAccesses(AuthData.Session.UserId);
             selectedDate = date;
-            foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
-                VersionHistory.Add(item);
-            //foreach (Window window in App.Current.Windows)
-            //    if (window is LogWindow logWindow)                    
-            //        IsAdmin = logWindow.IsAdmin;
-            IsAdmin = (App.Current.MainWindow as MainWindow).User.Permissions.IsAdmin;
+            VersionHistory = new(DB.GetShiftVersionHistory(selectedDate.Date));
+            VersionHistoryView.ItemsSource = VersionHistory;
         }
-
-        //protected override void OnActivated(EventArgs e)
-        //{
-        //    if (VersionHistory.Count == 0)
-        //    {
-        //        owner = Owner as LogWindow;
-        //        foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
-        //            VersionHistory.Add(item);
-        //        IsAdmin = owner.IsAdmin;
-        //    }
-        //}
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
         {

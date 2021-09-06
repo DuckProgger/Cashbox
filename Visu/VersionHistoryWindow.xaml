@@ -29,7 +29,7 @@
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Открыть" Click="WatchShift_Click"/>
-                    <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding IsAdmin}"/>
+                    <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding Permissions.IsAdmin}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.ItemContainerStyle>

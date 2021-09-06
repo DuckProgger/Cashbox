@@ -38,8 +38,8 @@
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Открыть" Click="WatchShift_Click"/>
-                    <MenuItem Header="Редактировать" Click="EditShift_Click" IsEnabled="{Binding IsAdmin}"/>
-                    <MenuItem Header="Удалить" Click="Remove_Click" IsEnabled="{Binding IsAdmin}"/>
+                    <MenuItem Header="Редактировать" Click="EditShift_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
+                    <MenuItem Header="Удалить" Click="Remove_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
                     <MenuItem Header="История версий" Click="VersionHistory_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>

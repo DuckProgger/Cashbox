@@ -45,8 +45,16 @@ namespace Cashbox.Model
         public static User GetUser(string userName)
         {
             using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions).Include(u => u.Staff)
+            return (from u in db.Users.Include(u => u.Permissions)/*.Include(u => u.Staff)*/
                     where u.Name == userName
+                    select u).FirstOrDefault();
+        }
+
+        public static User GetUser(int userId)
+        {
+            using ApplicationContext db = new();
+            return (from u in db.Users.Include(u => u.Permissions)/*.Include(u => u.Staff)*/
+                    where u.Id == userId
                     select u).FirstOrDefault();
         }
 
@@ -63,7 +71,7 @@ namespace Cashbox.Model
         public static Shift GetShift(DateTime date)
         {
             using ApplicationContext db = new();
-            return (from s in db.Shifts.Include(s => s.Staff)/*.ThenInclude(i => i.User)*/.Include(s => s.User)
+            return (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User).Include(s => s.User)
                     where date.Date == s.DateAndTime.Date
                     orderby s.Version descending
                     select s).FirstOrDefault();
@@ -87,12 +95,20 @@ namespace Cashbox.Model
                     select s.Id).FirstOrDefault();
         }
 
+        public static Session CreateSession(string userName)
+        {
+            using ApplicationContext db = new();
+            var user = GetUser(userName);
+            var session = db.Sessions.Add(new() { UserId = user.Id });
+            db.SaveChanges();
+            return session.Entity;
+        }
+
         public static void CreateShift(Shift newShift)
         {
             using ApplicationContext db = new();
-            //Shift shift = new(newShift);
-            Shift shift = newShift.DeepCopy();
-
+            Shift shift = newShift.Copy();
+            shift.User = db.Users.Find(newShift.User.Id);
             shift.Version++;
             foreach (var worker in db.Staff.ToList())
                 // Добавить в смену работника, если он есть в новой смене.
@@ -145,6 +161,13 @@ namespace Cashbox.Model
                 int shiftId = GetShiftId(date, version);
                 db.Shifts.Remove(db.Shifts.Find(shiftId));
             }
+            db.SaveChanges();
+        }
+
+        public static void RemoveSession(int id)
+        {
+            using ApplicationContext db = new();
+            db.Sessions.Remove(db.Sessions.Find(id));
             db.SaveChanges();
         }
 

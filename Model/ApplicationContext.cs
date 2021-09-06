@@ -16,6 +16,7 @@ namespace Cashbox.Model
         public DbSet<User> Users { get; set; }
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<Worker> Staff { get; set; }
+        public DbSet<Session> Sessions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

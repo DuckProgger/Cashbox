@@ -43,7 +43,8 @@ namespace Cashbox.Visu
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            new MainWindow(SelectedUser).Show();
+            AuthData.InitSession(SelectedUser);
+            new MainWindow().Show();
             Close();
         }
 

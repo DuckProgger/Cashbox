@@ -62,14 +62,11 @@ namespace Cashbox.Visu
             }
         }
 
-        public ShiftWindow(/*User user, */DateTime date, Mode mode, int version = 0)
+        public ShiftWindow(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
-
-            var u = App.Current.MainWindow as MainWindow;
-
             if (version == 0)
-                Shift = DB.GetShift(date) ?? Shift.Create((App.Current.MainWindow as MainWindow).User);
+                Shift = DB.GetShift(date) ?? Shift.Create(DB.GetUser(AuthData.Session.UserId));
             else
                 Shift = DB.GetShift(date, version);
             UpdateValues();

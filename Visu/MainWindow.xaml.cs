@@ -20,15 +20,7 @@ namespace Cashbox.Visu
 
     public partial class MainWindow : Window
     {
-        public User User { get; set; }
-
         public MainWindow() { InitializeComponent(); }
-
-        public MainWindow(string userName)
-        {
-            InitializeComponent();
-            User = DB.GetUser(userName);
-        }
 
         private void OpenShiftWindow(object sender, RoutedEventArgs e)
         {
@@ -37,7 +29,7 @@ namespace Cashbox.Visu
 
         private void OpenLogWindow(object sender, RoutedEventArgs e)
         {
-            new LogWindow(User).Show();
+            new LogWindow().Show();
         }
     }
 }

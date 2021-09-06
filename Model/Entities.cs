@@ -27,30 +27,6 @@ namespace Cashbox.Model
 
     public class Shift
     {
-        public Shift() { }
-
-        //public Shift(Shift shift)
-        //{
-        //    if (shift != null)
-        //    {
-        //        Version = shift.Version;
-        //        DateAndTime = shift.DateAndTime;
-        //        Cash = shift.Cash;
-        //        Terminal = shift.Terminal;
-        //        Expenses = shift.Expenses;
-        //        StartDay = shift.StartDay;
-        //        EndDay = shift.EndDay;
-        //        HandedOver = shift.HandedOver;
-        //        Total = shift.Total;
-        //        Difference = shift.Difference;
-        //        Comment = shift.Comment;
-        //        //Staff = shift.Staff != null ? new(shift.Staff) : new();
-        //    }
-        //    else
-        //        DateAndTime = DateTime.Now;
-
-        //}
-
         public int Id { get; set; }
 
         /// <summary>
@@ -61,7 +37,6 @@ namespace Cashbox.Model
         /// <summary>
         /// Дата.
         /// </summary>
-        //[Column(TypeName = "date")]
         public DateTime DateAndTime { get; set; }
 
         /// <summary>
@@ -120,14 +95,33 @@ namespace Cashbox.Model
 
         public static Shift Create(User user) => new() { DateAndTime = DateTime.Now, User = user, };
 
-        public Shift DeepCopy()
+        //public Shift Copy()
+        //{
+        //    Shift shift = (Shift)MemberwiseClone();
+        //    shift.Id = default;
+        //    //shift.User = new User() { Id = User.Id, Name = User.Name };
+        //    //shift.Staff = Staff != null ? new(Staff) : new();
+        //    return shift;
+        //}
+
+        public Shift Copy()
         {
-            Shift shift = (Shift)MemberwiseClone();
-            shift.Id = default;
-            //shift.User = ;
-            //shift.Staff = Staff != null ? new(Staff) : new();
-            return shift;
+            return new Shift
+            {
+                Version = Version,
+                DateAndTime = DateAndTime,
+                Cash = Cash,
+                Terminal = Terminal,
+                Expenses = Expenses,
+                StartDay = StartDay,
+                EndDay = EndDay,
+                HandedOver = HandedOver,
+                Total = Total,
+                Difference = Difference,
+                Comment = Comment
+            };
         }
+
     }
 
     public class Permissions
@@ -137,28 +131,16 @@ namespace Cashbox.Model
 
         public User User { get; set; }
 
-        //public Permissions GetAccesses(Accesses access)
-        //{
-        //    switch (access)
-        //    {
-        //        case Accesses.Usual:
-        //            return new Permissions()
-        //            {
-
-        //            };
-        //        case Accesses.Administrator:
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    throw new NotImplementedException();
-        //}
-
-        //public enum Accesses : int
-        //{
-        //    Administrator = 0,
-        //    Usual = 1,
-        //}
+        public static Permissions GetAccesses(int userId)
+        {
+            var user = DB.GetUser(userId);
+            return user.Permissions;
+        }
     }
 
+    public class Session
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+    }
 }

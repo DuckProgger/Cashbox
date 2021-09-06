@@ -16,26 +16,21 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    /// <summary>
-    /// Логика взаимодействия для LogWindow.xaml
-    /// </summary>
     public partial class LogWindow : Window
     {
         private DateTime selectedShiftDate;
-        //private User user;
 
-        public bool IsAdmin { get; set; } = false; /*=> user.Permissions.IsAdmin;*/
+        public Permissions Permissions { get; private set; }
         public ObservableCollection<object> Log { get; set; } = new();
         public DateTime Begin { get; set; } = DateTime.Today;
         public DateTime End { get; set; } = DateTime.Today;
 
-        public LogWindow(User user)
+        public LogWindow()
         {
             InitializeComponent();
             DataContext = this;
             LogView.ItemsSource = Log;
-            IsAdmin = (App.Current.MainWindow as MainWindow).User.Permissions.IsAdmin;
-            //this.user = user;
+            Permissions = Permissions.GetAccesses(AuthData.Session.UserId);
         }
 
         private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();

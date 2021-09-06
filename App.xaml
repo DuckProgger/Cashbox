@@ -4,9 +4,6 @@
              xmlns:local="clr-namespace:Cashbox.Visu"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              StartupUri="Visu/AuthorizationWindow.xaml">
-    <Application.MainWindow>
-        <local:MainWindow/>
-    </Application.MainWindow>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
