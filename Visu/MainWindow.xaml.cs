@@ -1,6 +1,7 @@
 ﻿using Cashbox.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,11 @@ namespace Cashbox.Visu
         private void OpenLogWindow(object sender, RoutedEventArgs e)
         {
             new LogWindow().Show();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            DB.RemoveSession(AuthData.Session.Id);
         }
     }
 }

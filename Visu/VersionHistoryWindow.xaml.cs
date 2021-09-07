@@ -21,7 +21,7 @@ namespace Cashbox.Visu
         private readonly DateTime selectedDate;
         private int selectedVersion;
 
-        public List<object> VersionHistory { get; set; }
+        public ObservableCollection<object> VersionHistory { get; set; }
         public Permissions Permissions { get; private set; }
 
         public VersionHistoryWindow(DateTime date)
@@ -48,6 +48,19 @@ namespace Cashbox.Visu
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
             new ShiftWindow(selectedDate, Mode.EditVersion, selectedVersion).Show();
+        }
+
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            DB.RemoveShift(selectedDate.Date, selectedVersion);
+            UpdateVersionHistory();
+        }
+
+        private void UpdateVersionHistory()
+        {
+            VersionHistory.Clear();
+            foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
+                VersionHistory.Add(item);
         }
     }
 }
