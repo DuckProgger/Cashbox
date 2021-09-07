@@ -16,23 +16,25 @@
         ResizeMode="CanMinimize"
         mc:Ignorable="d"
         Background="AliceBlue"
-        Title="LogWindow" Height="450" Width="800">
+        Title="LogWindow" Height="450" Width="1100">
     <Window.Resources>
         <c:DateConverter x:Key="DateConverter"/>
+        <c:StaffConverter x:Key="StaffConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.7*"/>
+            <ColumnDefinition Width="0.4*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <ListView Name="LogView"                  
                   Grid.Column="1">
             <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Date, Converter={StaticResource DateConverter}}" Header="1"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Staff}" Header="2"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Total}" Header="3"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="4"/>
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn DisplayMemberBinding="{Binding DateAndTime, Converter={StaticResource DateConverter}}" Header="Дата"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Staff, Converter={StaticResource StaffConverter}}" Header="Сотрудники"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Total}" Header="Выручка"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="Расхождение"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding User.Name}" Header="Пользователь"/>
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
@@ -53,17 +55,23 @@
         
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="0.33*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Button Grid.Row="1"
-                    Click="Button_GetLog"/>
+                    Click="Button_GetLog"
+                    Content="Применить"/>
             <StackPanel Orientation="Horizontal">
                 <DatePicker SelectedDate="{Binding Begin}"                            
-                            MinWidth="150"/>
+                            MinWidth="130"
+                            Margin="10"/>
                 <DatePicker SelectedDate="{Binding End}"
-                             MinWidth="150"/>
+                             MinWidth="130"
+                            Margin="10"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2">
+                <ComboBox Name="UsersComboBox" ItemsSource="{Binding Staff}" SelectedIndex="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
         </Grid>
     </Grid>

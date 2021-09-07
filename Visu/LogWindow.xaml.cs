@@ -21,7 +21,9 @@ namespace Cashbox.Visu
         private DateTime selectedShiftDate;
 
         public Permissions Permissions { get; private set; }
-        public ObservableCollection<object> Log { get; set; } = new();
+        public ObservableCollection<Shift> Log { get; set; } = new();
+        public ObservableCollection<string> Staff { get; set; } = new();
+        public int SelectedWorker { get; set; }
         public DateTime Begin { get; set; } = DateTime.Today;
         public DateTime End { get; set; } = DateTime.Today;
 
@@ -38,8 +40,14 @@ namespace Cashbox.Visu
         private void UpdateLog()
         {
             Log.Clear();
+            Staff.Clear();
             foreach (var item in DB.GetLog(Begin, End))
+            {
                 Log.Add(item);
+                foreach (var worker in item.Staff)
+                    if (!Staff.Contains(worker.Name))
+                        Staff.Add(worker.Name);
+            }
         }
 
         private void VersionHistory_Click(object sender, RoutedEventArgs e)
@@ -66,8 +74,7 @@ namespace Cashbox.Visu
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
         {
-            var obj = Util.Cast((sender as ListViewItem).Content, new { Date = DateTime.Now, Staff = "", Total = 0, Difference = 0 });
-            selectedShiftDate = obj.Date;
+            selectedShiftDate = ((Shift)(sender as ListViewItem).Content).DateAndTime.Date; ;
         }
     }
 }
