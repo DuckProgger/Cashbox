@@ -1,0 +1,62 @@
+﻿<Window x:Class="Cashbox.Visu.StaffWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Cashbox.Visu"
+        mc:Ignorable="d"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto" 
+        ResizeMode="CanMinimize"
+        Title="WorkersWindow" Height="400" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <TextBox Text="{Binding SearchEntry}" materialDesign:HintAssist.Hint="Поиск"/>
+        
+        <DataGrid Name="WorkersTable" 
+                  Grid.Row="1"
+                      Margin="10"
+                      ItemsSource="{Binding Staff}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      Background="White"
+                      materialDesign:DataGridAssist.ColumnHeaderPadding="5"
+                      materialDesign:DataGridAssist.CornerRadius="5"
+                      BorderThickness="1"
+                      BorderBrush="Gray">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Действующие сотрудики">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
+                                              Grid.Column="0"
+                                              Width="20"
+                                              Margin="2"
+                                              Checked="CheckBox_Checked"
+                                              Unchecked="CheckBox_Unchecked"/>
+                                <TextBlock Text="{Binding Name}"
+                                               Grid.Column="1"
+                                               Margin="2"
+                                               Padding="0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

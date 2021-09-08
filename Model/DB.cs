@@ -145,6 +145,14 @@ namespace Cashbox.Model
             return shift;
         }
 
+        public static void UpdateWorker(Worker newWorker)
+        {
+            using ApplicationContext db = new();
+            var worker = db.Staff.Find(newWorker.Id);
+            db.Entry(worker).CurrentValues.SetValues(newWorker);
+            db.SaveChanges();
+        }
+
         public static void RemoveShift(DateTime date, int version = 0)
         {
             using ApplicationContext db = new();
@@ -162,7 +170,7 @@ namespace Cashbox.Model
                 db.Shifts.Remove(db.Shifts.Find(shiftId));
             }
             db.SaveChanges();
-        }
+        }       
 
         public static void RemoveSession(int id)
         {
@@ -177,42 +185,17 @@ namespace Cashbox.Model
             shift.Difference = shift.Cash - shift.Expenses + shift.StartDay - shift.EndDay - shift.HandedOver;
         }
 
-        //public static List<object> GetLog(DateTime begin, DateTime end)
-        //{
-        //    using ApplicationContext db = new();
-        //    List<object> logItems = new();
-
-        //    var items = from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
-        //                where shift.DateAndTime.Date >= begin && shift.DateAndTime.Date <= end
-        //                orderby shift.DateAndTime descending, shift.Version descending
-        //                group shift by shift.DateAndTime.Date
-        //                 into gr
-        //                let s = gr.FirstOrDefault()
-        //                select new
-        //                {
-        //                    Date = s.DateAndTime,
-        //                    Staff = TransformWorkersToString(s.Staff),
-        //                    s.Total,
-        //                    s.Difference,
-        //                    User = s.User.Name
-        //                };
-
-        //    foreach (var item in items)
-        //        logItems.Add(item);
-        //    return logItems;
-        //}
-
         public static List<Shift> GetLog(DateTime begin, DateTime end)
         {
             using ApplicationContext db = new();
 
             return (from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
-                   where shift.DateAndTime.Date >= begin && shift.DateAndTime.Date <= end
-                   orderby shift.DateAndTime descending, shift.Version descending
-                   group shift by shift.DateAndTime.Date
+                    where shift.DateAndTime.Date >= begin && shift.DateAndTime.Date <= end
+                    orderby shift.DateAndTime descending, shift.Version descending
+                    group shift by shift.DateAndTime.Date
                           into gr
-                   let s = gr.FirstOrDefault()
-                   select s).ToList();           
+                    let s = gr.FirstOrDefault()
+                    select s).ToList();
         }
 
         public static List<object> GetShiftVersionHistory(DateTime date)
@@ -229,18 +212,6 @@ namespace Cashbox.Model
         }
 
         private static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
-
-        //private static string TransformWorkersToString(List<Worker> workers)
-        //{
-        //    StringBuilder builder = new();
-        //    for (int i = 0; i < workers.Count; i++)
-        //    {
-        //        builder.Append(workers[i].Name);
-        //        if (i < workers.Count - 1)
-        //            builder.Append(',');
-        //    }
-        //    return builder.ToString();
-        //}
 
         private static void WaitForConnect(ApplicationContext db)
         {

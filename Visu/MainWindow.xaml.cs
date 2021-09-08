@@ -37,5 +37,10 @@ namespace Cashbox.Visu
         {
             DB.RemoveSession(AuthData.Session.Id);
         }
+
+        private void OpenStaffWindow(object sender, RoutedEventArgs e)
+        {
+            new StaffWindow().Show();
+        }
     }
 }

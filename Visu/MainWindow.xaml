@@ -22,6 +22,7 @@
         </Grid.RowDefinitions>
         <Button Click="OpenShiftWindow" Cursor="Hand" Margin="10"/>
         <Button Click="OpenLogWindow" Cursor="Hand" Grid.Column="1" Margin="10"/>
+        <Button Click="OpenStaffWindow" Cursor="Hand" Grid.Column="2" Margin="10"/>
 
     </Grid>
 </Window>

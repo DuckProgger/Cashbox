@@ -81,11 +81,14 @@ namespace Cashbox.Visu
             List<WorkerItem> workers = new();
             foreach (Worker worker in DB.GetStaff())
             {
-                WorkerItem workerItem = new() { Name = worker.Name };
-                // Поставить галочки работчикам, которые были в смене.
-                if (shift.Staff != null && WorkerExists(worker.Id))
-                    workerItem.Checked = true;
-                workers.Add(workerItem);
+                if (worker.IsActive)
+                {
+                    WorkerItem workerItem = new() { Name = worker.Name };
+                    // Поставить галочки работникам, которые были в смене.
+                    if (shift.Staff != null && WorkerExists(worker.Id))
+                        workerItem.Checked = true;
+                    workers.Add(workerItem);
+                }               
             }
             return workers;
         }
