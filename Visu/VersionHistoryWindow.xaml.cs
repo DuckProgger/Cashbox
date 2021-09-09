@@ -21,23 +21,22 @@ namespace Cashbox.Visu
         private readonly DateTime selectedDate;
         private int selectedVersion;
 
-        public ObservableCollection<object> VersionHistory { get; set; }
+        public ObservableCollection<Shift> VersionHistory { get; set; }
         public Permissions Permissions { get; private set; }
 
         public VersionHistoryWindow(DateTime date)
         {
             InitializeComponent();
             DataContext = this;
-            Permissions = Permissions.GetAccesses(AuthData.Session.UserId);
+            Permissions = Permissions.GetAccesses(Global.Session.UserId);
             selectedDate = date;
-            VersionHistory = new(DB.GetShiftVersionHistory(selectedDate.Date));
+            VersionHistory = new(DB.GetShiftVersions(selectedDate.Date));
             VersionHistoryView.ItemsSource = VersionHistory;
         }
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
         {
-            var obj = Util.Cast((sender as ListViewItem).Content, new { Time = DateTime.Now, Version = 0 });
-            selectedVersion = obj.Version;
+            selectedVersion = ((Shift)(sender as ListViewItem).Content).Version;
         }
 
         private void WatchShift_Click(object sender, RoutedEventArgs e)
@@ -59,7 +58,7 @@ namespace Cashbox.Visu
         private void UpdateVersionHistory()
         {
             VersionHistory.Clear();
-            foreach (var item in DB.GetShiftVersionHistory(selectedDate.Date))
+            foreach (var item in DB.GetShiftVersions(selectedDate.Date))
                 VersionHistory.Add(item);
         }
     }

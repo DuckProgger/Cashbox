@@ -35,7 +35,7 @@ namespace Cashbox.Visu
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            DB.RemoveSession(AuthData.Session.Id);
+            DB.RemoveSession(Global.Session.Id);
         }
 
         private void OpenStaffWindow(object sender, RoutedEventArgs e)

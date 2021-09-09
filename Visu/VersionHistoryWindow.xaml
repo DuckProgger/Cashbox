@@ -15,15 +15,16 @@
         mc:Ignorable="d"
         Title="VersionHistoryWindow" Height="300" Width="300">
     <Window.Resources>
-        <c:TimeConverter x:Key="TimeConverter"/>
+        <c:DateTimeConverter x:Key="DateTimeConverter"/>
     </Window.Resources>
     <Grid>
         <ListView Name="VersionHistoryView"                  
                   Grid.Column="1">
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn DisplayMemberBinding="{Binding Time, Converter={StaticResource TimeConverter}}" Header="Время" />
+                    <GridViewColumn DisplayMemberBinding="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" Header="Изменён" />
                     <GridViewColumn DisplayMemberBinding="{Binding Version}" Header="Версия" />
+                    <GridViewColumn DisplayMemberBinding="{Binding User.Name}" Header="Пользователь" />
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>

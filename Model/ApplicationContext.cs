@@ -53,6 +53,10 @@ namespace Cashbox.Model
                 .HasOne(s => s.User)
                 .WithMany(u => u.Shifts)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder
+              .Property(x => x.CreatedAt)
+              .HasDefaultValueSql("GETDATE()");
         }
 
 

@@ -36,9 +36,15 @@ namespace Cashbox.Model
         public int Version { get; set; }
 
         /// <summary>
-        /// Дата.
+        /// Дата создания.
         /// </summary>
-        public DateTime DateAndTime { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Дата и время последнего изменения.
+        /// </summary>
+        public DateTime LastModified { get; set; }
 
         /// <summary>
         /// Наличные.
@@ -94,7 +100,7 @@ namespace Cashbox.Model
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public static Shift Create(User user) => new() { DateAndTime = DateTime.Now, User = user, };
+        public static Shift Create(User user) => new() { /*DateAndTime = DateTime.Now,*/ User = user, };
 
         //public Shift Copy()
         //{
@@ -110,7 +116,7 @@ namespace Cashbox.Model
             return new Shift
             {
                 Version = Version,
-                DateAndTime = DateAndTime,
+                CreatedAt = CreatedAt,
                 Cash = Cash,
                 Terminal = Terminal,
                 Expenses = Expenses,

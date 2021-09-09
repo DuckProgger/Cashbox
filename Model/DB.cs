@@ -72,7 +72,7 @@ namespace Cashbox.Model
         {
             using ApplicationContext db = new();
             return (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User).Include(s => s.User)
-                    where date.Date == s.DateAndTime.Date
+                    where date.Date == s.CreatedAt
                     orderby s.Version descending
                     select s).FirstOrDefault();
         }
@@ -81,7 +81,7 @@ namespace Cashbox.Model
         {
             using ApplicationContext db = new();
             return (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User)
-                    where date.Date == s.DateAndTime.Date && s.Version == version
+                    where date.Date == s.CreatedAt && s.Version == version
                     orderby s.Version descending
                     select s).FirstOrDefault();
         }
@@ -90,7 +90,7 @@ namespace Cashbox.Model
         {
             using ApplicationContext db = new();
             return (from s in db.Shifts
-                    where date == s.DateAndTime.Date && s.Version == version
+                    where date == s.CreatedAt && s.Version == version
                     orderby s.Version descending
                     select s.Id).FirstOrDefault();
         }
@@ -108,7 +108,8 @@ namespace Cashbox.Model
         {
             using ApplicationContext db = new();
             Shift shift = newShift.Copy();
-            shift.User = db.Users.Find(newShift.User.Id);
+            shift.User = db.Users.Find(Global.Session.UserId);
+            shift.LastModified = DateTime.Now;
             shift.Version++;
             foreach (var worker in db.Staff.ToList())
                 // Добавить в смену работника, если он есть в новой смене.
@@ -132,6 +133,8 @@ namespace Cashbox.Model
             using ApplicationContext db = new();
             var shift = db.Shifts.Include(s => s.Staff).FirstOrDefault(s => s.Id == newShift.Id);
             db.Entry(shift).CurrentValues.SetValues(newShift);
+            shift.User = db.Users.Find(Global.Session.UserId);
+            shift.LastModified = DateTime.Now;
             foreach (var worker in db.Staff.ToList())
             {
                 // Добавить в смену работника, если он есть в новой смене и его нет в старой версии смены.
@@ -159,7 +162,7 @@ namespace Cashbox.Model
             if (version == 0)
             {
                 var shiftsId = (from s in db.Shifts
-                                where date.Date == s.DateAndTime.Date
+                                where date.Date == s.CreatedAt
                                 select s.Id).ToList();
                 foreach (var id in shiftsId)
                     db.Shifts.Remove(db.Shifts.Find(id));
@@ -170,7 +173,7 @@ namespace Cashbox.Model
                 db.Shifts.Remove(db.Shifts.Find(shiftId));
             }
             db.SaveChanges();
-        }       
+        }
 
         public static void RemoveSession(int id)
         {
@@ -185,31 +188,26 @@ namespace Cashbox.Model
             shift.Difference = shift.Cash - shift.Expenses + shift.StartDay - shift.EndDay - shift.HandedOver;
         }
 
-        public static List<Shift> GetLog(DateTime begin, DateTime end)
+        public static List<Shift> GetShiftLog(DateTime begin, DateTime end)
         {
             using ApplicationContext db = new();
 
             return (from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
-                    where shift.DateAndTime.Date >= begin && shift.DateAndTime.Date <= end
-                    orderby shift.DateAndTime descending, shift.Version descending
-                    group shift by shift.DateAndTime.Date
+                    where shift.CreatedAt >= begin && shift.CreatedAt <= end
+                    orderby shift.CreatedAt descending, shift.Version descending
+                    group shift by shift.CreatedAt
                           into gr
                     let s = gr.FirstOrDefault()
                     select s).ToList();
         }
 
-        public static List<object> GetShiftVersionHistory(DateTime date)
+        public static List<Shift> GetShiftVersions(DateTime date)
         {
             using ApplicationContext db = new();
-            List<object> logItems = new();
-            var items = from s in db.Shifts.AsEnumerable()
-                        where s.DateAndTime.Date == date
-                        select new { Time = s.DateAndTime, s.Version };
-
-            foreach (var item in items)
-                logItems.Add(item);
-            return logItems;
-        }
+            return (from s in db.Shifts.Include(s => s.User).AsEnumerable()
+                    where s.CreatedAt == date
+                    select s).ToList();
+        }      
 
         private static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
 
@@ -222,6 +220,7 @@ namespace Cashbox.Model
                     return;
             }
         }
+
 
     }
 }

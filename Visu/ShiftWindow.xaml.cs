@@ -66,7 +66,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             if (version == 0)
-                Shift = DB.GetShift(date) ?? Shift.Create(DB.GetUser(AuthData.Session.UserId));
+                Shift = DB.GetShift(date) ?? Shift.Create(DB.GetUser(Global.Session.UserId));
             else
                 Shift = DB.GetShift(date, version);
             UpdateValues();

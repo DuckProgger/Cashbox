@@ -30,7 +30,7 @@
                   Grid.Column="1">
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn DisplayMemberBinding="{Binding DateAndTime, Converter={StaticResource DateConverter}}" Header="Дата"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding CreatedAt, Converter={StaticResource DateConverter}}" Header="Дата"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Staff, Converter={StaticResource StaffConverter}}" Header="Сотрудники"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Total}" Header="Выручка"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="Расхождение"/>
@@ -52,7 +52,7 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        
+
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*"/>
@@ -71,7 +71,12 @@
                             Margin="10"/>
             </StackPanel>
             <StackPanel Grid.Row="2">
-                <ComboBox Name="UsersComboBox" ItemsSource="{Binding Staff}" SelectedIndex="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"/>
+                <ComboBox ItemsSource="{Binding Staff}" 
+                          SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"
+                          SelectionChanged="ComboBox_SelectionChanged"/>
+                <Button Click="CalculateSalary_Click"
+                        Content="Посчитать ЗП"
+                        IsEnabled="{Binding SalaryButtonVis}"/>
             </StackPanel>
         </Grid>
     </Grid>
