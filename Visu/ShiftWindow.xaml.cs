@@ -18,6 +18,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MDIXDialogHost = MaterialDesignThemes.Wpf.DialogHost;
+
 
 namespace Cashbox.Visu
 {
@@ -186,6 +188,11 @@ namespace Cashbox.Visu
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MDIXDialogHost.Show(this);
         }
     }
 }

@@ -42,5 +42,11 @@ namespace Cashbox.Visu
         {
             new StaffWindow().Show();
         }
+
+        private void ChangeUser(object sender, RoutedEventArgs e)
+        {
+            new AuthorizationWindow().Show();
+            Close();
+        }
     }
 }

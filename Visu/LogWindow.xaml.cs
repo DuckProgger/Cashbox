@@ -102,7 +102,7 @@ namespace Cashbox.Visu
      
         private void CalculateSalary_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(Global.CalculateSalary(DB.GetWorker(SelectedWorker).Name, Log.ToList()).ToString());
+            MessageBox.Show(Global.CalculateSalary(Log.ToList()).ToString());
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

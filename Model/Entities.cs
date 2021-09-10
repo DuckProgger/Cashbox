@@ -24,6 +24,7 @@ namespace Cashbox.Model
         public int UserId { get; set; }
         public User User { get; set; }
         public List<Shift> Shifts { get; set; }
+        public List<Salary> Salaries { get; set; }
     }
 
     public class Shift
@@ -149,5 +150,16 @@ namespace Cashbox.Model
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+    }
+
+    public class Salary
+    {
+        public int Id { get; set; }
+        public int Money { get; set; }
+        public DateTime StartPeriod { get; set; }
+        public DateTime EndPeriod { get; set; }
+
+        public int WorkerId { get; set; }
+        public Worker Worker { get; set; }
     }
 }

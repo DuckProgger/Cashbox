@@ -13,7 +13,7 @@ namespace Cashbox
 
         public static void InitSession(string userName) => Session = DB.CreateSession(userName);
 
-        public static int CalculateSalary(string name, List<Shift> shifts)
+        public static int CalculateSalary(List<Shift> shifts)
         {
             const double Percent = 0.075;
             const int minDailySalary = 1000;

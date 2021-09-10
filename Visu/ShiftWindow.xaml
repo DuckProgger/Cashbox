@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
         xmlns:local="clr-namespace:Cashbox.Visu"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -38,22 +39,46 @@
             <Setter Property="Padding" Value="0"/>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="0.1*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1.5*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
 
-            <DataGrid Name="WorkersTable" 
+    <md:DialogHost>
+        <md:DialogHost.DialogContent>
+            <StackPanel Margin="20" MinWidth="300">
+                <TextBlock Text="Сохранить смену?" />
+                <Grid Margin="0,10,0,-10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="Отмена" 
+                            Style="{StaticResource MaterialDesignFlatAccentButton}" 
+                            IsCancel="True" 
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                    <Button Content="Сохранить" 
+                            Grid.Column="1" 
+                            Style="{StaticResource MaterialDesignFlatButton}" 
+                            IsDefault="True" Click="SaveShift"
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                </Grid>
+            </StackPanel>
+        </md:DialogHost.DialogContent>     
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.1*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.5*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <DataGrid Name="WorkersTable" 
                       Margin="10"
                       ItemsSource="{Binding Staff}"
                       AutoGenerateColumns="False"
@@ -64,33 +89,33 @@
                       BorderThickness="1"
                       BorderBrush="Gray"
                       IsEnabled="{Binding EnableEntries}">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Сотрудники">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="0.2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Сотрудники">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="0.2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
                                               Grid.Column="0"
                                               Width="20"
                                               Margin="2"
                                               Checked="CheckBox_Checked"
                                               Unchecked="CheckBox_Unchecked"/>
-                                    <TextBlock Text="{Binding Name}"
+                                        <TextBlock Text="{Binding Name}"
                                                Grid.Column="1"
                                                Margin="2"
                                                Padding="0"/>
-                                </Grid>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
 
-            <TextBox x:Name="Comment"
+                <TextBox x:Name="Comment"
                      Grid.Row="1"
                      Margin="10"
                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
@@ -100,111 +125,116 @@
                      KeyDown="Comment_KeyDown"
                      Text="{Binding Shift.Comment}"
                      IsEnabled="{Binding EnableEntries}"/>
-        </Grid>
+            </Grid>
+          
+            <Button Grid.Column="0"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Content="Сохранить" 
+                     Cursor="Hand"
+                     Command="{x:Static md:DialogHost.OpenDialogCommand}"
+                    IsEnabled="{Binding EnableEntries}"/>
 
-        <Button Grid.Column="0"
-                Grid.Row="2"
-                Grid.ColumnSpan="2"
-                Content="Сохранить" Click="SaveShift"
-                IsEnabled="{Binding EnableEntries}" Cursor="Hand"/>
-
-        <StackPanel Grid.Column="0"
+            <StackPanel Grid.Column="0"
                     Grid.Row="0"
                     VerticalAlignment="Center">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Наличные:"
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Наличные:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5" 
+                        <TextBox Padding="5" 
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
                              IsEnabled="{Binding EnableEntries}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Терминал:"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Терминал:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5"
+                        <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Расходы:"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Расходы:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5" 
+                        <TextBox Padding="5" 
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
                              IsEnabled="{Binding EnableEntries}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Начало дня:"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Начало дня:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5"
+                        <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Конец дня:"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Конец дня:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5"
+                        <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Сдано:"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Сдано:"
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBox Padding="5"
+                        <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <Separator Style="{StaticResource MaterialDesignDarkSeparator}"                       
+                <Separator Style="{StaticResource MaterialDesignDarkSeparator}"                       
                        Background="Gray"/>
 
-            <StackPanel>
-                <StackPanel Orientation="Horizontal"
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-                    <TextBlock Text="Выручка:"                          
+                        <TextBlock Text="Выручка:"                          
                            FontSize="15"                          
                            Style="{StaticResource MyTextBlock}"/>
-                    <TextBlock Text="{Binding Total}"
-                               Style="{StaticResource MyTextBlock2}"/>
-                </StackPanel>
-                <Border x:Name="DifferenceBorder"
-                        CornerRadius="5"
-                        HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center">
-                        <TextBlock Text="{Binding DifferenceText}"                                   
-                                   FontSize="15"                                   
-                                   Style="{StaticResource MyTextBlock}"/>
-                        <TextBlock Text="{Binding Difference, Converter={StaticResource DifferenceConverter}}"
+                        <TextBlock Text="{Binding Total}"
                                Style="{StaticResource MyTextBlock2}"/>
                     </StackPanel>
-                </Border>
+                    <Border x:Name="DifferenceBorder"
+                        CornerRadius="5"
+                        HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding DifferenceText}"                                   
+                                   FontSize="15"                                   
+                                   Style="{StaticResource MyTextBlock}"/>
+                            <TextBlock Text="{Binding Difference, Converter={StaticResource DifferenceConverter}}"
+                               Style="{StaticResource MyTextBlock2}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-    </Grid>
+        </Grid>
+
+    </md:DialogHost>
+
 </Window>
