@@ -14,6 +14,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto" 
         ResizeMode="CanMinimize"
+         WindowStartupLocation="CenterScreen"
         Title="ShiftWindow" Height="400" Width="450">
     <Window.Resources>
         <c:DifferenceConverter x:Key="DifferenceConverter"/>
@@ -58,7 +59,7 @@
                             Grid.Column="1" 
                             Style="{StaticResource MaterialDesignFlatButton}" 
                             IsDefault="True" Click="SaveShift"
-                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>                  
                 </Grid>
             </StackPanel>
         </md:DialogHost.DialogContent>     
@@ -76,7 +77,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.5*"/>
                     <RowDefinition/>
-                </Grid.RowDefinitions>
+                </Grid.RowDefinitions>                
 
                 <DataGrid Name="WorkersTable" 
                       Margin="10"
@@ -126,14 +127,15 @@
                      Text="{Binding Shift.Comment}"
                      IsEnabled="{Binding EnableEntries}"/>
             </Grid>
-          
+
             <Button Grid.Column="0"
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
                     Content="Сохранить" 
                      Cursor="Hand"
-                     Command="{x:Static md:DialogHost.OpenDialogCommand}"
-                    IsEnabled="{Binding EnableEntries}"/>
+                     
+                    Click="Button_Click"
+                    IsEnabled="{Binding EnableEntries}"/>         
 
             <StackPanel Grid.Column="0"
                     Grid.Row="0"
@@ -231,8 +233,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-            </StackPanel>
-
+            </StackPanel>            
         </Grid>
 
     </md:DialogHost>

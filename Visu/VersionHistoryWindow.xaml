@@ -13,6 +13,7 @@
         TextOptions.TextRenderingMode="Auto" 
         ResizeMode="CanMinimize"
         mc:Ignorable="d"
+         WindowStartupLocation="CenterScreen"
         Title="VersionHistoryWindow" Height="300" Width="300">
     <Window.Resources>
         <c:DateTimeConverter x:Key="DateTimeConverter"/>

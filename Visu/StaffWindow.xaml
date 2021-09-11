@@ -12,6 +12,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto" 
         ResizeMode="CanMinimize"
+         WindowStartupLocation="CenterScreen"
         Title="WorkersWindow" Height="400" Width="400">
     <Grid>
         <Grid.RowDefinitions>

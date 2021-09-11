@@ -50,20 +50,13 @@ namespace Cashbox.Visu
 
         private async void GetUsersAsync()
         {
-            ShowPopup("Подключение к БД");
-            Users.ItemsSource = await DB.GetUserNamesAsync();
-            MyPopup.IsPopupOpen = false;
+            Users.ItemsSource = await DB.GetUserNamesAsync();  
         }
 
         private void UserChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedUser = ((ComboBox)sender).SelectedValue as string;
             CheckOkButtonVis();
-        }
-        private void ShowPopup(string text)
-        {
-            MyPopup.IsPopupOpen = true;
-            PopupText.Text = text;
         }
 
         private void CheckOkButtonVis()
@@ -75,6 +68,16 @@ namespace Cashbox.Visu
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
     }
 }

@@ -18,7 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using MDIXDialogHost = MaterialDesignThemes.Wpf.DialogHost;
+using MDDialogHost = MaterialDesignThemes.Wpf.DialogHost;
 
 
 namespace Cashbox.Visu
@@ -90,7 +90,7 @@ namespace Cashbox.Visu
                     if (shift.Staff != null && WorkerExists(worker.Id))
                         workerItem.Checked = true;
                     workers.Add(workerItem);
-                }               
+                }
             }
             return workers;
         }
@@ -192,7 +192,10 @@ namespace Cashbox.Visu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MDIXDialogHost.Show(this);
+            if (Shift.Staff.Count == 0)
+                new MessageBoxCustom("В смене нет работников", MessageType.Error, MessageButtons.Ok).ShowDialog();
+            else
+                MDDialogHost.OpenDialogCommand.Execute(null, null);
         }
     }
 }

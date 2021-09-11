@@ -11,27 +11,44 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
-        Background="#e3e3e3"
+        
         FontFamily="{DynamicResource MaterialDesignFont}"
-        ResizeMode="CanMinimize"
-         Height="300" Width="500">
-    <Grid>
-        <Border MinWidth="400" 
-                Margin="20" 
+        ResizeMode="NoResize"
+        WindowStyle="None"
+         MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True"
+         Height="250" Width="500">
+    <Border BorderThickness="2" CornerRadius="30" BorderBrush="DarkGray" Background="#e3e3e3">
+        
+        <Grid>
+            <StackPanel  HorizontalAlignment="Center" Margin="0,5,5,0"  VerticalAlignment="Top" Grid.Column="1">
+                <Button x:Name="btnClose" Click="btnClose_Click" Width="35" Height="35"  Background="White" Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignFloatingActionDarkButton}">
+                    <materialDesign:PackIcon Kind="Close" />
+                </Button>
+            </StackPanel>
+            <Border MinWidth="400" 
+                Margin="20, 45, 20, 20" 
                 Background="White" 
                 CornerRadius="34">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="30"
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30"
                                   ShadowDepth="10"
                                   Color="LightGray"/>
-            </Border.Effect>
-            <StackPanel>
-                <TextBlock HorizontalAlignment="Center"                                
-                            Margin="10"
+                </Border.Effect>
+
+                <StackPanel>
+                    <!--<StackPanel  HorizontalAlignment="Right" Margin="0,5,10,0"  VerticalAlignment="Top" Grid.Column="1">
+                        <Button x:Name="btnClose" Click="btnClose_Click" Width="35" Height="35"  Background="White" Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignFloatingActionDarkButton}">
+                            <materialDesign:PackIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>-->
+                    <TextBlock HorizontalAlignment="Center" 
                             FontSize="35"
                             FontWeight="Bold"
                             Text="Авторизация"/>
-                <ComboBox Name="Users"
+                    <ComboBox Name="Users"
                           MinHeight="30"
                           MinWidth="350"
                           Margin="10"
@@ -40,7 +57,7 @@
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           SelectedValue="{Binding SelectedUser, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
                           materialDesign:HintAssist.Hint="Пользователь" SelectionChanged="UserChanged"/>
-                <Button x:Name="OkButton"
+                    <Button x:Name="OkButton"
                         MinHeight="50"
                         MinWidth="100"
                         Margin="10"
@@ -50,12 +67,8 @@
                         IsDefault="True"
                         IsEnabled="{Binding OkButtonVis, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource MaterialDesignFlatButton}" Click="Ok_Click" Cursor="Hand"/>
-                <materialDesign:PopupBox Name="MyPopup"
-                                         HorizontalAlignment="Center"
-                                         PlacementMode="BottomAndAlignCentres" >
-                    <TextBlock Name="PopupText" Margin="5"/>
-                </materialDesign:PopupBox>
-            </StackPanel>
-        </Border>
-    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
 </Window>

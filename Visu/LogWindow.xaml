@@ -16,6 +16,7 @@
         ResizeMode="CanMinimize"
         mc:Ignorable="d"
         Background="AliceBlue"
+         WindowStartupLocation="CenterScreen"
         Title="LogWindow" Height="450" Width="1100">
     <Window.Resources>
         <c:DateConverter x:Key="DateConverter"/>
