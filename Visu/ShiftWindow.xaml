@@ -178,11 +178,12 @@
                         <TextBlock Text="Начало дня:"
                            Style="{StaticResource MyTextBlock}"/>
                         <TextBox Padding="5"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
-                             LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}"/>
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
+                                 LostFocus="TextBox_LostFocus"
+                                 TextChanged="TextBox_TextChanged"
+                                 IsEnabled="{Binding EnableEntries}"
+                                 IsReadOnly="True"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">

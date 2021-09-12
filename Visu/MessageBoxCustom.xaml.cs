@@ -7,11 +7,11 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class MessageBoxCustom : Window
     {
-        public MessageBoxCustom(string Message, MessageType Type, MessageButtons Buttons)
+        public MessageBoxCustom(string message, MessageType type, MessageButtons buttons)
         {
             InitializeComponent();
-            txtMessage.Text = Message;
-            switch (Type)
+            txtMessage.Text = message;
+            switch (type)
             {
 
                 case MessageType.Info:
@@ -27,14 +27,12 @@ namespace Cashbox.Visu
                     txtTitle.Text = "Предупреждение";
                     break;
                 case MessageType.Error:
-                    {
-                        txtTitle.Text = "Ошибка";
-                    }
+                    txtTitle.Text = "Ошибка";
                     break;
                 default:
                     break;
             }
-            switch (Buttons)
+            switch (buttons)
             {
                 case MessageButtons.OkCancel:
                     btnYes.Visibility = Visibility.Collapsed; btnNo.Visibility = Visibility.Collapsed;
@@ -86,7 +84,13 @@ namespace Cashbox.Visu
         {
             DragMove();
         }
-    }
+
+        public static void Show(string message, MessageType type, MessageButtons buttons)
+        {
+            new MessageBoxCustom(message, type, buttons).ShowDialog();
+        }
+    }  
+
     public enum MessageType
     {
         Info,

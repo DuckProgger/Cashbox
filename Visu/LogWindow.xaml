@@ -18,6 +18,9 @@
         Background="AliceBlue"
          WindowStartupLocation="CenterScreen"
         Title="LogWindow" Height="450" Width="1100">
+    <!--<Window.DataContext>
+        <local:LogWindow/>
+    </Window.DataContext>-->
     <Window.Resources>
         <c:DateConverter x:Key="DateConverter"/>
         <c:StaffConverter x:Key="StaffConverter"/>
@@ -56,29 +59,65 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.5*"/>
-                <RowDefinition Height="0.33*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="1"
-                    Click="Button_GetLog"
-                    Content="Применить"/>
-            <StackPanel Orientation="Horizontal">
-                <DatePicker SelectedDate="{Binding Begin}"                            
+
+            <!--Выбор даты-->
+            <GroupBox Header="Дата">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock Text="Начало:" Margin="10"/>
+                            <DatePicker SelectedDate="{Binding Start}"                            
                             MinWidth="130"
-                            Margin="10"/>
-                <DatePicker SelectedDate="{Binding End}"
-                             MinWidth="130"
-                            Margin="10"/>
-            </StackPanel>
-            <StackPanel Grid.Row="2">
-                <ComboBox ItemsSource="{Binding Staff}" 
+                            Margin="10, 0, 10, 0"
+                                        IsTodayHighlighted="True"/>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="Конец:"  Margin="10"/>
+                            <DatePicker SelectedDate="{Binding End}"                            
+                            MinWidth="130"
+                            Margin="10, 0, 10, 0"
+                                         IsTodayHighlighted="True"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Period" Margin="10" Content="Аванс" IsChecked="True" Checked="PrepaidPeriod_Checked"/>
+                        <RadioButton GroupName="Period" Margin="10" Content="Зарплата" Checked="SalaryPeriod_Checked" />
+                        <RadioButton GroupName="Period" Margin="10" Content="Вручную" Checked="ManuallyPeriod_Checked"  />
+                    </StackPanel>
+                    
+                    <!--Кнопка Применить-->
+                    <Button Grid.Row="1"
+                    Click="Button_GetLog"
+                    Content="Применить" Margin="10"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                </StackPanel>
+
+            </GroupBox>
+
+            <GroupBox Header="Заработная плата" Grid.Row="1">
+                <!--Расчёт ЗП-->
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="Выбор сотрудника:"/>
+                    <ComboBox ItemsSource="{Binding Staff}" 
                           SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"
                           SelectionChanged="ComboBox_SelectionChanged"/>
-                <Button Click="CalculateSalary_Click"
-                        Content="Посчитать ЗП"
-                        IsEnabled="{Binding SalaryButtonVis}"/>
-            </StackPanel>
+                    <Button Click="CalculateSalary_Click"
+                        Content="Предварительный расчёт"
+                        IsEnabled="{Binding SalaryButtonVis}"
+                         Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                    <Button Click="IssueSalary_Click"
+                        Content="Выдать ЗП"
+                        IsEnabled="{Binding SalaryButtonVis}"
+                         Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                </StackPanel>
+            </GroupBox>
+
+            
         </Grid>
     </Grid>
 </Window>

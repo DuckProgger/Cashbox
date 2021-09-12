@@ -39,11 +39,6 @@
                 </Border.Effect>
 
                 <StackPanel>
-                    <!--<StackPanel  HorizontalAlignment="Right" Margin="0,5,10,0"  VerticalAlignment="Top" Grid.Column="1">
-                        <Button x:Name="btnClose" Click="btnClose_Click" Width="35" Height="35"  Background="White" Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignFloatingActionDarkButton}">
-                            <materialDesign:PackIcon Kind="Close" />
-                        </Button>
-                    </StackPanel>-->
                     <TextBlock HorizontalAlignment="Center" 
                             FontSize="35"
                             FontWeight="Bold"

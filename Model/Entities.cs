@@ -101,7 +101,7 @@ namespace Cashbox.Model
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public static Shift Create(User user) => new() { /*DateAndTime = DateTime.Now,*/ User = user, };
+        public static Shift Create(User user) => new() { User = user, };
 
         //public Shift Copy()
         //{
@@ -156,7 +156,9 @@ namespace Cashbox.Model
     {
         public int Id { get; set; }
         public int Money { get; set; }
+        [Column(TypeName = "date")]
         public DateTime StartPeriod { get; set; }
+        [Column(TypeName = "date")]
         public DateTime EndPeriod { get; set; }
 
         public int WorkerId { get; set; }

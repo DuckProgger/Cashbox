@@ -86,6 +86,14 @@ namespace Cashbox.Model
                     select s).FirstOrDefault();
         }
 
+        public static Shift GetPrevShift()
+        {
+            using ApplicationContext db = new();
+            return (from s in db.Shifts
+                    orderby s.CreatedAt descending, s.Version descending
+                    select s).First();
+        }
+
         public static int GetShiftId(DateTime date, int version)
         {
             using ApplicationContext db = new();
@@ -93,6 +101,14 @@ namespace Cashbox.Model
                     where date == s.CreatedAt && s.Version == version
                     orderby s.Version descending
                     select s.Id).FirstOrDefault();
+        }
+
+        public static List<Salary> GetSalaries(int workerId, DateTime start, DateTime end)
+        {
+            using ApplicationContext db = new();
+            return (from s in db.Salaries
+                    where s.WorkerId == workerId && s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+                    select s).ToList();
         }
 
         public static Session CreateSession(string userName)
@@ -207,7 +223,7 @@ namespace Cashbox.Model
             return (from s in db.Shifts.Include(s => s.User).AsEnumerable()
                     where s.CreatedAt == date
                     select s).ToList();
-        }      
+        }
 
         private static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
 

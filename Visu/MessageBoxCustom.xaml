@@ -53,13 +53,13 @@
                         <ColumnDefinition Width="349*"/>
                         <ColumnDefinition Width="151*"/>
                     </Grid.ColumnDefinitions>
-                    <Grid Margin="20,20,20,20" Grid.ColumnSpan="2">
+                    <Grid  Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="txtMessage" HorizontalAlignment="Center" Grid.Row="0" Margin="5" FontSize="18"  />
+                        
+                        <TextBlock x:Name="txtMessage" HorizontalAlignment="Center" Grid.Row="0" Margin="10" FontSize="18" TextWrapping="WrapWithOverflow"/>
 
                         <Grid Grid.Row="1" Margin="0,20,0,5">
                             <Grid.ColumnDefinitions>

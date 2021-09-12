@@ -11,7 +11,7 @@ namespace Cashbox.Visu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             DateTime date = (DateTime)value;
-            return $"{Formatter.AddZero(date.Day)}.{Formatter.AddZero(date.Month)}.{date.Year}";
+            return Formatter.FormatDate(date);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

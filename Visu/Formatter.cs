@@ -32,5 +32,7 @@ namespace Cashbox.Model
             }
             return str;
         }
+
+        public static string FormatDate(DateTime date) => $"{AddZero(date.Day)}.{AddZero(date.Month)}.{date.Year}";
     }
 }

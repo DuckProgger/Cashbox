@@ -68,7 +68,16 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             if (version == 0)
-                Shift = DB.GetShift(date) ?? Shift.Create(DB.GetUser(Global.Session.UserId));
+            {
+                Shift = DB.GetShift(date);
+                if (Shift == null)
+                {
+                    Shift = Shift.Create(DB.GetUser(Global.Session.UserId));
+                    var s = DB.GetPrevShift();
+
+                    Shift.StartDay = DB.GetPrevShift().EndDay;
+                }
+            }                
             else
                 Shift = DB.GetShift(date, version);
             UpdateValues();
@@ -182,20 +191,22 @@ namespace Cashbox.Visu
                 Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
         }
 
-        private bool WorkerExists(int id) => Shift.Staff.Exists(w => w.Id == id);
+        private bool WorkerExists(int id) => Shift.Staff.Exists(w => w.Id == id);       
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsValidStaffList(Shift))
+                MessageBoxCustom.Show("В смене нет работников", MessageType.Error, MessageButtons.Ok);
+            else
+                MDDialogHost.OpenDialogCommand.Execute(null, null);
+        }
+
+        private bool IsValidStaffList(Shift shift) => shift.Staff.Count > 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (Shift.Staff.Count == 0)
-                new MessageBoxCustom("В смене нет работников", MessageType.Error, MessageButtons.Ok).ShowDialog();
-            else
-                MDDialogHost.OpenDialogCommand.Execute(null, null);
         }
     }
 }
