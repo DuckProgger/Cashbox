@@ -81,7 +81,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            LogView.ItemsSource = Log;
+            //LogView.ItemsSource = Log;
             Permissions = Permissions.GetAccesses(Global.Session.UserId);
         }
 
@@ -203,5 +203,9 @@ namespace Cashbox.Visu
             return date;
         }
 
+        private void ShowSalaryLog(object sender, RoutedEventArgs e)
+        {
+            new SalaryLogWindow().Show();
+        }
     }
 }

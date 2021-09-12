@@ -31,7 +31,8 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <ListView Name="LogView"                  
-                  Grid.Column="1">
+                  Grid.Column="1"
+                  ItemsSource="{Binding Log}">
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
                     <GridViewColumn DisplayMemberBinding="{Binding CreatedAt, Converter={StaticResource DateConverter}}" Header="Дата"/>
@@ -93,7 +94,7 @@
                     <!--Кнопка Применить-->
                     <Button Grid.Row="1"
                     Click="Button_GetLog"
-                    Content="Применить" Margin="10"
+                    Content="Применить" Margin="5"
                     Style="{StaticResource MaterialDesignOutlinedButton}"/>
                 </StackPanel>
 
@@ -109,11 +110,17 @@
                     <Button Click="CalculateSalary_Click"
                         Content="Предварительный расчёт"
                         IsEnabled="{Binding SalaryButtonVis}"
-                         Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                         Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="5"/>
                     <Button Click="IssueSalary_Click"
                         Content="Выдать ЗП"
                         IsEnabled="{Binding SalaryButtonVis}"
-                         Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                         Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="5"/>
+                    <Button Click="ShowSalaryLog"    
+                        Content="Журнал зарплат"                       
+                         Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="5"/>
                 </StackPanel>
             </GroupBox>
 

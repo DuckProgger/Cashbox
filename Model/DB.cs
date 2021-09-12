@@ -111,6 +111,14 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
+        public static List<Salary> GetSalaries(DateTime start, DateTime end)
+        {
+            using ApplicationContext db = new();
+            return (from s in db.Salaries
+                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+                    select s).ToList();
+        }
+
         public static Session CreateSession(string userName)
         {
             using ApplicationContext db = new();

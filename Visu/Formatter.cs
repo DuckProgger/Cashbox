@@ -34,5 +34,27 @@ namespace Cashbox.Model
         }
 
         public static string FormatDate(DateTime date) => $"{AddZero(date.Day)}.{AddZero(date.Month)}.{date.Year}";
+
+        public static string FormatDatePeriod(DateTime start, DateTime end) => $"{start.Day} - {end.Date.Day} {FormatMonth(start.Month)}";
+
+        private static string FormatMonth(int monthNum)
+        {
+            return monthNum switch
+            {
+                1 => "янв",
+                2 => "фев",
+                3 => "мар",
+                4 => "апр",
+                5 => "май",
+                6 => "июн",
+                7 => "июл",
+                8 => "авг",
+                9 => "сен",
+                10 => "окт",
+                11 => "ноя",
+                12 => "дек",
+                _ => "",
+            };
+        }
     }
 }
