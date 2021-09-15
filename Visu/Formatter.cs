@@ -37,6 +37,25 @@ namespace Cashbox.Model
 
         public static string FormatDatePeriod(DateTime start, DateTime end) => $"{start.Day} - {end.Date.Day} {FormatMonth(start.Month)}";
 
+        public static string FormatWithoutDay(DateTime date) => $"{FormatMonth(date.Month)} {date.Year}";
+
+        public static DateTime ReturnToFirstDay(DateTime date) => date.AddDays(-date.Day + 1);
+
+        public static DateTime ReturnToMiddleOfMonth(DateTime date)
+        {
+            date = ReturnToFirstDay(date);
+            date = date.AddDays(14);
+            return date;
+        }
+
+        public static DateTime ReturnToEndOfMonth(DateTime date)
+        {
+            date = ReturnToFirstDay(date);
+            date = date.AddMonths(1);
+            date = date.AddDays(-1);
+            return date;
+        }
+
         private static string FormatMonth(int monthNum)
         {
             return monthNum switch

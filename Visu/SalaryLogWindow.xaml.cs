@@ -21,10 +21,11 @@ namespace Cashbox.Visu
     public partial class SalaryLogWindow : Window, INotifyPropertyChanged
     {
         private int _totalSalary;
-        private string _selectedWorker;
-        private DateTime _start = DateTime.Today;
-        private DateTime _end = DateTime.Today;
+        private string _selectedWorkerName;
+        private DateTime _start = Formatter.ReturnToFirstDay(DateTime.Today);
+        private DateTime _end = Formatter.ReturnToEndOfMonth(DateTime.Today);
         private const string allWorkers = "(Все)";
+        private Worker selectedWorker;
 
         public Permissions Permissions { get; private set; }
         public ObservableCollection<SalaryItem> SalaryLog { get; set; } = new();
@@ -34,7 +35,10 @@ namespace Cashbox.Visu
             get => _start;
             set
             {
-                _start = value;
+                if (value > End)
+                    _start = End;
+                else
+                    _start = value;
                 OnPropertyChanged();
             }
         }
@@ -43,7 +47,10 @@ namespace Cashbox.Visu
             get => _end;
             set
             {
-                _end = value;
+                if (value < Start)
+                    _end = Start;
+                else
+                    _end = value;
                 OnPropertyChanged();
             }
         }
@@ -56,12 +63,12 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
-        public string SelectedWorker
+        public string SelectedWorkerName
         {
-            get => _selectedWorker;
+            get => _selectedWorkerName;
             set
             {
-                _selectedWorker = value;
+                _selectedWorkerName = value;
                 OnPropertyChanged();
             }
         }
@@ -83,24 +90,32 @@ namespace Cashbox.Visu
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var worker = DB.GetWorker(SelectedWorker);
-            UpdateSalaryLog(worker, Start, End);
+            selectedWorker = DB.GetWorker(SelectedWorkerName);
+            UpdateSalaryLog();
         }
 
-        private void UpdateSalaryLog(Worker worker, DateTime start, DateTime end)
+        private void UpdateSalaryLog()
         {
             SalaryLog.Clear();
-            var salaries = DB.GetSalaries(worker.Id, start, end);
+            var salaries = DB.GetSalaries(selectedWorker.Id, Start, End);
             foreach (var item in salaries)
             {
                 SalaryItem salaryItem = new()
                 {
-                    Name = worker.Name,
+                    Name = selectedWorker.Name,
                     Salary = item.Money,
                     Date = Formatter.FormatDatePeriod(item.StartPeriod, item.EndPeriod)
                 };
                 SalaryLog.Add(salaryItem);
             }
+        }
+
+        private void Button_GetSalaryLog(object sender, RoutedEventArgs e)
+        {
+            if (selectedWorker == null)
+                MessageBoxCustom.Show("Не выбран работник", MessageType.Error, MessageButtons.Ok);
+            else
+                UpdateSalaryLog();
         }
     }
 }

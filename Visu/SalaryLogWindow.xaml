@@ -16,54 +16,16 @@
          WindowStartupLocation="CenterScreen"
         Title="SalaryLogWindow" Height="400" Width="800">
     <Window.Resources>
-        <c:DateConverter2 x:Key="DateConverter"/>
-    </Window.Resources>
+        <c:DateConverterToFirstDay x:Key="DateConverterFirstDay"/>
+        <c:DateConverterToLastDay x:Key="DateConverterLastDay"/>
+    </Window.Resources>   
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.4*"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*"/>
-                <ColumnDefinition Width="1.6*"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-
-            <!--Выбор сотрудника-->
-            <GroupBox Header="Выбор сотрудника" Grid.Column="0">
-                <ComboBox ItemsSource="{Binding Staff}" 
-                          SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"
-                          SelectionChanged="ComboBox_SelectionChanged"/>
-            </GroupBox>
-
-            <!--Выбор даты-->
-            <GroupBox Header="Дата" Grid.Column="1">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel>
-                            <TextBlock Text="Начало:" Margin="10"/>
-                            <DatePicker SelectedDate="{Binding Start}"                            
-                            MinWidth="130"
-                            Margin="10, 0, 10, 0"
-                                        IsTodayHighlighted="True"/>
-                        </StackPanel>
-
-                        <StackPanel>
-                            <TextBlock Text="Конец:"  Margin="10"/>
-                            <DatePicker SelectedDate="{Binding End}"                            
-                            MinWidth="130"
-                            Margin="10, 0, 10, 0"
-                                         IsTodayHighlighted="True"/>
-                        </StackPanel>
-                    </StackPanel>                  
-                </StackPanel>
-            </GroupBox>            
-        </Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.7*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
         <ListView Name="SalaryLogView"                  
-                  Grid.Row="1"
+                  Grid.Column="1"
                   ItemsSource="{Binding SalaryLog}">
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
@@ -71,9 +33,76 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Сотрудник" />
                     <GridViewColumn DisplayMemberBinding="{Binding Salary}" Header="Сумма" />
                 </GridView>
-            </ListView.View>            
+            </ListView.View>
         </ListView>
 
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.7*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <!--Выбор даты-->
+            <GroupBox Header="Дата">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock Text="Начало:" Margin="10"/>
+                            <DatePicker 
+                                        MinWidth="130"
+                                        Margin="10, 0, 10, 0"
+                                        IsTodayHighlighted="True" 
+                                SelectedDate="{Binding Start, Converter={StaticResource DateConverterFirstDay}, UpdateSourceTrigger=PropertyChanged}">
+                                <!--<DatePicker.Resources>
+                                    <Style x:Key="DPS" TargetType="{x:Type DatePickerTextBox}" >
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <TextBox x:Name="PART_TextBox" 
+                                 HorizontalContentAlignment="Stretch"                                  
+                                 VerticalContentAlignment="Stretch" 
+                                 Text="{Binding SelectedDate,
+                            Converter={StaticResource DateConverter}, 
+                            RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" 
+                                 BorderBrush="{DynamicResource BaseBorderBrush}" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DatePicker.Resources>-->
+                            </DatePicker>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="Конец:"  Margin="10"/>
+                            <DatePicker 
+                                        MinWidth="130"
+                                        Margin="10, 0, 10, 0"
+                                        IsTodayHighlighted="True"
+                                SelectedDate="{Binding End, Converter={StaticResource DateConverterLastDay}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--Кнопка Применить-->
+                    <Button Grid.Row="1"
+                    Click="Button_GetSalaryLog"
+                    Content="Применить" Margin="5"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                </StackPanel>
+
+            </GroupBox>
+
+            <GroupBox Header="Заработная плата" Grid.Row="1">               
+                <StackPanel Grid.Row="2">
+                    <!--<TextBlock Text="Выбор сотрудника:"/>-->
+                    <ComboBox ItemsSource="{Binding Staff}" 
+                          SelectedValue="{Binding SelectedWorkerName, UpdateSourceTrigger=PropertyChanged}"
+                          SelectionChanged="ComboBox_SelectionChanged" materialDesign:HintAssist.Hint="Выбор сотрудника:"/>                    
+                </StackPanel>
+            </GroupBox>
+
+
+        </Grid>
     </Grid>
-    
+
 </Window>

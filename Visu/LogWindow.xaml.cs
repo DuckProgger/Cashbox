@@ -169,39 +169,22 @@ namespace Cashbox.Visu
         {
             Start = DateTime.Today;
             End = Start;
-            Start = ReturnToFirstDay(Start);
-            End = ReturnToMiddleOfMonth(End);
+            Start = Formatter.ReturnToFirstDay(Start);
+            End = Formatter.ReturnToMiddleOfMonth(End);
         }
 
         private void SalaryPeriod_Checked(object sender, RoutedEventArgs e)
         {
             Start = DateTime.Today;
             End = Start;
-            Start = ReturnToMiddleOfMonth(Start);
-            End = ReturnToEndOfMonth(End);
+            Start = Formatter.ReturnToMiddleOfMonth(Start);
+            End = Formatter.ReturnToEndOfMonth(End);
         }
 
         private void ManuallyPeriod_Checked(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        private DateTime ReturnToFirstDay(DateTime date) => date.AddDays(-date.Day + 1);
-
-        private DateTime ReturnToMiddleOfMonth(DateTime date)
-        {
-            date = ReturnToFirstDay(date);
-            date = date.AddDays(14);
-            return date;
-        }
-
-        private DateTime ReturnToEndOfMonth(DateTime date)
-        {
-            date = ReturnToFirstDay(date);
-            date = date.AddMonths(1);
-            date = date.AddDays(-1);
-            return date;
-        }
+        }      
 
         private void ShowSalaryLog(object sender, RoutedEventArgs e)
         {
