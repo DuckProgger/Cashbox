@@ -26,6 +26,8 @@ namespace Cashbox.Visu
         private DateTime _end = Formatter.ReturnToEndOfMonth(DateTime.Today);
         private const string allWorkers = "(Все)";
         private Worker selectedWorker;
+        private bool _combinePerMonth;
+
 
         public Permissions Permissions { get; private set; }
         public ObservableCollection<SalaryItem> SalaryLog { get; set; } = new();
@@ -72,6 +74,17 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+        public bool CombinePerMonth
+        {
+            get => _combinePerMonth;
+            set
+            {
+                _combinePerMonth = value;
+                if (IsValidWorkerSelected())
+                    UpdateSalaryLog();
+                OnPropertyChanged();
+            }
+        }
 
         public SalaryLogWindow()
         {
@@ -96,26 +109,73 @@ namespace Cashbox.Visu
 
         private void UpdateSalaryLog()
         {
-            SalaryLog.Clear();
-            var salaries = DB.GetSalaries(selectedWorker.Id, Start, End);
-            foreach (var item in salaries)
+            if (!IsValidWorkerSelected())
+                MessageBoxCustom.Show("Не выбран работник", MessageType.Error, MessageButtons.Ok);
+            else
             {
-                SalaryItem salaryItem = new()
+                SalaryLog.Clear();
+
+                // Сформировать список зарплат в зависимости от того выбран ли конкретный работник
+                // или список нужно получить для всех за выбранный период
+                List<Salary> salariesPerPeriod = SelectedWorkerName == allWorkers ?
+                     DB.GetSalaries(Start, End) : DB.GetSalaries(selectedWorker.Id, Start, End);
+
+                // Заполнение таблицы
+                // *не объединять в месяц*
+                if (!CombinePerMonth)
                 {
-                    Name = selectedWorker.Name,
-                    Salary = item.Money,
-                    Date = Formatter.FormatDatePeriod(item.StartPeriod, item.EndPeriod)
-                };
-                SalaryLog.Add(salaryItem);
+                    // Так как объединять в месяц не нужно, то просто перебираем список зарплат
+                    // за выбранный период и выводим его на экран
+                    foreach (var salary in salariesPerPeriod)
+                    {
+                        SalaryLog.Add(new()
+                        {
+                            Name = DB.GetWorker(salary.WorkerId).Name,
+                            Salary = salary.Money,
+                            Date = Formatter.FormatDatePeriod(salary.StartPeriod, salary.EndPeriod)
+                        });
+                    }
+                }
+                // *объединять в месяц*
+                else
+                {
+                    // Создать словарь, где ключом является Id работника,
+                    // а значением является список его смен за выбранный период 
+                    Dictionary<int, List<Salary>> workersSalariesDict = new();
+
+                    // Сгруппировать список смен за выбранный период по Id работников
+                    var workersSalaries = from s in salariesPerPeriod
+                                          group s by s.WorkerId;
+
+                    // Заполнить словарь этими группами. Ключ группы совпадает с ключом словаря.
+                    foreach (var workerSalariesGroup in workersSalaries)
+                        workersSalariesDict.Add(workerSalariesGroup.Key, workerSalariesGroup.ToList());
+
+                    // Сгруппировать смены каждого работника по месяцам, суммировать общий
+                    // заработок за месяц и вывести на экран
+                    foreach (var dictItem in workersSalariesDict)
+                    {
+                        var salariesPerMonth = from s in dictItem.Value
+                                               group s by s.StartPeriod.Month
+                                                into sg
+                                               select new SalaryItem()
+                                               {
+                                                   Name = DB.GetWorker(dictItem.Key).Name, // ключ словаря - это Id работника
+                                                   Salary = sg.Sum(s => s.Money),
+                                                   Date = Formatter.FormatMonth(sg.Key) // получившийся ключ группы - это номер месяца
+                                               };
+                        foreach (var salaryItem in salariesPerMonth)
+                            SalaryLog.Add(salaryItem);
+                    }
+                }
             }
         }
 
         private void Button_GetSalaryLog(object sender, RoutedEventArgs e)
         {
-            if (selectedWorker == null)
-                MessageBoxCustom.Show("Не выбран работник", MessageType.Error, MessageButtons.Ok);
-            else
-                UpdateSalaryLog();
+            UpdateSalaryLog();
         }
+
+        private bool IsValidWorkerSelected() => SelectedWorkerName?.Length > 0;
     }
 }

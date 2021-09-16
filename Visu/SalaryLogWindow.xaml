@@ -26,7 +26,7 @@
         </Grid.ColumnDefinitions>
         <ListView Name="SalaryLogView"                  
                   Grid.Column="1"
-                  ItemsSource="{Binding SalaryLog}">
+                  ItemsSource="{Binding SalaryLog}"                  >
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
                     <GridViewColumn DisplayMemberBinding="{Binding Date}" Header="Дата" />
@@ -97,7 +97,8 @@
                     <!--<TextBlock Text="Выбор сотрудника:"/>-->
                     <ComboBox ItemsSource="{Binding Staff}" 
                           SelectedValue="{Binding SelectedWorkerName, UpdateSourceTrigger=PropertyChanged}"
-                          SelectionChanged="ComboBox_SelectionChanged" materialDesign:HintAssist.Hint="Выбор сотрудника:"/>                    
+                          SelectionChanged="ComboBox_SelectionChanged" materialDesign:HintAssist.Hint="Выбор сотрудника:"/>
+                    <CheckBox Content="Объединять в месяц" IsChecked="{Binding CombinePerMonth, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </GroupBox>
 

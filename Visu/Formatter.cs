@@ -56,7 +56,7 @@ namespace Cashbox.Model
             return date;
         }
 
-        private static string FormatMonth(int monthNum)
+        public static string FormatMonth(int monthNum)
         {
             return monthNum switch
             {
