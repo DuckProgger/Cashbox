@@ -26,6 +26,7 @@ namespace Cashbox.Visu
         private string _selectedWorker;
         private DateTime _start;
         private DateTime _end;
+        private bool _manualPeriodChecked = false;
 
         public Permissions Permissions { get; private set; }
         public ObservableCollection<Shift> Log { get; set; } = new();
@@ -35,8 +36,7 @@ namespace Cashbox.Visu
             get => _start;
             set
             {
-                _start = value;
-                OnPropertyChanged();
+                _start = value; OnPropertyChanged();
             }
         }
         public DateTime End
@@ -44,8 +44,7 @@ namespace Cashbox.Visu
             get => _end;
             set
             {
-                _end = value;
-                OnPropertyChanged();
+                _end = value; OnPropertyChanged();
             }
         }
         public bool SalaryButtonVis
@@ -75,14 +74,22 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
-
+        public bool ManualPeriodChecked
+        {
+            get => _manualPeriodChecked;
+            set
+            {
+                _manualPeriodChecked = value;
+                OnPropertyChanged();
+            }
+        }
 
         public LogWindow()
         {
             InitializeComponent();
             DataContext = this;
-            //LogView.ItemsSource = Log;
             Permissions = Permissions.GetAccesses(Global.Session.UserId);
+            SetPrepaidPeriod(null, null);
         }
 
         private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();
@@ -98,7 +105,7 @@ namespace Cashbox.Visu
                     if (!Staff.Contains(worker.Name))
                         Staff.Add(worker.Name);
             }
-            SelectedWorker = Staff[0] ?? null;
+            SelectedWorker = Staff.Count > 0 ? Staff[0] : null;
         }
 
         private void VersionHistory_Click(object sender, RoutedEventArgs e)
@@ -157,15 +164,7 @@ namespace Cashbox.Visu
             }
         }
 
-        private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end) => DB.GetSalaries(workerId, start, end).Count == 0;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        private void PrepaidPeriod_Checked(object sender, RoutedEventArgs e)
+        private void SetPrepaidPeriod(object sender, RoutedEventArgs e)
         {
             Start = DateTime.Today;
             End = Start;
@@ -173,22 +172,26 @@ namespace Cashbox.Visu
             End = Formatter.ReturnToMiddleOfMonth(End);
         }
 
-        private void SalaryPeriod_Checked(object sender, RoutedEventArgs e)
+        private void SetSalaryPeriod(object sender, RoutedEventArgs e)
         {
             Start = DateTime.Today;
             End = Start;
             Start = Formatter.ReturnToMiddleOfMonth(Start);
+            Start = Start.AddDays(1);
             End = Formatter.ReturnToEndOfMonth(End);
         }
-
-        private void ManuallyPeriod_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }      
 
         private void ShowSalaryLog(object sender, RoutedEventArgs e)
         {
             new SalaryLogWindow().Show();
+        }
+
+        private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end) => DB.GetSalaries(workerId, start, end).Count == 0;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

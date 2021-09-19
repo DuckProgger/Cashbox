@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
         xmlns:local="clr-namespace:Cashbox.Visu"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -14,33 +14,56 @@
         ResizeMode="CanMinimize"
         mc:Ignorable="d"
          WindowStartupLocation="CenterScreen"
-        Title="VersionHistoryWindow" Height="300" Width="300">
+        Title="VersionHistoryWindow" Height="300" Width="400">
     <Window.Resources>
         <c:DateTimeConverter x:Key="DateTimeConverter"/>
     </Window.Resources>
-    <Grid>
-        <ListView Name="VersionHistoryView"                  
+    <md:DialogHost>
+        <md:DialogHost.DialogContent>
+            <StackPanel Margin="20" MinWidth="300">
+                <TextBlock Text="Удалить версию смены?" />
+                <Grid Margin="0,10,0,-10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="Отмена" 
+                            Style="{StaticResource MaterialDesignFlatAccentButton}" 
+                            IsCancel="True" 
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                    <Button Content="Удалить" 
+                            Grid.Column="1" 
+                            Style="{StaticResource MaterialDesignFlatButton}" 
+                            IsDefault="True" Click="Remove_Click"
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                </Grid>
+            </StackPanel>
+        </md:DialogHost.DialogContent>
+        <Grid>
+            <ListView Name="VersionHistoryView"                  
                   Grid.Column="1">
-            <ListView.View>
-                <GridView AllowsColumnReorder="True">
-                    <GridViewColumn DisplayMemberBinding="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" Header="Изменён" />
-                    <GridViewColumn DisplayMemberBinding="{Binding Version}" Header="Версия" />
-                    <GridViewColumn DisplayMemberBinding="{Binding User.Name}" Header="Пользователь" />
-                </GridView>
-            </ListView.View>
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Открыть" Click="WatchShift_Click"/>
-                    <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding Permissions.IsAdmin}"/>
-                    <MenuItem Header="Удалить" Click="Remove_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
-                </ContextMenu>
-            </ListView.ContextMenu>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
-                    <EventSetter Event="MouseDoubleClick" Handler="WatchShift_Click" />
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
-    </Grid>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="True">
+                        <GridViewColumn DisplayMemberBinding="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" Header="Изменён" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Version}" Header="Версия" />
+                        <GridViewColumn DisplayMemberBinding="{Binding User.Name}" Header="Пользователь" />
+                    </GridView>
+                </ListView.View>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Открыть" Click="WatchShift_Click"/>
+                        <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding Permissions.IsAdmin}"/>
+                        <MenuItem Header="Удалить" Command="{x:Static md:DialogHost.OpenDialogCommand}" IsEnabled="{Binding Permissions.IsAdmin}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
+                        <EventSetter Event="MouseDoubleClick" Handler="WatchShift_Click" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+    </md:DialogHost>
 </Window>

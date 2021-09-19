@@ -7,7 +7,8 @@
         xmlns:m="clr-namespace:Cashbox.Model"
         xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        d:DataContext="{d:DesignInstance Type=local:LogWindow}"    
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -25,106 +26,135 @@
         <c:DateConverter x:Key="DateConverter"/>
         <c:StaffConverter x:Key="StaffConverter"/>
     </Window.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.4*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <ListView Name="LogView"                  
+
+    <md:DialogHost>
+        <md:DialogHost.DialogContent>
+            <StackPanel Margin="20" MinWidth="300">
+                <TextBlock Text="Удалить смену?" />
+                <Grid Margin="0,10,0,-10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="Отмена" 
+                            Style="{StaticResource MaterialDesignFlatAccentButton}" 
+                            IsCancel="True" 
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                    <Button Content="Удалить" 
+                            Grid.Column="1" 
+                            Style="{StaticResource MaterialDesignFlatButton}" 
+                            IsDefault="True" Click="Remove_Click"
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                </Grid>
+            </StackPanel>
+        </md:DialogHost.DialogContent>
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.4*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ListView Name="LogView"                  
                   Grid.Column="1"
                   ItemsSource="{Binding Log}">
-            <ListView.View>
-                <GridView AllowsColumnReorder="True">
-                    <GridViewColumn DisplayMemberBinding="{Binding CreatedAt, Converter={StaticResource DateConverter}}" Header="Дата"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Staff, Converter={StaticResource StaffConverter}}" Header="Сотрудники"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Total}" Header="Выручка"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="Расхождение"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding User.Name}" Header="Пользователь"/>
-                </GridView>
-            </ListView.View>
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Открыть" Click="WatchShift_Click"/>
-                    <MenuItem Header="Редактировать" Click="EditShift_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
-                    <MenuItem Header="Удалить" Click="Remove_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
-                    <MenuItem Header="История версий" Click="VersionHistory_Click"/>
-                </ContextMenu>
-            </ListView.ContextMenu>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
-                    <EventSetter Event="MouseDoubleClick" Handler="WatchShift_Click" />
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="True">
+                        <GridViewColumn DisplayMemberBinding="{Binding CreatedAt, Converter={StaticResource DateConverter}}" Header="Дата"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Staff, Converter={StaticResource StaffConverter}}" Header="Сотрудники"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Total}" Header="Выручка"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Difference}" Header="Расхождение"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding User.Name}" Header="Пользователь"/>
+                    </GridView>
+                </ListView.View>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Открыть" Click="WatchShift_Click"/>
+                        <MenuItem Header="Редактировать" Click="EditShift_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
+                        <MenuItem Header="Удалить" IsEnabled="{Binding Permissions.IsAdmin}" Command="{x:Static md:DialogHost.OpenDialogCommand}"/>
+                        <MenuItem Header="История версий" Click="VersionHistory_Click"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="Selected" Handler="ListViewItem_Selected" />
+                        <EventSetter Event="MouseDoubleClick" Handler="WatchShift_Click" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
 
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-            <!--Выбор даты-->
-            <GroupBox Header="Дата">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel>
-                            <TextBlock Text="Начало:" Margin="10"/>
-                            <DatePicker SelectedDate="{Binding Start}"                            
+                <!--Выбор даты-->
+                <GroupBox Header="Дата">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="Начало:" Margin="10"/>
+                                <DatePicker SelectedDate="{Binding Start}"
+                                            MinWidth="130"
+                                            Margin="10, 0, 10, 0"
+                                            IsTodayHighlighted="True"
+                                             IsEnabled="{Binding ManualPeriodChecked}"/>
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="Конец:"  Margin="10"/>
+                                <DatePicker SelectedDate="{Binding End}"                            
                             MinWidth="130"
                             Margin="10, 0, 10, 0"
-                                        IsTodayHighlighted="True"/>
+                                         IsTodayHighlighted="True" 
+                                             IsEnabled="{Binding ManualPeriodChecked}"/>
+                            </StackPanel>
                         </StackPanel>
 
-                        <StackPanel>
-                            <TextBlock Text="Конец:"  Margin="10"/>
-                            <DatePicker SelectedDate="{Binding End}"                            
-                            MinWidth="130"
-                            Margin="10, 0, 10, 0"
-                                         IsTodayHighlighted="True"/>
-                        </StackPanel>
-                    </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="Period" Margin="10" Content="Аванс" IsChecked="True" Checked="SetPrepaidPeriod"/>
+                            <RadioButton GroupName="Period" Margin="10" Content="Зарплата" Checked="SetSalaryPeriod" />
+                            <RadioButton GroupName="Period" Margin="10" Content="Вручную" IsChecked="{Binding ManualPeriodChecked, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <StackPanel Orientation="Horizontal">
-                        <RadioButton GroupName="Period" Margin="10" Content="Аванс" IsChecked="True" Checked="PrepaidPeriod_Checked"/>
-                        <RadioButton GroupName="Period" Margin="10" Content="Зарплата" Checked="SalaryPeriod_Checked" />
-                        <RadioButton GroupName="Period" Margin="10" Content="Вручную" Checked="ManuallyPeriod_Checked"  />
-                    </StackPanel>
-                    
-                    <!--Кнопка Применить-->
-                    <Button Grid.Row="1"
+                        </StackPanel>
+
+                        <!--Кнопка Применить-->
+                        <Button Grid.Row="1"
                     Click="Button_GetLog"
                     Content="Применить" Margin="5"
                     Style="{StaticResource MaterialDesignOutlinedButton}"/>
-                </StackPanel>
+                    </StackPanel>
 
-            </GroupBox>
+                </GroupBox>
 
-            <GroupBox Header="Заработная плата" Grid.Row="1">
-                <!--Расчёт ЗП-->
-                <StackPanel Grid.Row="2">
-                    <TextBlock Text="Выбор сотрудника:"/>
-                    <ComboBox ItemsSource="{Binding Staff}" 
+                <GroupBox Header="Заработная плата" Grid.Row="1">
+                    <!--Расчёт ЗП-->
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="Выбор сотрудника:"/>
+                        <ComboBox ItemsSource="{Binding Staff}" 
                           SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"
                           SelectionChanged="ComboBox_SelectionChanged"/>
-                    <Button Click="CalculateSalary_Click"
+                        <Button Click="CalculateSalary_Click"
                         Content="Предварительный расчёт"
                         IsEnabled="{Binding SalaryButtonVis}"
                          Style="{StaticResource MaterialDesignOutlinedButton}"
                             Margin="5"/>
-                    <Button Click="IssueSalary_Click"
+                        <Button Click="IssueSalary_Click"
                         Content="Выдать ЗП"
                         IsEnabled="{Binding SalaryButtonVis}"
                          Style="{StaticResource MaterialDesignOutlinedButton}"
                             Margin="5"/>
-                    <Button Click="ShowSalaryLog"    
+                        <Button Click="ShowSalaryLog"    
                         Content="Журнал зарплат"                       
                          Style="{StaticResource MaterialDesignOutlinedButton}"
                             Margin="5"/>
-                </StackPanel>
-            </GroupBox>
+                    </StackPanel>
+                </GroupBox>
 
-            
+
+            </Grid>
         </Grid>
-    </Grid>
+    </md:DialogHost>
 </Window>
