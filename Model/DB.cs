@@ -13,15 +13,13 @@ namespace Cashbox.Model
         public static async Task<List<string>> GetUserNamesAsync()
         {
             using ApplicationContext db = new();
-            await Task.Run(() => WaitForConnect(db));
-            return GetUserNames();
-        }
-
-        public static List<string> GetUserNames()
-        {
-            using ApplicationContext db = new();
-            return (from user in db.Users
-                    select user.Name).ToList();
+            //bool canConnect = await db.Database.EnsureCreatedAsync();
+            //return await canConnect
+            //    ? (from user in db.Users
+            //            select user.Name).ToListAsync()
+            //    : null;
+            return await (from user in db.Users
+                          select user.Name).ToListAsync();
         }
 
         public static List<Worker> GetStaff()
@@ -234,17 +232,5 @@ namespace Cashbox.Model
         }
 
         private static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
-
-        private static void WaitForConnect(ApplicationContext db)
-        {
-            while (true)
-            {
-                Thread.Sleep(500);
-                if (db.Database.CanConnect())
-                    return;
-            }
-        }
-
-
     }
 }

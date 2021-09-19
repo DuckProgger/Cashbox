@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MessageBoxWindow" Height="180" Width="500" 
+        Title="MessageBoxWindow" MinHeight="180" MinWidth="500" 
         WindowStartupLocation="CenterScreen" WindowStyle="None" Background="White" 
         ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -13,8 +13,7 @@
         TextElement.FontSize="10"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"        
-        FontFamily="{DynamicResource MaterialDesignFont}" 
-        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+        FontFamily="{DynamicResource MaterialDesignFont}"         >
     <Border BorderThickness="1" BorderBrush="Black">
         <materialDesign:TransitioningContent>
             <materialDesign:TransitioningContent.OpeningEffects >
@@ -38,8 +37,9 @@
                                      materialDesign:ShadowAssist.ShadowDepth="Depth3"   
                                      Background="{DynamicResource PrimaryHueMidBrush}" 
                                      Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}" 
-                                     Visibility="Visible" Grid.ColumnSpan="2">
-                    <StackPanel>
+                                     Visibility="Visible" Grid.ColumnSpan="2"
+                                     MouseLeftButtonDown="Window_MouseLeftButtonDown">
+                    <StackPanel >
                         <TextBlock x:Name="txtTitle" HorizontalAlignment="Center" VerticalAlignment="Stretch" Style="{DynamicResource MaterialDesignTitleTextBlock}" FontSize="20" >Message Title</TextBlock>
                     </StackPanel>
                 </materialDesign:Card>
@@ -55,11 +55,11 @@
                     </Grid.ColumnDefinitions>
                     <Grid  Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition />
+                            <RowDefinition Height="60"/>
                         </Grid.RowDefinitions>
-                        
-                        <TextBlock x:Name="txtMessage" HorizontalAlignment="Center" Grid.Row="0" Margin="10" FontSize="18" TextWrapping="WrapWithOverflow"/>
+
+                        <TextBox x:Name="txtMessage" IsReadOnly="True" HorizontalAlignment="Center" Grid.Row="0" Margin="10" FontSize="15" TextWrapping="WrapWithOverflow"/>
 
                         <Grid Grid.Row="1" Margin="0,20,0,5">
                             <Grid.ColumnDefinitions>
@@ -69,10 +69,10 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Button x:Name="btnOk" Click="btnOk_Click" Grid.Column="1" Margin="5" Width="100" Content="OK" />
-                            <Button x:Name="btnCancel" Click="btnCancel_Click" Grid.Column="2"  Margin="5" Width="100" Content="Cancel" />
-                            <Button x:Name="btnYes" Click="btnYes_Click" Grid.Column="1" Margin="5" Width="100" Content="Yes" />
-                            <Button x:Name="btnNo" Click="btnNo_Click" Grid.Column="2" Margin="5" Width="100" Content="No"/>
+                            <Button x:Name="btnOk" Click="btnOk_Click" Grid.Column="1" Margin="5,0,5,0" Width="100" Content="OK" />
+                            <Button x:Name="btnCancel" Click="btnCancel_Click" Grid.Column="2" Margin="5,0,5,0"   Width="100" Content="Cancel" />
+                            <Button x:Name="btnYes" Click="btnYes_Click" Grid.Column="1" Margin="5,0,5,0" Width="100" Content="Yes" />
+                            <Button x:Name="btnNo" Click="btnNo_Click" Grid.Column="2" Margin="5,0,5,0"  Width="100" Content="No"/>
                         </Grid>
 
                     </Grid>
