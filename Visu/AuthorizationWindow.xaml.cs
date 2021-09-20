@@ -21,24 +21,25 @@ namespace Cashbox.Visu
 {
     public partial class AuthorizationWindow : Window, INotifyPropertyChanged
     {
-        private bool _okButtonVis;
+        private string _selectedUser;
 
-        public string SelectedUser { get; set; }
-        public bool OkButtonVis
+        public string SelectedUser
         {
-            get => _okButtonVis;
+            get => _selectedUser;
             set
             {
-                _okButtonVis = value;
-                OnPropertyChanged();
+                _selectedUser = value;
+                OnPropertyChanged(nameof(OkButtonVis));
             }
         }
+        public MessageProvider ErrorMessage { get; } = new();
+        public bool OkButtonVis => SelectedUser != null;
 
         public AuthorizationWindow()
         {
             InitializeComponent();
-            GetUsersAsync();
             DataContext = this;
+            GetUsersAsync();
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)
@@ -50,27 +51,26 @@ namespace Cashbox.Visu
 
         private async void GetUsersAsync()
         {
-            Users.ItemsSource = await DB.GetUserNamesAsync();  
+            try
+            {
+                Users.ItemsSource = await DB.GetUserNamesAsync();
+            }
+            catch (InvalidOperationException ex)
+            {
+                ErrorMessage.Message = ex.Message;
+            }
+            catch (Exception)
+            {
+                ErrorMessage.Message = "Ошибка подключения к БД.";
+            }
         }
 
         private void UserChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedUser = ((ComboBox)sender).SelectedValue as string;
-            CheckOkButtonVis();
         }
 
-        private void CheckOkButtonVis()
-        {
-            OkButtonVis = SelectedUser != null;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        private void btnClose_Click(object sender, RoutedEventArgs e)
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
@@ -78,6 +78,12 @@ namespace Cashbox.Visu
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

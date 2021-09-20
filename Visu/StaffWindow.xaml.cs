@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,10 +21,22 @@ namespace Cashbox.Visu
     /// <summary>
     /// Логика взаимодействия для WorkersWindow.xaml
     /// </summary>
-    public partial class StaffWindow : Window
+    public partial class StaffWindow : Window, INotifyPropertyChanged
     {
-        public ObservableCollection<WorkerItem> Staff { get; set; }
+        private string _newWorkerName;
 
+        public ObservableCollection<WorkerItem> Staff { get; set; }
+        public string NewWorkerName
+        {
+            get => _newWorkerName;
+            set
+            {
+                _newWorkerName = value;
+                OnPropertyChanged();
+            }
+        }
+        public MessageProvider ErrorMessage { get; } = new();
+        public string SearchEntry { get; set; }
 
         public StaffWindow()
         {
@@ -59,6 +73,41 @@ namespace Cashbox.Visu
                 workers.Add(workerItem);
             }
             return workers;
+        }
+
+        private void AddWorker_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsEmptyName(NewWorkerName))
+                ErrorMessage.Message = "Пустое имя.";
+            else if (IsDublicate(NewWorkerName))
+                ErrorMessage.Message = "Такой сотрудник уже есть в базе.";
+            else
+            {
+                Worker newWorker = new() { Name = NewWorkerName, IsActive = true };
+                DB.Create(newWorker);
+                Staff.Add(new WorkerItem() { Name = newWorker.Name, Checked = newWorker.IsActive });
+                NewWorkerName = string.Empty;
+            }
+        }
+
+        private bool IsEmptyName(string name) => name?.Length == 0;
+
+        private bool IsDublicate(string name) => DB.GetWorker(name) != null;
+
+        private void NewWorkerNameField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ErrorMessage.Message = string.Empty;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private void SearhField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Staff = Staff.Where(w => w.Name == SearchEntry).ToList();
         }
     }
 }

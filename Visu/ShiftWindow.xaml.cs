@@ -63,6 +63,8 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+        public MessageProvider ErrorMessage { get; } = new();
+        public MessageProvider StatusMessage { get; } = new();
 
         public ShiftWindow(DateTime date, Mode mode, int version = 0)
         {
@@ -73,11 +75,16 @@ namespace Cashbox.Visu
                 if (Shift == null)
                 {
                     Shift = Shift.Create(DB.GetUser(Global.Session.UserId));
-                    var s = DB.GetPrevShift();
-
-                    Shift.StartDay = DB.GetPrevShift().EndDay;
+                    try
+                    {
+                        Shift.StartDay = DB.GetPrevShift().EndDay;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        Shift.StartDay = 0;
+                    }
                 }
-            }                
+            }
             else
                 Shift = DB.GetShift(date, version);
             UpdateValues();
@@ -104,20 +111,30 @@ namespace Cashbox.Visu
             return workers;
         }
 
-        private void SaveShift(object sender, RoutedEventArgs e)
+        private async void SaveShift(object sender, RoutedEventArgs e)
         {
-            switch (viewMode)
+            try
             {
-                case Mode.WatchOnly:
-                    break;
-                case Mode.EditVersion:
-                    DB.UpdateShift(Shift);
-                    break;
-                case Mode.NewVersion:
-                    DB.CreateShift(Shift);
-                    break;
-                default:
-                    break;
+                switch (viewMode)
+                {
+                    case Mode.WatchOnly:
+                        break;
+                    case Mode.EditVersion:
+                        DB.UpdateShift(Shift);
+                        break;
+                    case Mode.NewVersion:
+                        DB.CreateShift(Shift);
+                        break;
+                    default:
+                        break;
+                }
+                StatusMessage.Message = "Смена успешно сохранена.";
+                await Task.Delay(3000);
+                StatusMessage.Message = string.Empty;
+            }
+            catch (Exception)
+            {
+                ErrorMessage.Message = "Не удалось сохранить смену.";
             }
         }
 
@@ -177,6 +194,7 @@ namespace Cashbox.Visu
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
+            ErrorMessage.Message = string.Empty;
             string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             if (!WorkerExists(worker.Id))
@@ -191,12 +209,12 @@ namespace Cashbox.Visu
                 Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
         }
 
-        private bool WorkerExists(int id) => Shift.Staff.Exists(w => w.Id == id);       
+        private bool WorkerExists(int id) => Shift.Staff.Exists(w => w.Id == id);
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (!IsValidStaffList(Shift))
-                MessageBoxCustom.Show("В смене нет работников", MessageType.Error, MessageButtons.Ok);
+                ErrorMessage.Message = "В смене нет работников";
             else
                 MDDialogHost.OpenDialogCommand.Execute(null, null);
         }

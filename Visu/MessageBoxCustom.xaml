@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MessageBoxWindow" MinHeight="180" MinWidth="500" 
+        Title="MessageBoxWindow" MinHeight="180" MinWidth="500" MaxHeight="800" MaxWidth="800" 
         WindowStartupLocation="CenterScreen" WindowStyle="None" Background="White" 
         ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -27,7 +27,7 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <materialDesign:Card x:Name="cardHeader" 
@@ -43,11 +43,13 @@
                         <TextBlock x:Name="txtTitle" HorizontalAlignment="Center" VerticalAlignment="Stretch" Style="{DynamicResource MaterialDesignTitleTextBlock}" FontSize="20" >Message Title</TextBlock>
                     </StackPanel>
                 </materialDesign:Card>
+                
                 <StackPanel  HorizontalAlignment="Right" Margin="0,5,5,0"  VerticalAlignment="Top" Grid.Column="1">
                     <Button x:Name="btnClose" Click="btnClose_Click" Width="35" Height="35"  Background="White" Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignFloatingActionDarkButton}">
                         <materialDesign:PackIcon Kind="Close" />
                     </Button>
                 </StackPanel>
+                
                 <Grid Grid.Row="1" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="349*"/>
@@ -55,11 +57,11 @@
                     </Grid.ColumnDefinitions>
                     <Grid  Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
-                            <RowDefinition />
+                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="60"/>
                         </Grid.RowDefinitions>
 
-                        <TextBox x:Name="txtMessage" IsReadOnly="True" HorizontalAlignment="Center" Grid.Row="0" Margin="10" FontSize="15" TextWrapping="WrapWithOverflow"/>
+                        <TextBox x:Name="txtMessage" IsReadOnly="True" TextAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Margin="10" FontSize="15" TextWrapping="WrapWithOverflow"/>
 
                         <Grid Grid.Row="1" Margin="0,20,0,5">
                             <Grid.ColumnDefinitions>

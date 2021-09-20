@@ -13,13 +13,9 @@ namespace Cashbox.Model
         public static async Task<List<string>> GetUserNamesAsync()
         {
             using ApplicationContext db = new();
-            //bool canConnect = await db.Database.EnsureCreatedAsync();
-            //return await canConnect
-            //    ? (from user in db.Users
-            //            select user.Name).ToListAsync()
-            //    : null;
-            return await (from user in db.Users
-                          select user.Name).ToListAsync();
+            var userNames = await (from user in db.Users
+                                   select user.Name).ToListAsync();
+            return userNames.Count > 0 ? userNames : throw new InvalidOperationException("В базе отсутствуют пользователи.");
         }
 
         public static List<Worker> GetStaff()
@@ -59,7 +55,7 @@ namespace Cashbox.Model
         public static Shift GetShift(int id)
         {
             using ApplicationContext db = new();
-            Shift shift = (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User)
+            Shift shift = (from s in db.Shifts.Include(s => s.Staff)
                            where id == s.Id
                            orderby s.Version descending
                            select s).FirstOrDefault();
@@ -69,7 +65,7 @@ namespace Cashbox.Model
         public static Shift GetShift(DateTime date)
         {
             using ApplicationContext db = new();
-            return (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User).Include(s => s.User)
+            return (from s in db.Shifts.Include(s => s.Staff).Include(s => s.User)
                     where date.Date == s.CreatedAt
                     orderby s.Version descending
                     select s).FirstOrDefault();
@@ -78,7 +74,7 @@ namespace Cashbox.Model
         public static Shift GetShift(DateTime date, int version)
         {
             using ApplicationContext db = new();
-            return (from s in db.Shifts.Include(s => s.Staff).ThenInclude(i => i.User)
+            return (from s in db.Shifts.Include(s => s.Staff)
                     where date.Date == s.CreatedAt && s.Version == version
                     orderby s.Version descending
                     select s).FirstOrDefault();

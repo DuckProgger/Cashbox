@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:Cashbox.Visu"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:ShiftWindow}"           
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -18,6 +19,7 @@
         Title="ShiftWindow" Height="400" Width="450">
     <Window.Resources>
         <c:DifferenceConverter x:Key="DifferenceConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="MaterialDesignOutlinedTextBox" 
                BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
                TargetType="TextBox">
@@ -59,10 +61,10 @@
                             Grid.Column="1" 
                             Style="{StaticResource MaterialDesignFlatButton}" 
                             IsDefault="True" Click="SaveShift"
-                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>                  
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
                 </Grid>
             </StackPanel>
-        </md:DialogHost.DialogContent>     
+        </md:DialogHost.DialogContent>
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -71,13 +73,14 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="0.07*"/>
                 <RowDefinition Height="0.1*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.5*"/>
                     <RowDefinition/>
-                </Grid.RowDefinitions>                
+                </Grid.RowDefinitions>
 
                 <DataGrid Name="WorkersTable" 
                       Margin="10"
@@ -135,7 +138,29 @@
                      Cursor="Hand"
                      
                     Click="Button_Click"
-                    IsEnabled="{Binding EnableEntries}"/>         
+                    IsEnabled="{Binding EnableEntries}"/>
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock 
+                           Foreground="DarkRed" 
+                           TextAlignment="Center"
+                           DataContext="{Binding ErrorMessage}" 
+                           Text="{Binding Message}" 
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBlock Grid.Row="1"
+                           Foreground="DarkGreen" 
+                           TextAlignment="Center"
+                           DataContext="{Binding StatusMessage}" 
+                           Text="{Binding Message}" 
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            </Grid>
 
             <StackPanel Grid.Column="0"
                     Grid.Row="0"
@@ -234,7 +259,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-            </StackPanel>            
+            </StackPanel>
         </Grid>
 
     </md:DialogHost>

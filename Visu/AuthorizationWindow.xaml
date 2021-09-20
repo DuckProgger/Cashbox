@@ -11,7 +11,7 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
-        
+        d:DataContext="{d:DesignInstance Type=local:AuthorizationWindow}"            
         FontFamily="{DynamicResource MaterialDesignFont}"
         ResizeMode="NoResize"
         WindowStyle="None"
@@ -19,12 +19,15 @@
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
         AllowsTransparency="True"
-         Height="250" Width="500">
+         MaxHeight="290" Width="500">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     <Border BorderThickness="2" CornerRadius="30" BorderBrush="DarkGray" Background="#e3e3e3">
-        
+
         <Grid>
             <StackPanel  HorizontalAlignment="Center" Margin="0,5,5,0"  VerticalAlignment="Top" Grid.Column="1">
-                <Button x:Name="btnClose" Click="btnClose_Click" Width="35" Height="35"  Background="White" Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignFloatingActionDarkButton}">
+                <Button x:Name="btnClose" Click="ButtonClose_Click" Width="35" Height="35"  Background="White" Foreground="{DynamicResource PrimaryHueDarkBrush}" Style="{StaticResource MaterialDesignFloatingActionDarkButton}">
                     <materialDesign:PackIcon Kind="Close" />
                 </Button>
             </StackPanel>
@@ -51,7 +54,7 @@
                           SelectedIndex="0"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           SelectedValue="{Binding SelectedUser, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
-                          materialDesign:HintAssist.Hint="Пользователь" SelectionChanged="UserChanged"/>
+                          materialDesign:HintAssist.Hint="Пользователь" SelectionChanged="UserChanged"/>                    
                     <Button x:Name="OkButton"
                         MinHeight="50"
                         MinWidth="100"
@@ -62,6 +65,12 @@
                         IsDefault="True"
                         IsEnabled="{Binding OkButtonVis, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource MaterialDesignFlatButton}" Click="Ok_Click" Cursor="Hand"/>
+                    <TextBlock Foreground="DarkRed" 
+                               TextAlignment="Center"
+                               DataContext="{Binding ErrorMessage}" 
+                               Text="{Binding Message}" 
+                               Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               />
                 </StackPanel>
             </Border>
         </Grid>

@@ -5,28 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cashbox.Visu"
         mc:Ignorable="d"
-         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        d:DataContext="{d:DesignInstance Type=local:StaffWindow}"          
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"        
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto" 
         ResizeMode="CanMinimize"
          WindowStartupLocation="CenterScreen"
-        Title="WorkersWindow" Height="400" Width="400">
+        Title="WorkersWindow" Height="420" Width="400">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+        
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.3*"/>
             <RowDefinition Height="2*"/>
-            <RowDefinition/>
+            <RowDefinition Height="1.1*"/>
         </Grid.RowDefinitions>
         
-        <TextBox Text="{Binding SearchEntry}" materialDesign:HintAssist.Hint="Поиск"/>
+        <TextBox Text="{Binding SearchEntry}" 
+                 materialDesign:HintAssist.Hint="Поиск"
+                 TextChanged="SearhField_TextChanged"/>
         
         <DataGrid Name="WorkersTable" 
                   Grid.Row="1"
                       Margin="10"
-                      ItemsSource="{Binding Staff}"
+                      ItemsSource="{Binding Staff, Mode=TwoWay}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       Background="White"
@@ -59,5 +66,22 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <GroupBox Header="Добавить сотрудника:" Grid.Row="2">
+            <StackPanel>
+                <TextBox Text="{Binding NewWorkerName}" 
+                         Height="30" 
+                         materialDesign:HintAssist.Hint="Имя"
+                         TextChanged="NewWorkerNameField_TextChanged"/>
+                <TextBlock 
+                           Foreground="DarkRed" 
+                           TextAlignment="Center"
+                           DataContext="{Binding ErrorMessage}" 
+                           Text="{Binding Message}" 
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Button Content="Добавить" Click="AddWorker_Click"/>
+            </StackPanel>           
+            
+        </GroupBox>
     </Grid>
 </Window>

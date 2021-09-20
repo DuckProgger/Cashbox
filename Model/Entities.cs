@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cashbox.Model
@@ -11,18 +12,19 @@ namespace Cashbox.Model
         public string Name { get; set; }
 
         public Permissions Permissions { get; set; }
-        public List<Worker> Staff { get; set; }
+        //public List<Worker> Staff { get; set; }
         public List<Shift> Shifts { get; set; }
     }
 
     public class Worker
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public bool IsActive { get; set; }
 
-        public int UserId { get; set; }
-        public User User { get; set; }
+        //public int UserId { get; set; }
+        //public User User { get; set; }
         public List<Shift> Shifts { get; set; }
         public List<Salary> Salaries { get; set; }
     }
