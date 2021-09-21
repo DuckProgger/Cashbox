@@ -1,31 +1,29 @@
-﻿<Window x:Class="Cashbox.Visu.SalaryLogWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl x:Class="Cashbox.Visu.SalaryLogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
         xmlns:local="clr-namespace:Cashbox.Visu"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        d:DataContext="{d:DesignInstance Type=local:SalaryLogView}"               
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto" 
-        ResizeMode="CanMinimize"
         mc:Ignorable="d"
-         WindowStartupLocation="CenterScreen"
-        Title="SalaryLogWindow" Height="400" Width="800">
-    <Window.Resources>
+        d:DesignHeight="400" d:DesignWidth="800">
+    <UserControl.Resources>
         <c:DateConverterToFirstDay x:Key="DateConverterFirstDay"/>
         <c:DateConverterToLastDay x:Key="DateConverterLastDay"/>
-    </Window.Resources>   
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.7*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListView Name="SalaryLogView"                  
-                  Grid.Column="1"
+        <ListView Grid.Column="1"
                   ItemsSource="{Binding SalaryLog}"                  >
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
@@ -92,7 +90,7 @@
 
             </GroupBox>
 
-            <GroupBox Header="Заработная плата" Grid.Row="1">               
+            <GroupBox Header="Заработная плата" Grid.Row="1">
                 <StackPanel Grid.Row="2">
                     <!--<TextBlock Text="Выбор сотрудника:"/>-->
                     <ComboBox ItemsSource="{Binding Staff}" 
@@ -106,4 +104,4 @@
         </Grid>
     </Grid>
 
-</Window>
+</UserControl>

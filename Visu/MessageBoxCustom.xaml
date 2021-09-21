@@ -13,7 +13,8 @@
         TextElement.FontSize="10"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"        
-        FontFamily="{DynamicResource MaterialDesignFont}"         >
+        FontFamily="{DynamicResource MaterialDesignFont}"     
+        SizeToContent="WidthAndHeight">
     <Border BorderThickness="1" BorderBrush="Black">
         <materialDesign:TransitioningContent>
             <materialDesign:TransitioningContent.OpeningEffects >

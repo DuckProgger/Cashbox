@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.Visu
 {
-    public class WorkerView
+    public class WorkerViewItem
     {
         /// <summary>
         /// Отмечен в смене.

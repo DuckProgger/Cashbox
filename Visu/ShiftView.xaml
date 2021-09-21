@@ -1,4 +1,4 @@
-﻿<Window x:Class="Cashbox.Visu.ShiftWindow"
+﻿<UserControl x:Class="Cashbox.Visu.ShiftView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,17 +7,15 @@
         xmlns:local="clr-namespace:Cashbox.Visu"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:ShiftWindow}"           
+        d:DataContext="{d:DesignInstance Type=local:ShiftView}"           
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto" 
-        ResizeMode="CanMinimize"
-         WindowStartupLocation="CenterScreen"
-        Title="ShiftWindow" Height="400" Width="450">
-    <Window.Resources>
+        d:DesignHeight="400" d:DesignWidth="450">
+    <UserControl.Resources>
         <c:DifferenceConverter x:Key="DifferenceConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="MaterialDesignOutlinedTextBox" 
@@ -41,7 +39,7 @@
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
-    </Window.Resources>
+    </UserControl.Resources>
 
     <md:DialogHost>
         <md:DialogHost.DialogContent>
@@ -66,7 +64,7 @@
             </StackPanel>
         </md:DialogHost.DialogContent>
 
-        <Grid>
+        <Grid Background="AliceBlue">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -84,10 +82,10 @@
 
                 <DataGrid Name="WorkersTable" 
                       Margin="10"
+                      Background="AliceBlue"
                       ItemsSource="{Binding Staff}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
-                      Background="White"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="5"
                       materialDesign:DataGridAssist.CornerRadius="5"
                       BorderThickness="1"
@@ -145,7 +143,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                
+
                 <TextBlock 
                            Foreground="DarkRed" 
                            TextAlignment="Center"
@@ -169,7 +167,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Наличные:"
                            Style="{StaticResource MyTextBlock}"/>
-                        <TextBox Padding="5" 
+                        <TextBox Padding="5"                            
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
@@ -185,7 +183,7 @@
                              Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}"/>
+                             IsEnabled="{Binding EnableEntries}" Cursor="IBeam"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -263,5 +261,4 @@
         </Grid>
 
     </md:DialogHost>
-
-</Window>
+</UserControl>

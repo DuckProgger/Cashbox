@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.Visu
 {
-    public class SalaryView
+    public class SalaryViewItem
     {
         public string Date { get; set; }
         public string Name { get; set; }

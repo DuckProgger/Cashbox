@@ -41,12 +41,12 @@ namespace Cashbox.Visu
 
         private void WatchShift_Click(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(selectedDate, Mode.WatchOnly, selectedVersion).Show();
+            new PopupWindow(new ShiftView(selectedDate, Mode.WatchOnly, selectedVersion)).Show();
         }
 
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(selectedDate, Mode.EditVersion, selectedVersion).Show();
+            new PopupWindow(new ShiftView(selectedDate, Mode.EditVersion, selectedVersion)).Show();
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)

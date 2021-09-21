@@ -16,9 +16,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
 namespace Cashbox.Visu
-{
-    public partial class LogWindow : Window, INotifyPropertyChanged
+{   
+    public partial class ShiftLogView : UserControl, INotifyPropertyChanged
     {
         private DateTime selectedShiftDate;
         private int _salary;
@@ -84,7 +85,7 @@ namespace Cashbox.Visu
             }
         }
 
-        public LogWindow()
+        public ShiftLogView()
         {
             InitializeComponent();
             DataContext = this;
@@ -110,18 +111,17 @@ namespace Cashbox.Visu
 
         private void VersionHistory_Click(object sender, RoutedEventArgs e)
         {
-            VersionHistoryWindow versionHistoryWindow = new(selectedShiftDate) { Owner = this };
-            versionHistoryWindow.Show();
+            new VersionHistoryWindow(selectedShiftDate).Show();
         }
 
         private void WatchShift_Click(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(selectedShiftDate, Mode.WatchOnly).Show();
+            new PopupWindow(new ShiftView(selectedShiftDate, Mode.WatchOnly)).Show();
         }
 
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
-            new ShiftWindow(selectedShiftDate, Mode.EditVersion).Show();
+            new PopupWindow(new ShiftView(selectedShiftDate, Mode.EditVersion)).Show();
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
@@ -179,11 +179,6 @@ namespace Cashbox.Visu
             Start = Formatter.ReturnToMiddleOfMonth(Start);
             Start = Start.AddDays(1);
             End = Formatter.ReturnToEndOfMonth(End);
-        }
-
-        private void ShowSalaryLog(object sender, RoutedEventArgs e)
-        {
-            new SalaryLogWindow().Show();
         }
 
         private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end) => DB.GetSalaries(workerId, start, end).Count == 0;

@@ -3,27 +3,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Cashbox"
-        mc:Ignorable="d"        
-         WindowStartupLocation="CenterScreen"
+        xmlns:local="clr-namespace:Cashbox.Visu"
+        mc:Ignorable="d" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"        
+        d:DataContext="{d:DesignInstance Type=local:MainWindow}"   
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="CanMinimize"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="ExpanderStyle" TargetType="Expander">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="IsExpanded" Value="True"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="False">
+                    <Setter Property="IsExpanded" Value="False"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Button Click="OpenShiftWindow" Cursor="Hand" Margin="10" Content="Смена"/>
-        <Button Click="OpenLogWindow" Cursor="Hand" Grid.Column="1" Margin="10" Content="Журнал"/>
-        <Button Click="OpenStaffWindow" Cursor="Hand" Grid.Column="2" Margin="10" Content="Сотрудники"/>
-        <Button Click="ChangeUser" Cursor="Hand" Grid.Column="3" Margin="10" Content="Смена пользователя"/>
+        <Expander ExpandDirection="Right" IsExpanded="True" MouseEnter="Expander_MouseEnter" MouseLeave="Expander_MouseLeave">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top">
+                    <Button Click="OpenShiftView" Cursor="Hand" Margin="10" Content="Смена"/>
+                    <Button Click="OpenLogView" Cursor="Hand" Grid.Row="1" Margin="10" Content="Журнал смен"/>
+                    <Button Click="OpenSalaryLogView" Cursor="Hand" Grid.Row="1" Margin="10" Content="Журнал зарплат"/>
+                    <Button Click="OpenStaffView" Cursor="Hand" Grid.Row="2" Margin="10" Content="Сотрудники"/>
+                </StackPanel>
+                <Button DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Click="ChangeUser" Cursor="Hand" Grid.Row="3" Margin="10" Content="Смена пользователя"/>
+
+            </DockPanel>
+        </Expander>
+           
+        
+
+
+        <ContentControl Grid.Column="1" Content="{Binding CurrentView}"/>
+
     </Grid>
 </Window>

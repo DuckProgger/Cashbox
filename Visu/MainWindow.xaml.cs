@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,34 +20,61 @@ namespace Cashbox.Visu
 {
     public enum Mode : int { WatchOnly, EditVersion, NewVersion }
 
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public MainWindow() { InitializeComponent(); }
+        private object _currentView;
+        private readonly ShiftLogView logView = new();
+        private readonly StaffView staffView = new();
+        private readonly SalaryLogView salaryLogView = new();
 
-        private void OpenShiftWindow(object sender, RoutedEventArgs e)
+
+        public object CurrentView
         {
-            new ShiftWindow(DateTime.Today, Mode.NewVersion).Show();
+            get => _currentView;
+            set
+            {
+                _currentView = value;
+                OnPropertyChanged();
+            }
         }
 
-        private void OpenLogWindow(object sender, RoutedEventArgs e)
+        public MainWindow()
         {
-            new LogWindow().Show();
+            InitializeComponent();
+            DataContext = this;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            DB.RemoveSession(Global.Session.Id);
-        }
+        private void OpenShiftView(object sender, RoutedEventArgs e) => CurrentView = new ShiftView(DateTime.Today, Mode.NewVersion);
 
-        private void OpenStaffWindow(object sender, RoutedEventArgs e)
-        {
-            new StaffWindow().Show();
-        }
+        private void OpenLogView(object sender, RoutedEventArgs e) => CurrentView = logView;
+
+        protected override void OnClosing(CancelEventArgs e) => DB.RemoveSession(Global.Session.Id);
+
+        private void OpenStaffView(object sender, RoutedEventArgs e) => CurrentView = staffView;
+
+        private void OpenSalaryLogView(object sender, RoutedEventArgs e) => CurrentView = salaryLogView;
 
         private void ChangeUser(object sender, RoutedEventArgs e)
         {
             new AuthorizationWindow().Show();
             Close();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private void Expander_MouseEnter(object sender, MouseEventArgs e)
+        {
+            (sender as Expander).IsExpanded = true;
+        }
+
+        private void Expander_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (CurrentView != null)
+                (sender as Expander).IsExpanded = false;
         }
     }
 }

@@ -18,7 +18,10 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    public partial class SalaryLogWindow : Window, INotifyPropertyChanged
+    /// <summary>
+    /// Логика взаимодействия для SalaryLogView.xaml
+    /// </summary>
+    public partial class SalaryLogView : UserControl, INotifyPropertyChanged
     {
         private int _totalSalary;
         private string _selectedWorkerName;
@@ -30,7 +33,7 @@ namespace Cashbox.Visu
 
 
         public Permissions Permissions { get; private set; }
-        public ObservableCollection<SalaryView> SalaryLog { get; set; } = new();
+        public ObservableCollection<SalaryViewItem> SalaryLog { get; set; } = new();
         public ObservableCollection<string> Staff { get; set; } = new();
         public DateTime Start
         {
@@ -86,7 +89,7 @@ namespace Cashbox.Visu
             }
         }
 
-        public SalaryLogWindow()
+        public SalaryLogView()
         {
             InitializeComponent();
             DataContext = this;
@@ -158,7 +161,7 @@ namespace Cashbox.Visu
                         var salariesPerMonth = from s in dictItem.Value
                                                group s by s.StartPeriod.Month
                                                 into sg
-                                               select new SalaryView()
+                                               select new SalaryViewItem()
                                                {
                                                    Name = DB.GetWorker(dictItem.Key).Name, // ключ словаря - это Id работника
                                                    Salary = sg.Sum(s => s.Money),
