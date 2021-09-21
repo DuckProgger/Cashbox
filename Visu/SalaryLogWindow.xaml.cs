@@ -30,7 +30,7 @@ namespace Cashbox.Visu
 
 
         public Permissions Permissions { get; private set; }
-        public ObservableCollection<SalaryItem> SalaryLog { get; set; } = new();
+        public ObservableCollection<SalaryView> SalaryLog { get; set; } = new();
         public ObservableCollection<string> Staff { get; set; } = new();
         public DateTime Start
         {
@@ -158,7 +158,7 @@ namespace Cashbox.Visu
                         var salariesPerMonth = from s in dictItem.Value
                                                group s by s.StartPeriod.Month
                                                 into sg
-                                               select new SalaryItem()
+                                               select new SalaryView()
                                                {
                                                    Name = DB.GetWorker(dictItem.Key).Name, // ключ словаря - это Id работника
                                                    Salary = sg.Sum(s => s.Money),

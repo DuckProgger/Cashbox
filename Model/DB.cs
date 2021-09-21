@@ -21,7 +21,7 @@ namespace Cashbox.Model
         public static List<Worker> GetStaff()
         {
             using ApplicationContext db = new();
-            return db.Staff/*.Include(w => w.Shifts).Include(w => w.User)*/.ToList();
+            return db.Staff.OrderBy(w => w.Name).ToList();
         }
 
         public static Worker GetWorker(string name)

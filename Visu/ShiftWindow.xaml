@@ -164,7 +164,7 @@
 
             <StackPanel Grid.Column="0"
                     Grid.Row="0"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center" Cursor="IBeam">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Наличные:"

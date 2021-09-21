@@ -18,14 +18,13 @@ using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    /// <summary>
-    /// Логика взаимодействия для WorkersWindow.xaml
-    /// </summary>
     public partial class StaffWindow : Window, INotifyPropertyChanged
     {
         private string _newWorkerName;
+        private string _searchEntry;
+        private readonly CollectionView view;
 
-        public ObservableCollection<WorkerItem> Staff { get; set; }
+        public ObservableCollection<WorkerView> Staff { get; set; }
         public string NewWorkerName
         {
             get => _newWorkerName;
@@ -36,18 +35,29 @@ namespace Cashbox.Visu
             }
         }
         public MessageProvider ErrorMessage { get; } = new();
-        public string SearchEntry { get; set; }
-
+        public string SearchEntry
+        {
+            get => _searchEntry;
+            set
+            {
+                _searchEntry = value;
+                view.Refresh();
+            }
+        }
         public StaffWindow()
         {
             InitializeComponent();
             DataContext = this;
             Staff = new(GetWorkerItems());
+            view = (CollectionView)CollectionViewSource.GetDefaultView(Staff);
+            view.Filter = WorkersFilter;
         }
+
+        private bool WorkersFilter(object item) => string.IsNullOrEmpty(SearchEntry) || (item as WorkerView).Name.Contains(SearchEntry, StringComparison.OrdinalIgnoreCase);
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
+            string selectedName = ((WorkerView)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             worker.IsActive = true;
             DB.UpdateWorker(worker);
@@ -55,18 +65,18 @@ namespace Cashbox.Visu
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
+            string selectedName = ((WorkerView)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             worker.IsActive = false;
             DB.UpdateWorker(worker);
         }
 
-        public List<WorkerItem> GetWorkerItems()
+        public static List<WorkerView> GetWorkerItems()
         {
-            List<WorkerItem> workers = new();
+            List<WorkerView> workers = new();
             foreach (Worker worker in DB.GetStaff())
             {
-                WorkerItem workerItem = new() { Name = worker.Name };
+                WorkerView workerItem = new() { Name = worker.Name };
                 // Поставить галочки действующим работникам.
                 if (worker.IsActive)
                     workerItem.Checked = true;
@@ -85,14 +95,14 @@ namespace Cashbox.Visu
             {
                 Worker newWorker = new() { Name = NewWorkerName, IsActive = true };
                 DB.Create(newWorker);
-                Staff.Add(new WorkerItem() { Name = newWorker.Name, Checked = newWorker.IsActive });
+                Staff.Add(new WorkerView() { Name = newWorker.Name, Checked = newWorker.IsActive });
                 NewWorkerName = string.Empty;
             }
         }
 
-        private bool IsEmptyName(string name) => name?.Length == 0;
+        private static bool IsEmptyName(string name) => name?.Length == 0;
 
-        private bool IsDublicate(string name) => DB.GetWorker(name) != null;
+        private static bool IsDublicate(string name) => DB.GetWorker(name) != null;
 
         private void NewWorkerNameField_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -103,11 +113,6 @@ namespace Cashbox.Visu
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
-        private void SearhField_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            Staff = Staff.Where(w => w.Name == SearchEntry).ToList();
         }
     }
 }

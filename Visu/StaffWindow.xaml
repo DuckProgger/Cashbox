@@ -23,15 +23,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.3*"/>
             <RowDefinition Height="2*"/>
-            <RowDefinition Height="1.1*"/>
+            <RowDefinition Height="1.2*"/>
         </Grid.RowDefinitions>
         
-        <TextBox Text="{Binding SearchEntry}" 
-                 materialDesign:HintAssist.Hint="Поиск"
-                 TextChanged="SearhField_TextChanged"/>
+        <TextBox Text="{Binding SearchEntry, UpdateSourceTrigger=PropertyChanged}" 
+                 materialDesign:HintAssist.Hint="Поиск" Cursor="IBeam"/>
         
-        <DataGrid Name="WorkersTable" 
-                  Grid.Row="1"
+        <DataGrid     Grid.Row="1"
                       Margin="10"
                       ItemsSource="{Binding Staff, Mode=TwoWay}"
                       AutoGenerateColumns="False"
@@ -72,7 +70,9 @@
                 <TextBox Text="{Binding NewWorkerName}" 
                          Height="30" 
                          materialDesign:HintAssist.Hint="Имя"
-                         TextChanged="NewWorkerNameField_TextChanged"/>
+                         TextChanged="NewWorkerNameField_TextChanged"
+                         Padding="5"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"/>
                 <TextBlock 
                            Foreground="DarkRed" 
                            TextAlignment="Center"

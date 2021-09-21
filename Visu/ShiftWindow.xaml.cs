@@ -33,7 +33,7 @@ namespace Cashbox.Visu
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
         private readonly Mode viewMode;
 
-        public ObservableCollection<WorkerItem> Staff { get; private set; }
+        public ObservableCollection<WorkerView> Staff { get; private set; }
         public Shift Shift { get; set; }
         public bool EnableEntries => viewMode != Mode.WatchOnly;
         public int Total
@@ -94,14 +94,14 @@ namespace Cashbox.Visu
         }
 
 
-        public List<WorkerItem> GetWorkerItems(Shift shift)
+        public List<WorkerView> GetWorkerItems(Shift shift)
         {
-            List<WorkerItem> workers = new();
+            List<WorkerView> workers = new();
             foreach (Worker worker in DB.GetStaff())
             {
                 if (worker.IsActive)
                 {
-                    WorkerItem workerItem = new() { Name = worker.Name };
+                    WorkerView workerItem = new() { Name = worker.Name };
                     // Поставить галочки работникам, которые были в смене.
                     if (shift.Staff != null && WorkerExists(worker.Id))
                         workerItem.Checked = true;
@@ -195,7 +195,7 @@ namespace Cashbox.Visu
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             ErrorMessage.Message = string.Empty;
-            string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
+            string selectedName = ((WorkerView)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             if (!WorkerExists(worker.Id))
                 Shift.Staff.Add(worker);
@@ -203,7 +203,7 @@ namespace Cashbox.Visu
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            string selectedName = ((WorkerItem)(sender as CheckBox).DataContext).Name;
+            string selectedName = ((WorkerView)(sender as CheckBox).DataContext).Name;
             Worker worker = DB.GetWorker(selectedName);
             if (WorkerExists(worker.Id))
                 Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
