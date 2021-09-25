@@ -1,39 +1,15 @@
-﻿using Cashbox.Model;
-using OfficeOpenXml;
-using OfficeOpenXml.Attributes;
-using System;
+﻿using OfficeOpenXml;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.Services
 {
     public class ExcelFileService<T> : IFileService<T>
     {
-        //private const string workSheetName = "Смены";
-        //public static void SaveFile(string filename, List<Shift> data)
-        //{
-        //    using ExcelPackage package = new(new FileInfo(filename));
-        //    ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[workSheetName];
-        //    if (excelWorksheet == null)
-        //    {
-        //        List<string> descriptions = GetDescriptions<ShiftExcelItem>();
-        //        excelWorksheet = package.Workbook.Worksheets.Add(workSheetName);
-        //        for (int i = 0; i < descriptions.Count; i++)
-        //            excelWorksheet.Cells[1, i + 1].Value = descriptions[i];
-        //        List<ShiftExcelItem> collection = new();
-        //        foreach (var item in data)
-        //            collection.Add(ShiftExcelItem.ConvertFromShift(item));
-        //        //collection.Add(new() { CreatedAt = DateTime.Now });
-        //        excelWorksheet.Cells["A2"].LoadFromCollection(collection, false);
-        //    }
-        //    package.Save();
-        //}
+        public string Description => "Excel files";
+        public string Extension => "xlsx";
 
         public void SaveFile(string filename, List<T> data)
         {

@@ -97,8 +97,8 @@ namespace Cashbox.Visu
             DataContext = this;
             Permissions = Permissions.GetAccesses(Global.Session.UserId);
             SetPrepaidPeriod(null, null);
-            dialogService = new DefaultDialog();
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
+            dialogService = new DefaultDialog(fileServices);
         }
 
         private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();
@@ -208,7 +208,6 @@ namespace Cashbox.Visu
                         collection.Add(ShiftExcelItem.ConvertFromShift(item));
                     fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, collection);
                 }
-
             }
             catch (Exception)
             {
