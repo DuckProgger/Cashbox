@@ -141,7 +141,11 @@
                         Content="Выдать ЗП"
                         IsEnabled="{Binding SalaryButtonVis}"
                          Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Margin="5"/>                        
+                            Margin="5" Cursor="Hand"/>
+                        <Button Click="Export_Click"
+                        Content="Экспорт Excel"
+                         Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="5" Cursor="Hand"/>
                     </StackPanel>
                 </GroupBox>
 

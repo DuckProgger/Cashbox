@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,11 +17,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-
 namespace Cashbox.Visu
-{   
+{
     public partial class ShiftLogView : UserControl, INotifyPropertyChanged
     {
+        #region privateProperties
         private DateTime selectedShiftDate;
         private int _salary;
         private bool _salaryButtonVis;
@@ -28,7 +29,11 @@ namespace Cashbox.Visu
         private DateTime _start;
         private DateTime _end;
         private bool _manualPeriodChecked = false;
+        private readonly IDialogService dialogService;
+        private readonly IFileService<ShiftExcelItem>[] fileServices;
+        #endregion
 
+        #region publicProperties
         public Permissions Permissions { get; private set; }
         public ObservableCollection<Shift> Log { get; set; } = new();
         public ObservableCollection<string> Staff { get; set; } = new();
@@ -84,6 +89,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+        #endregion
 
         public ShiftLogView()
         {
@@ -91,6 +97,8 @@ namespace Cashbox.Visu
             DataContext = this;
             Permissions = Permissions.GetAccesses(Global.Session.UserId);
             SetPrepaidPeriod(null, null);
+            dialogService = new DefaultDialog();
+            fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
         }
 
         private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();
@@ -187,6 +195,26 @@ namespace Cashbox.Visu
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (dialogService.SaveFileDialog())
+                {
+                    List<ShiftExcelItem> collection = new();
+                    foreach (Shift item in Log)
+                        collection.Add(ShiftExcelItem.ConvertFromShift(item));
+                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, collection);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

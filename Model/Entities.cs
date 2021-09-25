@@ -1,5 +1,7 @@
-﻿using System;
+﻿using OfficeOpenXml.Attributes;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,76 +33,55 @@ namespace Cashbox.Model
 
     public class Shift
     {
+        [EpplusIgnore]
         public int Id { get; set; }
 
-        /// <summary>
-        /// Версия смены.
-        /// </summary>
+        [Description("Версия смены")]
         public int Version { get; set; }
-
-        /// <summary>
-        /// Дата создания.
-        /// </summary>
+        
+        [Description("Дата создания")]
         [Column(TypeName = "date")]
         public DateTime CreatedAt { get; set; }
 
-        /// <summary>
-        /// Дата и время последнего изменения.
-        /// </summary>
+        [Description("Дата и время последнего изменения")]
         public DateTime LastModified { get; set; }
 
-        /// <summary>
-        /// Наличные.
-        /// </summary>
+        [Description("Наличные")]
         public int Cash { get; set; }
-
-        /// <summary>
-        /// Терминал.
-        /// </summary>
+      
+        [Description("Терминал")]
         public int Terminal { get; set; }
 
-        /// <summary>
-        /// Расходы.
-        /// </summary>
+        [Description("Расходы")]
         public int Expenses { get; set; }
 
-        /// <summary>
-        /// Сумма на начало дня.
-        /// </summary>
+        [Description("Сумма на начало дня")]
         public int StartDay { get; set; }
 
-        /// <summary>
-        /// Сумма на конец дня.
-        /// </summary>
+        [Description("Сумма на конец дня")]
         public int EndDay { get; set; }
 
-        /// <summary>
-        /// Сдано денег.
-        /// </summary>
+        [Description("Сдано денег")]
         public int HandedOver { get; set; }
 
-        /// <summary>
-        /// Общая выручка.
-        /// </summary>
+        [Description("Общая выручка")]
         public int Total { get; set; }
 
-        /// <summary>
-        /// Расхождение.
-        /// </summary>
+        [Description("Расхождение")]
         public int Difference { get; set; }
 
-        /// <summary>
-        /// Комментарий.
-        /// </summary>
+        [Description("Комментарий")]
         [Column(TypeName = "nvarchar(200)")]
         public string Comment { get; set; }
 
         /// <summary>
         /// Сотрудники смены.
         /// </summary>
+        [EpplusIgnore]
         public List<Worker> Staff { get; set; } = new();
-
+        [EpplusIgnore]
         public int UserId { get; set; }
+        [EpplusIgnore]
         public User User { get; set; }
 
         public static Shift Create(User user) => new() { User = user, };
