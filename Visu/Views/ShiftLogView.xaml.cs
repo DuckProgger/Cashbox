@@ -11,11 +11,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
@@ -107,8 +102,8 @@ namespace Cashbox.Visu
         }
         public MessageProvider ErrorMessage { get; } = new();
         public MessageProvider StatusMessage { get; } = new();
-        public bool SalaryButtonsVis => SelectedWorker != null;
-        public bool ExportButtonVis => Log != null && Log.Count > 0;
+        public bool SalaryButtonsVis => !string.IsNullOrEmpty(SelectedWorker);
+        public bool ExportButtonVis => Log?.Count > 0;
         #endregion
 
         public ShiftLogView()

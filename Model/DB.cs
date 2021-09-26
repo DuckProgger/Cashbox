@@ -218,18 +218,6 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
-        //public static List<Shift> GetShiftLog(DateTime begin, DateTime end, string workerNameFilter)
-        //{
-        //    using ApplicationContext db = new();
-        //    return (from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
-        //            where shift.CreatedAt >= begin && shift.CreatedAt <= end && shift.Staff.Find(w => w.Name == workerNameFilter) != null
-        //            orderby shift.CreatedAt descending, shift.Version descending
-        //            group shift by shift.CreatedAt
-        //                  into gr
-        //            let s = gr.FirstOrDefault()
-        //            select s).ToList();
-        //}
-
         public static List<Shift> GetShiftVersions(DateTime date)
         {
             using ApplicationContext db = new();

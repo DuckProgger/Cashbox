@@ -18,6 +18,7 @@
     <UserControl.Resources>
         <c:DateConverterToFirstDay x:Key="DateConverterFirstDay"/>
         <c:DateConverterToLastDay x:Key="DateConverterLastDay"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -98,6 +99,19 @@
                           SelectedValue="{Binding SelectedWorkerName, UpdateSourceTrigger=PropertyChanged}"
                           SelectionChanged="ComboBox_SelectionChanged" materialDesign:HintAssist.Hint="Выбор сотрудника:"/>
                     <CheckBox Content="Объединять в месяц" IsChecked="{Binding CombinePerMonth, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock 
+                           Foreground="DarkRed" 
+                           TextAlignment="Center"
+                           DataContext="{Binding ErrorMessage}" 
+                           Text="{Binding Message}" 
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />   
+                    </Grid>
                 </StackPanel>
             </GroupBox>
 
