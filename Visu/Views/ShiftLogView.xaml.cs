@@ -57,15 +57,6 @@ namespace Cashbox.Visu
                 _end = value; OnPropertyChanged();
             }
         }
-        public bool ButtonsVis
-        {
-            get => _buttonsVis;
-            set
-            {
-                _buttonsVis = value;
-                OnPropertyChanged();
-            }
-        }
         public int Salary
         {
             get => _salary;
@@ -113,7 +104,8 @@ namespace Cashbox.Visu
         }
         public MessageProvider ErrorMessage { get; } = new();
         public MessageProvider StatusMessage { get; } = new();
-
+        public bool SalaryButtonsVis => SelectedWorker != null;
+        public bool ExportButtonVis => Log != null && Log.Count > 0;
         #endregion
 
         public ShiftLogView()
@@ -126,36 +118,45 @@ namespace Cashbox.Visu
             dialogService = new DefaultDialog(fileServices);
         }
 
-        private void Button_GetLog(object sender, RoutedEventArgs e) => UpdateLog();
+        private void Button_GetLog(object sender, RoutedEventArgs e)
+        {
+            UpdateLog(Start, End);
+            UpdateStaffComboBox(Log);
+            //SelectedWorker = Staff.Count > 0 ? Staff[0] : null;
+        }
 
-        private void UpdateLog()
+        private void UpdateLog(DateTime start, DateTime end)
         {
             Log.Clear();
-            Staff.Clear();
-            foreach (var item in DB.GetShiftLog(Start, End))
-            {
+            foreach (var item in DB.GetShiftLog(start, end))
                 Log.Add(item);
+            OnPropertyChanged(nameof(ExportButtonVis));
+        }
+
+        private void UpdateLog(DateTime start, DateTime end, string workerNameFilter)
+        {
+            Log.Clear();
+            foreach (var item in DB.GetShiftLog(start, end, workerNameFilter))
+                Log.Add(item);
+            OnPropertyChanged(nameof(ExportButtonVis));
+        }
+
+        private void UpdateStaffComboBox(IEnumerable<Shift> shifts)
+        {
+            Staff.Clear();
+            foreach (var item in shifts)
+            {
                 foreach (var worker in item.Staff)
                     if (!Staff.Contains(worker.Name))
                         Staff.Add(worker.Name);
             }
-            SelectedWorker = Staff.Count > 0 ? Staff[0] : null;
         }
 
-        private void VersionHistory_Click(object sender, RoutedEventArgs e)
-        {
-            new VersionHistoryWindow(selectedShiftDate).Show();
-        }
+        private void VersionHistory_Click(object sender, RoutedEventArgs e) => new VersionHistoryWindow(selectedShiftDate).Show();
 
-        private void WatchShift_Click(object sender, RoutedEventArgs e)
-        {
-            new PopupWindow(new ShiftView(selectedShiftDate, Mode.WatchOnly)).Show();
-        }
+        private void WatchShift_Click(object sender, RoutedEventArgs e) => new PopupWindow(new ShiftView(selectedShiftDate, Mode.WatchOnly)).Show();
 
-        private void EditShift_Click(object sender, RoutedEventArgs e)
-        {
-            new PopupWindow(new ShiftView(selectedShiftDate, Mode.EditVersion)).Show();
-        }
+        private void EditShift_Click(object sender, RoutedEventArgs e) => new PopupWindow(new ShiftView(selectedShiftDate, Mode.EditVersion)).Show();
 
         private void DialogOk_Click(object sender, RoutedEventArgs e)
         {
@@ -163,32 +164,25 @@ namespace Cashbox.Visu
             {
                 case removeQuestion:
                     DB.RemoveShift(selectedShiftDate);
-                    UpdateLog();
+                    UpdateLog(Start, End, SelectedWorker);
                     break;
                 case issueQuestion:
                     IssueSalary();
                     break;
                 default:
                     break;
-            }           
+            }
         }
 
-        private void ListViewItem_Selected(object sender, RoutedEventArgs e)
-        {
-            selectedShiftDate = ((Shift)(sender as ListViewItem).Content).CreatedAt.Date; ;
-        }
+        private void ListViewItem_Selected(object sender, RoutedEventArgs e) => selectedShiftDate = ((sender as ListViewItem).Content as Shift).CreatedAt.Date;
 
-        private void CalculateSalary_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxCustom.Show(Global.CalculateSalary(Log.ToList()).ToString(), MessageType.Info, MessageButtons.Ok);
-        }
+        private void CalculateSalary_Click(object sender, RoutedEventArgs e) => MessageBoxCustom.Show(Global.CalculateSalary(Log.ToList()).ToString(), MessageType.Info, MessageButtons.Ok);
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ButtonsVis = sender != null;
-            foreach (var item in Log.ToList())
-                if (item.Staff.Find(w => w.Name == SelectedWorker) == null)
-                    Log.Remove(item);
+            OnPropertyChanged(nameof(SalaryButtonsVis));
+            if (SelectedWorker != null)
+                UpdateLog(Start, End, SelectedWorker);
         }
 
         private void IssueSalary()
@@ -225,7 +219,7 @@ namespace Cashbox.Visu
         }
 
         private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end) => DB.GetSalaries(workerId, start, end).Count == 0;
-       
+
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -262,6 +256,5 @@ namespace Cashbox.Visu
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-
     }
 }

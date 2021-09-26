@@ -35,7 +35,7 @@
                                      Grid.Row="0" 
                                      Padding="10" 
                                      Margin="0" 
-                                     materialDesign:ShadowAssist.ShadowDepth="Depth3"   
+                                     materialDesign:ShadowAssist.ShadowDepth="Depth2"   
                                      Background="{DynamicResource PrimaryHueMidBrush}" 
                                      Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}" 
                                      Visibility="Visible" Grid.ColumnSpan="2"
