@@ -23,12 +23,13 @@
     <UserControl.Resources>
         <c:DateConverter x:Key="DateConverter"/>
         <c:StaffConverter x:Key="StaffConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
 
     <md:DialogHost>
         <md:DialogHost.DialogContent>
             <StackPanel Margin="20" MinWidth="300">
-                <TextBlock Text="Удалить смену?" />
+                <TextBlock Text="{Binding DialogQuestion}" />
                 <Grid Margin="0,10,0,-10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -39,10 +40,10 @@
                             Style="{StaticResource MaterialDesignFlatAccentButton}" 
                             IsCancel="True" 
                             Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
-                    <Button Content="Удалить" 
+                    <Button Content="{Binding DialogConfirmButtonText}" 
                             Grid.Column="1" 
                             Style="{StaticResource MaterialDesignFlatButton}" 
-                            IsDefault="True" Click="Remove_Click"
+                            IsDefault="True" Click="DialogOk_Click"
                             Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
                 </Grid>
             </StackPanel>
@@ -68,7 +69,7 @@
                     <ContextMenu>
                         <MenuItem Header="Открыть" Click="WatchShift_Click"/>
                         <MenuItem Header="Редактировать" Click="EditShift_Click" IsEnabled="{Binding Permissions.IsAdmin}"/>
-                        <MenuItem Header="Удалить" IsEnabled="{Binding Permissions.IsAdmin}" Command="{x:Static md:DialogHost.OpenDialogCommand}"/>
+                        <MenuItem Header="Удалить" IsEnabled="{Binding Permissions.IsAdmin}" Click="RemoveShift_Click" Command="{x:Static md:DialogHost.OpenDialogCommand}"/>
                         <MenuItem Header="История версий" Click="VersionHistory_Click"/>
                     </ContextMenu>
                 </ListView.ContextMenu>
@@ -134,18 +135,43 @@
                           SelectionChanged="ComboBox_SelectionChanged"/>
                         <Button Click="CalculateSalary_Click"
                         Content="Предварительный расчёт"
-                        IsEnabled="{Binding SalaryButtonVis}"
+                        IsEnabled="{Binding ButtonsVis}"
                          Style="{StaticResource MaterialDesignOutlinedButton}"
                             Margin="5"/>
-                        <Button Click="IssueSalary_Click"
+                        <Button Command="{x:Static md:DialogHost.OpenDialogCommand}"
+                                Click="IssueSalary_Click"
                         Content="Выдать ЗП"
-                        IsEnabled="{Binding SalaryButtonVis}"
+                        IsEnabled="{Binding ButtonsVis}"
                          Style="{StaticResource MaterialDesignOutlinedButton}"
                             Margin="5" Cursor="Hand"/>
                         <Button Click="Export_Click"
+                                IsEnabled="{Binding ButtonsVis}"
                         Content="Экспорт Excel"
                          Style="{StaticResource MaterialDesignOutlinedButton}"
                             Margin="5" Cursor="Hand"/>
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock 
+                           Foreground="DarkRed" 
+                           TextAlignment="Center"
+                           DataContext="{Binding ErrorMessage}" 
+                           Text="{Binding Message}" 
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <TextBlock Grid.Row="1"
+                           Foreground="DarkGreen" 
+                           TextAlignment="Center"
+                           DataContext="{Binding StatusMessage}" 
+                           Text="{Binding Message}" 
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       MaxWidth="300"
+                                       TextWrapping="Wrap"/>
+
+                        </Grid>
                     </StackPanel>
                 </GroupBox>
 

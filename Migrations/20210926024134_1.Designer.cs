@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cashbox.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210908111525_4")]
-    partial class _4
+    [Migration("20210926024134_1")]
+    partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,32 @@ namespace Cashbox.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Cashbox.Model.Salary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EndPeriod")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Money")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartPeriod")
+                        .HasColumnType("date");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("Salaries");
                 });
 
             modelBuilder.Entity("Cashbox.Model.Session", b =>
@@ -64,8 +90,10 @@ namespace Cashbox.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTime>("DateAndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("Difference")
                         .HasColumnType("int");
@@ -78,6 +106,9 @@ namespace Cashbox.Migrations
 
                     b.Property<int>("HandedOver")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StartDay")
                         .HasColumnType("int");
@@ -127,14 +158,10 @@ namespace Cashbox.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Staff");
                 });
@@ -165,23 +192,23 @@ namespace Cashbox.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Cashbox.Model.Salary", b =>
+                {
+                    b.HasOne("Cashbox.Model.Worker", "Worker")
+                        .WithMany("Salaries")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Worker");
+                });
+
             modelBuilder.Entity("Cashbox.Model.Shift", b =>
                 {
                     b.HasOne("Cashbox.Model.User", "User")
                         .WithMany("Shifts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Cashbox.Model.Worker", b =>
-                {
-                    b.HasOne("Cashbox.Model.User", "User")
-                        .WithMany("Staff")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -207,8 +234,11 @@ namespace Cashbox.Migrations
                     b.Navigation("Permissions");
 
                     b.Navigation("Shifts");
+                });
 
-                    b.Navigation("Staff");
+            modelBuilder.Entity("Cashbox.Model.Worker", b =>
+                {
+                    b.Navigation("Salaries");
                 });
 #pragma warning restore 612, 618
         }

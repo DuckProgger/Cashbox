@@ -24,13 +24,17 @@ namespace Cashbox.Visu
         #region privateProperties
         private DateTime selectedShiftDate;
         private int _salary;
-        private bool _salaryButtonVis;
+        private bool _buttonsVis;
         private string _selectedWorker;
         private DateTime _start;
         private DateTime _end;
-        private bool _manualPeriodChecked = false;
+        private bool _manualPeriodChecked;
         private readonly IDialogService dialogService;
         private readonly IFileService<ShiftExcelItem>[] fileServices;
+        private string _dialogQuestion;
+        private const string removeQuestion = "Удалить выбранную смену?";
+        private const string issueQuestion = "Выдать сотруднику ЗП?";
+        private string _dialogConfirmButtonText;
         #endregion
 
         #region publicProperties
@@ -53,12 +57,12 @@ namespace Cashbox.Visu
                 _end = value; OnPropertyChanged();
             }
         }
-        public bool SalaryButtonVis
+        public bool ButtonsVis
         {
-            get => _salaryButtonVis;
+            get => _buttonsVis;
             set
             {
-                _salaryButtonVis = value;
+                _buttonsVis = value;
                 OnPropertyChanged();
             }
         }
@@ -89,6 +93,27 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+        public string DialogQuestion
+        {
+            get => _dialogQuestion;
+            set
+            {
+                _dialogQuestion = value;
+                OnPropertyChanged();
+            }
+        }
+        public string DialogConfirmButtonText
+        {
+            get => _dialogConfirmButtonText;
+            set
+            {
+                _dialogConfirmButtonText = value;
+                OnPropertyChanged();
+            }
+        }
+        public MessageProvider ErrorMessage { get; } = new();
+        public MessageProvider StatusMessage { get; } = new();
+
         #endregion
 
         public ShiftLogView()
@@ -132,10 +157,20 @@ namespace Cashbox.Visu
             new PopupWindow(new ShiftView(selectedShiftDate, Mode.EditVersion)).Show();
         }
 
-        private void Remove_Click(object sender, RoutedEventArgs e)
+        private void DialogOk_Click(object sender, RoutedEventArgs e)
         {
-            DB.RemoveShift(selectedShiftDate);
-            UpdateLog();
+            switch (DialogQuestion)
+            {
+                case removeQuestion:
+                    DB.RemoveShift(selectedShiftDate);
+                    UpdateLog();
+                    break;
+                case issueQuestion:
+                    IssueSalary();
+                    break;
+                default:
+                    break;
+            }           
         }
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
@@ -150,13 +185,13 @@ namespace Cashbox.Visu
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SalaryButtonVis = sender != null;
+            ButtonsVis = sender != null;
             foreach (var item in Log.ToList())
                 if (item.Staff.Find(w => w.Name == SelectedWorker) == null)
                     Log.Remove(item);
         }
 
-        private void IssueSalary_Click(object sender, RoutedEventArgs e)
+        private void IssueSalary()
         {
             var worker = DB.GetWorker(SelectedWorker);
             // проверка не выдана ли уже зарплата
@@ -190,13 +225,7 @@ namespace Cashbox.Visu
         }
 
         private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end) => DB.GetSalaries(workerId, start, end).Count == 0;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-
+       
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -207,13 +236,32 @@ namespace Cashbox.Visu
                     foreach (Shift item in Log)
                         collection.Add(ShiftExcelItem.ConvertFromShift(item));
                     fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, collection);
+                    StatusMessage.Message = $"Файл успешно экспортирован. Расположение {dialogService.FilePath}";
                 }
             }
             catch (Exception)
             {
-
-                throw;
+                ErrorMessage.Message = "Ошибка экспорта файла";
             }
         }
+
+        private void RemoveShift_Click(object sender, RoutedEventArgs e)
+        {
+            DialogQuestion = removeQuestion;
+            DialogConfirmButtonText = "Удалить";
+        }
+
+        private void IssueSalary_Click(object sender, RoutedEventArgs e)
+        {
+            DialogQuestion = issueQuestion;
+            DialogConfirmButtonText = "Выдать";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
     }
 }

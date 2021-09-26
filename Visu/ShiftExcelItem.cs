@@ -5,18 +5,18 @@ using System.ComponentModel;
 
 namespace Cashbox.Visu
 {
-    [EpplusTable]
+    [EpplusTable(PrintHeaders = false, AutofitColumns = true, TableStyle = OfficeOpenXml.Table.TableStyles.Dark1)]
     public class ShiftExcelItem
     {
         [EpplusTableColumn(Order = 0)]
         [Description("Версия смены")]
         public int Version { get; set; }
 
-        [EpplusTableColumn(Order = 1/*, NumberFormat = "yy-mm-dd"*/)]
+        [EpplusTableColumn(Order = 1, NumberFormat = "yy-mm-dd")]
         [Description("Дата создания")]
         public DateTime CreatedAt { get; set; }
 
-        [EpplusTableColumn(Order = 2/*, NumberFormat = "yy-mm-dd"*/)]
+        [EpplusTableColumn(Order = 2, NumberFormat = "yy-mm-dd")]
         [Description("Дата и время последнего изменения")]
         public DateTime LastModified { get; set; }
 

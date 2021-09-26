@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Table;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -22,6 +23,7 @@ namespace Cashbox.Services
                 excelWorksheet = package.Workbook.Worksheets.Add(workSheetName);
                 for (int i = 0; i < descriptions.Count; i++)
                     excelWorksheet.Cells[1, i + 1].Value = descriptions[i];
+                excelWorksheet.Cells[2, 2, data.Count + 1, 3].Style.Numberformat.Format = "mm-dd-yy";
                 excelWorksheet.Cells["A2"].LoadFromCollection(data, false);
             }
             package.Save();
