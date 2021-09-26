@@ -131,8 +131,7 @@
                     <StackPanel Grid.Row="2">
                         <TextBlock Text="Выбор сотрудника:"/>
                         <ComboBox ItemsSource="{Binding Staff}" 
-                          SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"
-                          SelectionChanged="ComboBox_SelectionChanged"/>
+                          SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}"/>
                         <Button Click="CalculateSalary_Click"
                         Content="Предварительный расчёт"
                         IsEnabled="{Binding SalaryButtonsVis}"

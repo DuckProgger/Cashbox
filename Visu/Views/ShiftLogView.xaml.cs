@@ -35,6 +35,7 @@ namespace Cashbox.Visu
         private const string removeQuestion = "Удалить выбранную смену?";
         private const string issueQuestion = "Выдать сотруднику ЗП?";
         private string _dialogConfirmButtonText;
+        private readonly CollectionView view;
         #endregion
 
         #region publicProperties
@@ -72,7 +73,9 @@ namespace Cashbox.Visu
             set
             {
                 _selectedWorker = value;
-                OnPropertyChanged();
+                view.Refresh();
+                OnPropertyChanged(nameof(SalaryButtonsVis));
+                //OnPropertyChanged(); // раскомментить, если нужно, чтобы при обновлении журнала автоматически выбирался сотрудник в ComboBox
             }
         }
         public bool ManualPeriodChecked
@@ -116,35 +119,31 @@ namespace Cashbox.Visu
             SetPrepaidPeriod(null, null);
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
             dialogService = new DefaultDialog(fileServices);
+            view = (CollectionView)CollectionViewSource.GetDefaultView(Log);
+            view.Filter = WorkerFilter;
         }
+
+        private bool WorkerFilter(object item) => string.IsNullOrEmpty(SelectedWorker) || (item as Shift).Staff.Find(w => w.Name == SelectedWorker) != null;
 
         private void Button_GetLog(object sender, RoutedEventArgs e)
         {
-            UpdateLog(Start, End);
-            UpdateStaffComboBox(Log);
-            //SelectedWorker = Staff.Count > 0 ? Staff[0] : null;
+            UpdateLog();
+            UpdateStaffComboBox();
+            //SelectedWorker = Staff.Count > 0 ? Staff[0] : null; // раскомментить, если нужно, чтобы при обновлении журнала автоматически выбирался сотрудник в ComboBox
         }
 
-        private void UpdateLog(DateTime start, DateTime end)
+        private void UpdateLog()
         {
             Log.Clear();
-            foreach (var item in DB.GetShiftLog(start, end))
+            foreach (var item in DB.GetShiftLog(Start, End))
                 Log.Add(item);
             OnPropertyChanged(nameof(ExportButtonVis));
         }
 
-        private void UpdateLog(DateTime start, DateTime end, string workerNameFilter)
-        {
-            Log.Clear();
-            foreach (var item in DB.GetShiftLog(start, end, workerNameFilter))
-                Log.Add(item);
-            OnPropertyChanged(nameof(ExportButtonVis));
-        }
-
-        private void UpdateStaffComboBox(IEnumerable<Shift> shifts)
+        private void UpdateStaffComboBox()
         {
             Staff.Clear();
-            foreach (var item in shifts)
+            foreach (var item in Log)
             {
                 foreach (var worker in item.Staff)
                     if (!Staff.Contains(worker.Name))
@@ -164,7 +163,7 @@ namespace Cashbox.Visu
             {
                 case removeQuestion:
                     DB.RemoveShift(selectedShiftDate);
-                    UpdateLog(Start, End, SelectedWorker);
+                    UpdateLog();
                     break;
                 case issueQuestion:
                     IssueSalary();
@@ -177,13 +176,6 @@ namespace Cashbox.Visu
         private void ListViewItem_Selected(object sender, RoutedEventArgs e) => selectedShiftDate = ((sender as ListViewItem).Content as Shift).CreatedAt.Date;
 
         private void CalculateSalary_Click(object sender, RoutedEventArgs e) => MessageBoxCustom.Show(Global.CalculateSalary(Log.ToList()).ToString(), MessageType.Info, MessageButtons.Ok);
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            OnPropertyChanged(nameof(SalaryButtonsVis));
-            if (SelectedWorker != null)
-                UpdateLog(Start, End, SelectedWorker);
-        }
 
         private void IssueSalary()
         {
