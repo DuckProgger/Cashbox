@@ -139,6 +139,10 @@
                     IsEnabled="{Binding EnableEntries}"/>
 
             <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="79*"/>
+                    <ColumnDefinition Width="146*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -149,14 +153,14 @@
                            TextAlignment="Center"
                            DataContext="{Binding ErrorMessage}" 
                            Text="{Binding Message}" 
-                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" />
 
-                <TextBlock Grid.Row="1"
+                <TextBlock
                            Foreground="DarkGreen" 
                            TextAlignment="Center"
                            DataContext="{Binding StatusMessage}" 
                            Text="{Binding Message}" 
-                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" Margin="0,17,0,0" Grid.RowSpan="2" />
 
             </Grid>
 
@@ -241,7 +245,7 @@
                         <TextBlock Text="Выручка:"                          
                            FontSize="15"                          
                            Style="{StaticResource MyTextBlock}"/>
-                        <TextBlock Text="{Binding Total}"
+                        <TextBlock Text="{Binding Shift.Total}"
                                Style="{StaticResource MyTextBlock2}"/>
                     </StackPanel>
                     <Border x:Name="DifferenceBorder"
@@ -252,7 +256,7 @@
                             <TextBlock Text="{Binding DifferenceText}"                                   
                                    FontSize="15"                                   
                                    Style="{StaticResource MyTextBlock}"/>
-                            <TextBlock Text="{Binding Difference, Converter={StaticResource DifferenceConverter}}"
+                            <TextBlock Text="{Binding Shift.Difference, Converter={StaticResource DifferenceConverter}}"
                                Style="{StaticResource MyTextBlock2}"/>
                         </StackPanel>
                     </Border>

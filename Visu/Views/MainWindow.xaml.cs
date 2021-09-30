@@ -48,7 +48,7 @@ namespace Cashbox.Visu
 
         private void OpenLogView(object sender, RoutedEventArgs e) => CurrentView = logView;
 
-        protected override void OnClosing(CancelEventArgs e) => DB.RemoveSession(Global.Session.Id);
+        protected override void OnClosing(CancelEventArgs e) => Manager.RemoveCurrentSession();
 
         private void OpenStaffView(object sender, RoutedEventArgs e) => CurrentView = staffView;
 

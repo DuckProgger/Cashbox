@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox
 {
-    public static class Global
+    public class Manager
     {
         public static Session Session { get; private set; }
 
@@ -30,5 +31,17 @@ namespace Cashbox
             }
             return (int)Math.Ceiling(salary);
         }
+
+        //public static void CaclShift(Shift shift)
+        //{
+        //    shift.Total = shift.Cash + shift.Terminal;
+        //    shift.Difference = shift.Cash - shift.Expenses + shift.StartDay - shift.EndDay - shift.HandedOver;
+        //}
+
+        public static void RemoveCurrentSession() => DB.RemoveSession(Session.Id);
+
+        public static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
+
+
     }
 }

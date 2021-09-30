@@ -44,7 +44,7 @@ namespace Cashbox.Visu
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            Global.InitSession(SelectedUser);
+            Manager.InitSession(SelectedUser);
             new MainWindow().Show();
             Close();
         }

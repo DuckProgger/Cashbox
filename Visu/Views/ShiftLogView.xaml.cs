@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Entities;
 using Cashbox.Services;
 using System;
 using System.Collections.Generic;
@@ -110,7 +111,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            Permissions = Permissions.GetAccesses(Global.Session.UserId);
+            Permissions = Permissions.GetAccesses(Manager.Session.UserId);
             SetPrepaidPeriod(null, null);
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
             dialogService = new DefaultDialog(fileServices);
@@ -170,7 +171,7 @@ namespace Cashbox.Visu
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e) => selectedShiftDate = ((sender as ListViewItem).Content as Shift).CreatedAt.Date;
 
-        private void CalculateSalary_Click(object sender, RoutedEventArgs e) => MessageBoxCustom.Show(Global.CalculateSalary(Log.ToList()).ToString(), MessageType.Info, MessageButtons.Ok);
+        private void CalculateSalary_Click(object sender, RoutedEventArgs e) => MessageBoxCustom.Show(Manager.CalculateSalary(Log.ToList()).ToString(), MessageType.Info, MessageButtons.Ok);
 
         private void IssueSalary()
         {
@@ -180,7 +181,7 @@ namespace Cashbox.Visu
                 MessageBoxCustom.Show("Этот сотрудник уже получал ЗП за выбранный период", MessageType.Error, MessageButtons.Ok);
             else
             {
-                int money = Global.CalculateSalary(Log.ToList());
+                int money = Manager.CalculateSalary(Log.ToList());
                 DB.Create(new Salary() { WorkerId = worker.Id, Money = money, StartPeriod = Start, EndPeriod = End });
                 MessageBoxCustom.Show($"Сотруднику {worker.Name} выдана ЗП в размере {money} руб." +
                     $" за период с {Formatter.FormatDate(Start.Date)} по {Formatter.FormatDate(End.Date)}",

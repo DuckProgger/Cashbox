@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Cashbox.Model.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Cashbox.Model
             using ApplicationContext db = new();
             var userNames = await (from user in db.Users
                                    select user.Name).ToListAsync();
-            return userNames.Count > 0 ? userNames : throw new InvalidOperationException("В базе отсутствуют пользователи.");
+            return userNames;
         }
 
         public static List<Worker> GetStaff()
@@ -27,19 +28,19 @@ namespace Cashbox.Model
         public static Worker GetWorker(string name)
         {
             using ApplicationContext db = new();
-            return db.Staff/*.Include(w => w.Shifts)*//*.Include(w => w.User)*/.FirstOrDefault(w => w.Name == name);
+            return db.Staff.FirstOrDefault(w => w.Name == name);
         }
 
         public static Worker GetWorker(int id)
         {
             using ApplicationContext db = new();
-            return db.Staff/*.Include(w => w.Shifts)*//*.Include(w => w.User)*/.FirstOrDefault(w => w.Id == id);
+            return db.Staff.FirstOrDefault(w => w.Id == id);
         }
 
         public static User GetUser(string userName)
         {
             using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions)/*.Include(u => u.Staff)*/
+            return (from u in db.Users.Include(u => u.Permissions)
                     where u.Name == userName
                     select u).FirstOrDefault();
         }
@@ -47,7 +48,7 @@ namespace Cashbox.Model
         public static User GetUser(int userId)
         {
             using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions)/*.Include(u => u.Staff)*/
+            return (from u in db.Users.Include(u => u.Permissions)
                     where u.Id == userId
                     select u).FirstOrDefault();
         }
@@ -55,11 +56,10 @@ namespace Cashbox.Model
         public static Shift GetShift(int id)
         {
             using ApplicationContext db = new();
-            Shift shift = (from s in db.Shifts.Include(s => s.Staff)
-                           where id == s.Id
-                           orderby s.Version descending
-                           select s).FirstOrDefault();
-            return shift;
+            return (from s in db.Shifts.Include(s => s.Staff)
+                    where id == s.Id
+                    orderby s.Version descending
+                    select s).FirstOrDefault();
         }
 
         public static Shift GetShift(DateTime date)
@@ -126,7 +126,7 @@ namespace Cashbox.Model
         {
             using ApplicationContext db = new();
             Shift shift = newShift.Copy();
-            shift.User = db.Users.Find(Global.Session.UserId);
+            shift.User = db.Users.Find(Manager.Session.UserId);
             shift.LastModified = DateTime.Now;
             shift.Version++;
             foreach (var worker in db.Staff.ToList())
@@ -151,15 +151,15 @@ namespace Cashbox.Model
             using ApplicationContext db = new();
             var shift = db.Shifts.Include(s => s.Staff).FirstOrDefault(s => s.Id == newShift.Id);
             db.Entry(shift).CurrentValues.SetValues(newShift);
-            shift.User = db.Users.Find(Global.Session.UserId);
+            shift.User = db.Users.Find(Manager.Session.UserId);
             shift.LastModified = DateTime.Now;
             foreach (var worker in db.Staff.ToList())
             {
                 // Добавить в смену работника, если он есть в новой смене и его нет в старой версии смены.
-                if (WorkerExists(newShift, worker.Id) && !WorkerExists(shift, worker.Id))
+                if (Manager.WorkerExists(newShift, worker.Id) && !Manager.WorkerExists(shift, worker.Id))
                     shift.Staff.Add(worker);
                 // Убрать из смены работника, если его нет в новой смене и он есть в старой версии смены.
-                else if (!WorkerExists(newShift, worker.Id) && WorkerExists(shift, worker.Id))
+                else if (!Manager.WorkerExists(newShift, worker.Id) && Manager.WorkerExists(shift, worker.Id))
                     shift.Staff.Remove(worker);
             }
             db.SaveChanges();
@@ -198,13 +198,7 @@ namespace Cashbox.Model
             using ApplicationContext db = new();
             db.Sessions.Remove(db.Sessions.Find(id));
             db.SaveChanges();
-        }
-
-        public static void CaclShift(Shift shift)
-        {
-            shift.Total = shift.Cash + shift.Terminal;
-            shift.Difference = shift.Cash - shift.Expenses + shift.StartDay - shift.EndDay - shift.HandedOver;
-        }
+        }        
 
         public static List<Shift> GetShiftLog(DateTime begin, DateTime end)
         {
@@ -226,6 +220,5 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
-        private static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
     }
 }

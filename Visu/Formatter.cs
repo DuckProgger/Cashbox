@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,24 +57,7 @@ namespace Cashbox.Model
             return date;
         }
 
-        public static string FormatMonth(int monthNum)
-        {
-            return monthNum switch
-            {
-                1 => "янв",
-                2 => "фев",
-                3 => "мар",
-                4 => "апр",
-                5 => "май",
-                6 => "июн",
-                7 => "июл",
-                8 => "авг",
-                9 => "сен",
-                10 => "окт",
-                11 => "ноя",
-                12 => "дек",
-                _ => "",
-            };
-        }
+        public static string FormatMonth(int monthNum) => DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(monthNum);
+              
     }
 }

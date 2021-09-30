@@ -93,9 +93,6 @@ namespace Cashbox.Migrations
                         .HasColumnType("date")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("Difference")
-                        .HasColumnType("int");
-
                     b.Property<int>("EndDay")
                         .HasColumnType("int");
 
@@ -112,9 +109,6 @@ namespace Cashbox.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Terminal")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Total")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")

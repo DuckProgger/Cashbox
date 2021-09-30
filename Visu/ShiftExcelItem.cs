@@ -1,24 +1,27 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Entities;
 using OfficeOpenXml.Attributes;
+using OfficeOpenXml.Table;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Cashbox.Visu
 {
-    [EpplusTable(PrintHeaders = false, AutofitColumns = true, TableStyle = OfficeOpenXml.Table.TableStyles.Dark1)]
+    [EpplusTable(PrintHeaders = false, AutofitColumns = true)]
     public class ShiftExcelItem
     {
         [EpplusTableColumn(Order = 0)]
         [Description("Версия смены")]
         public int Version { get; set; }
 
-        [EpplusTableColumn(Order = 1, NumberFormat = "yy-mm-dd")]
+        [EpplusTableColumn(Order = 1)]
         [Description("Дата создания")]
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
 
-        [EpplusTableColumn(Order = 2, NumberFormat = "yy-mm-dd")]
+        [EpplusTableColumn(Order = 2)]
         [Description("Дата и время последнего изменения")]
-        public DateTime LastModified { get; set; }
+        public string LastModified { get; set; }
 
         [EpplusTableColumn(Order = 3)]
         [Description("Наличные")]
@@ -62,12 +65,12 @@ namespace Cashbox.Visu
             {
                 Cash = shift.Cash,
                 Comment = shift.Comment,
-                CreatedAt = shift.CreatedAt,
+                CreatedAt = Formatter.FormatDate(shift.CreatedAt),
                 Difference = shift.Difference,
                 EndDay = shift.EndDay,
                 Expenses = shift.Expenses,
                 HandedOver = shift.HandedOver,
-                LastModified = shift.LastModified,
+                LastModified = shift.LastModified.ToString(),
                 StartDay = shift.StartDay,
                 Terminal = shift.Terminal,
                 Total = shift.Total,

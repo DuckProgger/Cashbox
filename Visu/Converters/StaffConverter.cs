@@ -1,4 +1,4 @@
-﻿using Cashbox.Model;
+﻿using Cashbox.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

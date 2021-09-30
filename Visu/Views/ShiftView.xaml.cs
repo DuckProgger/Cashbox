@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,8 +29,8 @@ namespace Cashbox.Visu
     /// </summary>
     public partial class ShiftView : UserControl, INotifyPropertyChanged
     {
-        private int _total;
-        private int _difference;
+        //private int _total;
+        //private int _difference;
         private string _differenceText;
         private readonly SolidColorBrush redBackground = new(Color.FromRgb(245, 94, 83));
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
@@ -38,24 +39,24 @@ namespace Cashbox.Visu
         public ObservableCollection<WorkerViewItem> Staff { get; private set; }
         public Shift Shift { get; set; }
         public bool EnableEntries => viewMode != Mode.WatchOnly;
-        public int Total
-        {
-            get => _total;
-            set
-            {
-                _total = value;
-                OnPropertyChanged();
-            }
-        }
-        public int Difference
-        {
-            get => _difference;
-            set
-            {
-                _difference = value;
-                OnPropertyChanged();
-            }
-        }
+        //public int Total
+        //{
+        //    get => _total;
+        //    set
+        //    {
+        //        _total = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
+        //public int Difference
+        //{
+        //    get => _difference;
+        //    set
+        //    {
+        //        _difference = value;
+        //        OnPropertyChanged();
+        //    }
+        //}
         public string DifferenceText
         {
             get => _differenceText;
@@ -76,7 +77,7 @@ namespace Cashbox.Visu
                 Shift = DB.GetShift(date);
                 if (Shift == null)
                 {
-                    Shift = Shift.Create(DB.GetUser(Global.Session.UserId));
+                    Shift = Shift.Create(DB.GetUser(Manager.Session.UserId));
                     try
                     {
                         Shift.StartDay = DB.GetPrevShift().EndDay;
@@ -89,12 +90,11 @@ namespace Cashbox.Visu
             }
             else
                 Shift = DB.GetShift(date, version);
-            UpdateValues();
+            //UpdateValues();
             Staff = new(GetWorkerItems(Shift));
             DataContext = this;
             viewMode = mode;
         }
-
 
         public List<WorkerViewItem> GetWorkerItems(Shift shift)
         {
@@ -167,16 +167,16 @@ namespace Cashbox.Visu
             textBox.SelectionStart = textBox.Text.Length;
 
             // Рассчитать новые значения
-            DB.CaclShift(Shift);
-            UpdateValues();
+            //Manager.CaclShift(Shift);
+            //UpdateValues();
 
             // Установить фон в поле Расхождения
-            if (Difference > 0)
+            if (Shift.Difference > 0)
             {
                 DifferenceText = "Недостача:";
                 DifferenceBorder.Background = redBackground;
             }
-            else if (Difference < 0)
+            else if (Shift.Difference < 0)
             {
                 DifferenceText = "Излишек:";
                 DifferenceBorder.Background = redBackground;
@@ -188,11 +188,11 @@ namespace Cashbox.Visu
             }
         }
 
-        private void UpdateValues()
-        {
-            Total = Shift.Total;
-            Difference = Shift.Difference;
-        }
+        //private void UpdateValues()
+        //{
+        //    Total = Shift.Total;
+        //    Difference = Shift.Difference;
+        //}
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
