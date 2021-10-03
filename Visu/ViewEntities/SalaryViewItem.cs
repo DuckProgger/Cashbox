@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cashbox.Visu
+namespace Cashbox.Visu.ViewEntities
 {
     public class SalaryViewItem
     {

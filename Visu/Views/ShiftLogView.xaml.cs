@@ -12,12 +12,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Cashbox.Visu.ViewEntities;
 
 namespace Cashbox.Visu
 {
     public partial class ShiftLogView : UserControl, INotifyPropertyChanged
     {
         #region privateProperties
+
         private DateTime selectedShiftDate;
         private int _salary;
         private bool _buttonsVis;
@@ -32,12 +34,15 @@ namespace Cashbox.Visu
         private const string issueQuestion = "Выдать сотруднику ЗП?";
         private string _dialogConfirmButtonText;
         private readonly CollectionView view;
-        #endregion
+
+        #endregion privateProperties
 
         #region publicProperties
+
         public Permissions Permissions { get; private set; }
         public ObservableCollection<Shift> Log { get; set; } = new();
         public ObservableCollection<string> Staff { get; set; } = new();
+
         public DateTime Start
         {
             get => _start;
@@ -46,6 +51,7 @@ namespace Cashbox.Visu
                 _start = value; OnPropertyChanged();
             }
         }
+
         public DateTime End
         {
             get => _end;
@@ -54,6 +60,7 @@ namespace Cashbox.Visu
                 _end = value; OnPropertyChanged();
             }
         }
+
         public int Salary
         {
             get => _salary;
@@ -63,6 +70,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public string SelectedWorker
         {
             get => _selectedWorker;
@@ -74,6 +82,7 @@ namespace Cashbox.Visu
                 //OnPropertyChanged(); // раскомментить, если нужно, чтобы при обновлении журнала автоматически выбирался сотрудник в ComboBox
             }
         }
+
         public bool ManualPeriodChecked
         {
             get => _manualPeriodChecked;
@@ -83,6 +92,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public string DialogQuestion
         {
             get => _dialogQuestion;
@@ -92,6 +102,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public string DialogConfirmButtonText
         {
             get => _dialogConfirmButtonText;
@@ -101,11 +112,13 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public MessageProvider ErrorMessage { get; } = new();
         public MessageProvider StatusMessage { get; } = new();
         public bool SalaryButtonsVis => !string.IsNullOrEmpty(SelectedWorker);
         public bool ExportButtonVis => Log?.Count > 0;
-        #endregion
+
+        #endregion publicProperties
 
         public ShiftLogView()
         {
@@ -161,9 +174,11 @@ namespace Cashbox.Visu
                     DB.RemoveShift(selectedShiftDate);
                     UpdateLog();
                     break;
+
                 case issueQuestion:
                     IssueSalary();
                     break;
+
                 default:
                     break;
             }
@@ -240,6 +255,7 @@ namespace Cashbox.Visu
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

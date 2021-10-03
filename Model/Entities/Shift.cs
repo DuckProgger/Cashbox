@@ -162,20 +162,20 @@ namespace Cashbox.Model.Entities
         //    return shift;
         //}
 
-        public Shift Copy()
-        {
-            return new Shift
-            {
-                Version = Version,
-                CreatedAt = CreatedAt,
-                Cash = Cash,
-                Terminal = Terminal,
-                Expenses = Expenses,
-                StartDay = StartDay,
-                EndDay = EndDay,
-                HandedOver = HandedOver,
-                Comment = Comment
-            };
-        }
+        //public Shift Copy()
+        //{
+        //    return new Shift
+        //    {
+        //        Version = Version,
+        //        CreatedAt = CreatedAt,
+        //        Cash = Cash,
+        //        Terminal = Terminal,
+        //        Expenses = Expenses,
+        //        StartDay = StartDay,
+        //        EndDay = EndDay,
+        //        HandedOver = HandedOver,
+        //        Comment = Comment
+        //    };
+        //}
     }
 }

@@ -19,7 +19,7 @@ namespace Cashbox.Migrations
                 .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Cashbox.Model.Permissions", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Permissions", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,7 +34,7 @@ namespace Cashbox.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Salary", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Salary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace Cashbox.Migrations
                     b.ToTable("Salaries");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Session", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Session", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,7 +75,7 @@ namespace Cashbox.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Shift", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Shift", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -124,7 +124,7 @@ namespace Cashbox.Migrations
                     b.ToTable("Shifts");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.User", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,7 +139,7 @@ namespace Cashbox.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Worker", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Worker", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -173,20 +173,20 @@ namespace Cashbox.Migrations
                     b.ToTable("ShiftWorker");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Permissions", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Permissions", b =>
                 {
-                    b.HasOne("Cashbox.Model.User", "User")
+                    b.HasOne("Cashbox.Model.Entities.User", "User")
                         .WithOne("Permissions")
-                        .HasForeignKey("Cashbox.Model.Permissions", "Id")
+                        .HasForeignKey("Cashbox.Model.Entities.Permissions", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Salary", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Salary", b =>
                 {
-                    b.HasOne("Cashbox.Model.Worker", "Worker")
+                    b.HasOne("Cashbox.Model.Entities.Worker", "Worker")
                         .WithMany("Salaries")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -195,9 +195,9 @@ namespace Cashbox.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Shift", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Shift", b =>
                 {
-                    b.HasOne("Cashbox.Model.User", "User")
+                    b.HasOne("Cashbox.Model.Entities.User", "User")
                         .WithMany("Shifts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -208,27 +208,27 @@ namespace Cashbox.Migrations
 
             modelBuilder.Entity("ShiftWorker", b =>
                 {
-                    b.HasOne("Cashbox.Model.Shift", null)
+                    b.HasOne("Cashbox.Model.Entities.Shift", null)
                         .WithMany()
                         .HasForeignKey("ShiftsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Cashbox.Model.Worker", null)
+                    b.HasOne("Cashbox.Model.Entities.Worker", null)
                         .WithMany()
                         .HasForeignKey("StaffId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Cashbox.Model.User", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.User", b =>
                 {
                     b.Navigation("Permissions");
 
                     b.Navigation("Shifts");
                 });
 
-            modelBuilder.Entity("Cashbox.Model.Worker", b =>
+            modelBuilder.Entity("Cashbox.Model.Entities.Worker", b =>
                 {
                     b.Navigation("Salaries");
                 });

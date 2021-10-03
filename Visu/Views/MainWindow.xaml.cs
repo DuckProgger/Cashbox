@@ -22,11 +22,18 @@ namespace Cashbox.Visu
 
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private object _currentView;
         private readonly ShiftLogView logView = new();
-        private readonly StaffView staffView = new();
         private readonly SalaryLogView salaryLogView = new();
+        private readonly StaffView staffView = new();
+        private object _currentView;
 
+        public MainWindow()
+        {
+            InitializeComponent();
+            DataContext = this;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public object CurrentView
         {
@@ -38,32 +45,17 @@ namespace Cashbox.Visu
             }
         }
 
-        public MainWindow()
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
-            InitializeComponent();
-            DataContext = this;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        private void OpenShiftView(object sender, RoutedEventArgs e) => CurrentView = new ShiftView(DateTime.Today, Mode.NewVersion);
-
-        private void OpenLogView(object sender, RoutedEventArgs e) => CurrentView = logView;
-
         protected override void OnClosing(CancelEventArgs e) => Manager.RemoveCurrentSession();
-
-        private void OpenStaffView(object sender, RoutedEventArgs e) => CurrentView = staffView;
-
-        private void OpenSalaryLogView(object sender, RoutedEventArgs e) => CurrentView = salaryLogView;
 
         private void ChangeUser(object sender, RoutedEventArgs e)
         {
             new AuthorizationWindow().Show();
             Close();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         private void Expander_MouseEnter(object sender, MouseEventArgs e)
@@ -76,5 +68,13 @@ namespace Cashbox.Visu
             if (CurrentView != null)
                 (sender as Expander).IsExpanded = false;
         }
+
+        private void OpenLogView(object sender, RoutedEventArgs e) => CurrentView = logView;
+
+        private void OpenSalaryLogView(object sender, RoutedEventArgs e) => CurrentView = salaryLogView;
+
+        private void OpenShiftView(object sender, RoutedEventArgs e) => CurrentView = new ShiftView(DateTime.Today, Mode.NewVersion);
+
+        private void OpenStaffView(object sender, RoutedEventArgs e) => CurrentView = staffView;
     }
 }

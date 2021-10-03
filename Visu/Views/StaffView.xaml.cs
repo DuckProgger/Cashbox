@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Cashbox.Visu.ViewEntities;
 
 namespace Cashbox.Visu
 {
@@ -29,6 +30,7 @@ namespace Cashbox.Visu
         private readonly CollectionView view;
 
         public ObservableCollection<WorkerViewItem> Staff { get; set; }
+
         public string NewWorkerName
         {
             get => _newWorkerName;
@@ -38,7 +40,9 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public MessageProvider ErrorMessage { get; } = new();
+
         public string SearchEntry
         {
             get => _searchEntry;
@@ -48,6 +52,7 @@ namespace Cashbox.Visu
                 view.Refresh();
             }
         }
+
         public StaffView()
         {
             InitializeComponent();
@@ -114,10 +119,10 @@ namespace Cashbox.Visu
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }
-

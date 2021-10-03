@@ -7,37 +7,37 @@
         xmlns:local="clr-namespace:Cashbox.Visu"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:ShiftView}"           
+        d:DataContext="{d:DesignInstance Type=local:ShiftView}"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto" 
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
         d:DesignHeight="400" d:DesignWidth="450">
     <UserControl.Resources>
-        <c:DifferenceConverter x:Key="DifferenceConverter"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <Style x:Key="MaterialDesignOutlinedTextBox" 
+        <c:DifferenceConverter x:Key="DifferenceConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="MaterialDesignOutlinedTextBox"
                BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
                TargetType="TextBox">
-            <Setter Property="MinWidth" Value="80"/>
-            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="80" />
+            <Setter Property="Margin" Value="5" />
         </Style>
-        <Style x:Key="MyTextBlock"                
+        <Style x:Key="MyTextBlock"
                TargetType="TextBlock">
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="Width" Value="100" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Right" />
         </Style>
-        <Style x:Key="MyTextBlock2"                
+        <Style x:Key="MyTextBlock2"
                TargetType="TextBlock">
-            <Setter Property="MinWidth" Value="80"/>
-            <Setter Property="MinHeight" Value="25"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinWidth" Value="80" />
+            <Setter Property="MinHeight" Value="25" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Padding" Value="0" />
         </Style>
     </UserControl.Resources>
 
@@ -51,39 +51,39 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <Button Content="Отмена" 
-                            Style="{StaticResource MaterialDesignFlatAccentButton}" 
-                            IsCancel="True" 
-                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
-                    <Button Content="Сохранить" 
-                            Grid.Column="1" 
-                            Style="{StaticResource MaterialDesignFlatButton}" 
+                    <Button Content="Отмена"
+                            Style="{StaticResource MaterialDesignFlatAccentButton}"
+                            IsCancel="True"
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}" />
+                    <Button Content="Сохранить"
+                            Grid.Column="1"
+                            Style="{StaticResource MaterialDesignFlatButton}"
                             IsDefault="True" Click="SaveShift"
-                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}" />
                 </Grid>
             </StackPanel>
         </md:DialogHost.DialogContent>
 
         <Grid Background="AliceBlue">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="0.07*"/>
-                <RowDefinition Height="0.1*"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="0.07*" />
+                <RowDefinition Height="0.1*" />
             </Grid.RowDefinitions>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.5*"/>
-                    <RowDefinition/>
+                    <RowDefinition Height="1.5*" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <DataGrid Name="WorkersTable" 
+                <DataGrid Name="WorkersTable"
                       Margin="10"
                       Background="AliceBlue"
-                      ItemsSource="{Binding Staff}"
+                      ItemsSource="{Binding ShiftManager.Staff}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="5"
@@ -97,19 +97,19 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.2*"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="0.2*" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
                                               Grid.Column="0"
                                               Width="20"
                                               Margin="2"
                                               Checked="CheckBox_Checked"
-                                              Unchecked="CheckBox_Unchecked"/>
+                                              Unchecked="CheckBox_Unchecked" />
                                         <TextBlock Text="{Binding Name}"
                                                Grid.Column="1"
                                                Margin="2"
-                                               Padding="0"/>
+                                               Padding="0" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -125,43 +125,42 @@
                      materialDesign:HintAssist.HintOpacity="100"
                      BorderBrush="Gray"
                      KeyDown="Comment_KeyDown"
-                     Text="{Binding Shift.Comment}"
-                     IsEnabled="{Binding EnableEntries}"/>
+                     Text="{Binding ShiftManager.Shift.Comment}"
+                     IsEnabled="{Binding EnableEntries}" />
             </Grid>
 
             <Button Grid.Column="0"
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
-                    Content="Сохранить" 
+                    Content="Сохранить"
                      Cursor="Hand"
-                     
+
                     Click="Button_Click"
-                    IsEnabled="{Binding EnableEntries}"/>
+                    IsEnabled="{Binding EnableEntries}" />
 
             <Grid Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="79*"/>
-                    <ColumnDefinition Width="146*"/>
+                    <ColumnDefinition Width="79*" />
+                    <ColumnDefinition Width="146*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock 
-                           Foreground="DarkRed" 
+                <TextBlock
+                           Foreground="DarkRed"
                            TextAlignment="Center"
-                           DataContext="{Binding ErrorMessage}" 
-                           Text="{Binding Message}" 
+                           DataContext="{Binding ErrorMessage}"
+                           Text="{Binding Message}"
                            Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" />
 
                 <TextBlock
-                           Foreground="DarkGreen" 
+                           Foreground="DarkGreen"
                            TextAlignment="Center"
-                           DataContext="{Binding StatusMessage}" 
-                           Text="{Binding Message}" 
+                           DataContext="{Binding StatusMessage}"
+                           Text="{Binding Message}"
                            Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.ColumnSpan="2" Margin="0,17,0,0" Grid.RowSpan="2" />
-
             </Grid>
 
             <StackPanel Grid.Column="0"
@@ -170,99 +169,98 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Наличные:"
-                           Style="{StaticResource MyTextBlock}"/>
-                        <TextBox Padding="5"                            
+                           Style="{StaticResource MyTextBlock}" />
+                        <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding ShiftManager.Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
-                             IsEnabled="{Binding EnableEntries}"/>
+                             IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Терминал:"
-                           Style="{StaticResource MyTextBlock}"/>
+                           Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding ShiftManager.Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}" Cursor="IBeam"/>
+                             IsEnabled="{Binding EnableEntries}" Cursor="IBeam" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Расходы:"
-                           Style="{StaticResource MyTextBlock}"/>
-                        <TextBox Padding="5" 
+                           Style="{StaticResource MyTextBlock}" />
+                        <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding ShiftManager.Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
-                             IsEnabled="{Binding EnableEntries}"/>
+                             IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Начало дня:"
-                           Style="{StaticResource MyTextBlock}"/>
+                           Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding ShiftManager.Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
                                  LostFocus="TextBox_LostFocus"
                                  TextChanged="TextBox_TextChanged"
                                  IsEnabled="{Binding EnableEntries}"
-                                 IsReadOnly="True"/>
+                                 IsReadOnly="True" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Конец дня:"
-                           Style="{StaticResource MyTextBlock}"/>
+                           Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding ShiftManager.Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}"/>
+                             IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Сдано:"
-                           Style="{StaticResource MyTextBlock}"/>
+                           Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding ShiftManager.Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}"/>
+                             IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
                 </StackPanel>
 
-                <Separator Style="{StaticResource MaterialDesignDarkSeparator}"                       
-                       Background="Gray"/>
+                <Separator Style="{StaticResource MaterialDesignDarkSeparator}"
+                       Background="Gray" />
 
                 <StackPanel>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
-                        <TextBlock Text="Выручка:"                          
-                           FontSize="15"                          
-                           Style="{StaticResource MyTextBlock}"/>
-                        <TextBlock Text="{Binding Shift.Total}"
-                               Style="{StaticResource MyTextBlock2}"/>
+                        <TextBlock Text="Выручка:"
+                           FontSize="15"
+                           Style="{StaticResource MyTextBlock}" />
+                        <TextBlock Text="{Binding ShiftManager.Shift.Total}"
+                               Style="{StaticResource MyTextBlock2}" />
                     </StackPanel>
                     <Border x:Name="DifferenceBorder"
                         CornerRadius="5"
                         HorizontalAlignment="Center">
                         <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding DifferenceText}"                                   
-                                   FontSize="15"                                   
-                                   Style="{StaticResource MyTextBlock}"/>
-                            <TextBlock Text="{Binding Shift.Difference, Converter={StaticResource DifferenceConverter}}"
-                               Style="{StaticResource MyTextBlock2}"/>
+                            <TextBlock Text="{Binding DifferenceText}"
+                                   FontSize="15"
+                                   Style="{StaticResource MyTextBlock}" />
+                            <TextBlock Text="{Binding ShiftManager.Shift.Difference, Converter={StaticResource DifferenceConverter}}"
+                               Style="{StaticResource MyTextBlock2}" />
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </StackPanel>
         </Grid>
-
     </md:DialogHost>
 </UserControl>

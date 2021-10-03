@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Cashbox.Visu.ViewEntities;
 
 namespace Cashbox.Visu
 {
@@ -25,6 +26,7 @@ namespace Cashbox.Visu
     public partial class SalaryLogView : UserControl, INotifyPropertyChanged
     {
         #region privateProperties
+
         private int _totalSalary;
         private string _selectedWorkerName;
         private DateTime _start = Formatter.ReturnToFirstDay(DateTime.Today);
@@ -32,12 +34,15 @@ namespace Cashbox.Visu
         private const string allWorkers = "(Все)";
         private Worker selectedWorker;
         private bool _combinePerMonth;
-        #endregion
+
+        #endregion privateProperties
 
         #region publicProperties
+
         public Permissions Permissions { get; private set; }
         public ObservableCollection<SalaryViewItem> SalaryLog { get; set; } = new();
         public ObservableCollection<string> Staff { get; set; } = new();
+
         public DateTime Start
         {
             get => _start;
@@ -50,6 +55,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public DateTime End
         {
             get => _end;
@@ -62,6 +68,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public int TotalSalary
         {
             get => _totalSalary;
@@ -71,6 +78,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public string SelectedWorkerName
         {
             get => _selectedWorkerName;
@@ -80,6 +88,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public bool CombinePerMonth
         {
             get => _combinePerMonth;
@@ -91,8 +100,10 @@ namespace Cashbox.Visu
                 OnPropertyChanged();
             }
         }
+
         public MessageProvider ErrorMessage { get; } = new();
-        #endregion
+
+        #endregion publicProperties
 
         public SalaryLogView()
         {
@@ -104,6 +115,7 @@ namespace Cashbox.Visu
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
@@ -145,7 +157,7 @@ namespace Cashbox.Visu
             else
             {
                 // Создать словарь, где ключом является Id работника,
-                // а значением является список его смен за выбранный период 
+                // а значением является список его смен за выбранный период
                 Dictionary<int, List<Salary>> workersSalariesDict = new();
 
                 // Сгруппировать список смен за выбранный период по Id работников
@@ -175,7 +187,7 @@ namespace Cashbox.Visu
         }
 
         private void Button_GetSalaryLog(object sender, RoutedEventArgs e)
-        {           
+        {
             if (!IsValidWorkerSelected())
                 ErrorMessage.Message = "Не выбран работник";
             else

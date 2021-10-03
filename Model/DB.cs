@@ -11,46 +11,57 @@ namespace Cashbox.Model
 {
     public static class DB
     {
-        public static async Task<List<string>> GetUserNamesAsync()
+        public static T Create<T>(T entity) where T : class
         {
             using ApplicationContext db = new();
-            var userNames = await (from user in db.Users
-                                   select user.Name).ToListAsync();
-            return userNames;
+            var createdEntity = db.Set<T>().Add(entity);
+            db.SaveChanges();
+            return createdEntity.Entity;
         }
 
-        public static List<Worker> GetStaff()
+        public static Session CreateSession(string userName)
         {
             using ApplicationContext db = new();
-            return db.Staff.OrderBy(w => w.Name).ToList();
+            var user = GetUser(userName);
+            var session = db.Sessions.Add(new() { UserId = user.Id });
+            db.SaveChanges();
+            return session.Entity;
         }
 
-        public static Worker GetWorker(string name)
+        public static void CreateShift(Shift newShift)
         {
             using ApplicationContext db = new();
-            return db.Staff.FirstOrDefault(w => w.Name == name);
+            db.Users.Attach(newShift.User);
+            db.Staff.AttachRange(db.Staff.ToList());
+            newShift.Id = 0;
+            for (int i = 0; i < newShift.Staff.Count; i++)
+                newShift.Staff[i] = db.Staff.Find(newShift.Staff[i].Id);
+            db.Shifts.Add(newShift);
+            db.SaveChanges();
         }
 
-        public static Worker GetWorker(int id)
+        public static Shift GetPrevShift()
         {
             using ApplicationContext db = new();
-            return db.Staff.FirstOrDefault(w => w.Id == id);
+            return (from s in db.Shifts
+                    orderby s.CreatedAt descending, s.Version descending
+                    select s).First();
         }
 
-        public static User GetUser(string userName)
+        public static List<Salary> GetSalaries(int workerId, DateTime start, DateTime end)
         {
             using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions)
-                    where u.Name == userName
-                    select u).FirstOrDefault();
+            return (from s in db.Salaries
+                    where s.WorkerId == workerId && s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+                    select s).ToList();
         }
 
-        public static User GetUser(int userId)
+        public static List<Salary> GetSalaries(DateTime start, DateTime end)
         {
             using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions)
-                    where u.Id == userId
-                    select u).FirstOrDefault();
+            return (from s in db.Salaries
+                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+                    select s).ToList();
         }
 
         public static Shift GetShift(int id)
@@ -80,14 +91,6 @@ namespace Cashbox.Model
                     select s).FirstOrDefault();
         }
 
-        public static Shift GetPrevShift()
-        {
-            using ApplicationContext db = new();
-            return (from s in db.Shifts
-                    orderby s.CreatedAt descending, s.Version descending
-                    select s).First();
-        }
-
         public static int GetShiftId(DateTime date, int version)
         {
             using ApplicationContext db = new();
@@ -97,80 +100,72 @@ namespace Cashbox.Model
                     select s.Id).FirstOrDefault();
         }
 
-        public static List<Salary> GetSalaries(int workerId, DateTime start, DateTime end)
+        public static List<Shift> GetShiftLog(DateTime begin, DateTime end)
         {
             using ApplicationContext db = new();
-            return (from s in db.Salaries
-                    where s.WorkerId == workerId && s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+            return (from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
+                    where shift.CreatedAt >= begin && shift.CreatedAt <= end
+                    orderby shift.CreatedAt descending, shift.Version descending
+                    group shift by shift.CreatedAt
+                          into gr
+                    let s = gr.FirstOrDefault()
                     select s).ToList();
         }
 
-        public static List<Salary> GetSalaries(DateTime start, DateTime end)
+        public static List<Shift> GetShiftVersions(DateTime date)
         {
             using ApplicationContext db = new();
-            return (from s in db.Salaries
-                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+            return (from s in db.Shifts.Include(s => s.User).AsEnumerable()
+                    where s.CreatedAt == date
                     select s).ToList();
         }
 
-        public static Session CreateSession(string userName)
+        public static List<Worker> GetStaff()
         {
             using ApplicationContext db = new();
-            var user = GetUser(userName);
-            var session = db.Sessions.Add(new() { UserId = user.Id });
-            db.SaveChanges();
-            return session.Entity;
+            return db.Staff.OrderBy(w => w.Name).ToList();
         }
 
-        public static void CreateShift(Shift newShift)
+        public static User GetUser(string userName)
         {
             using ApplicationContext db = new();
-            Shift shift = newShift.Copy();
-            shift.User = db.Users.Find(Manager.Session.UserId);
-            shift.LastModified = DateTime.Now;
-            shift.Version++;
-            foreach (var worker in db.Staff.ToList())
-                // Добавить в смену работника, если он есть в новой смене.
-                if (newShift.Staff.Exists(w => w.Id == worker.Id))
-                    shift.Staff.Add(worker);
-            db.Shifts.Add(shift);
-
-            db.SaveChanges();
+            return (from u in db.Users.Include(u => u.Permissions)
+                    where u.Name == userName
+                    select u).FirstOrDefault();
         }
 
-        public static T Create<T>(T entity) where T : class
+        public static User GetUser(int userId)
         {
             using ApplicationContext db = new();
-            var createdEntity = db.Set<T>().Add(entity);
-            db.SaveChanges();
-            return createdEntity.Entity;
+            return (from u in db.Users.Include(u => u.Permissions)
+                    where u.Id == userId
+                    select u).FirstOrDefault();
         }
 
-        public static Shift UpdateShift(Shift newShift)
+        public static async Task<List<string>> GetUserNamesAsync()
         {
             using ApplicationContext db = new();
-            var shift = db.Shifts.Include(s => s.Staff).FirstOrDefault(s => s.Id == newShift.Id);
-            db.Entry(shift).CurrentValues.SetValues(newShift);
-            shift.User = db.Users.Find(Manager.Session.UserId);
-            shift.LastModified = DateTime.Now;
-            foreach (var worker in db.Staff.ToList())
-            {
-                // Добавить в смену работника, если он есть в новой смене и его нет в старой версии смены.
-                if (Manager.WorkerExists(newShift, worker.Id) && !Manager.WorkerExists(shift, worker.Id))
-                    shift.Staff.Add(worker);
-                // Убрать из смены работника, если его нет в новой смене и он есть в старой версии смены.
-                else if (!Manager.WorkerExists(newShift, worker.Id) && Manager.WorkerExists(shift, worker.Id))
-                    shift.Staff.Remove(worker);
-            }
-            db.SaveChanges();
-            return shift;
+            var userNames = await (from user in db.Users
+                                   select user.Name).ToListAsync();
+            return userNames;
         }
 
-        public static void UpdateWorker(Worker newWorker)
+        public static Worker GetWorker(string name)
         {
             using ApplicationContext db = new();
-            var worker = db.Staff.Find(newWorker.Id);
-            db.Entry(worker).CurrentValues.SetValues(newWorker);
+            return db.Staff.FirstOrDefault(w => w.Name == name);
+        }
+
+        public static Worker GetWorker(int id)
+        {
+            using ApplicationContext db = new();
+            return db.Staff.FirstOrDefault(w => w.Id == id);
+        }
+
+        public static void RemoveSession(int id)
+        {
+            using ApplicationContext db = new();
+            db.Sessions.Remove(db.Sessions.Find(id));
             db.SaveChanges();
         }
 
@@ -193,32 +188,39 @@ namespace Cashbox.Model
             db.SaveChanges();
         }
 
-        public static void RemoveSession(int id)
+        public static void UpdateShift(Shift newShift)
         {
             using ApplicationContext db = new();
-            db.Sessions.Remove(db.Sessions.Find(id));
+            var dbShift = db.Shifts.Include(s => s.Staff).FirstOrDefault(s => s.Id == newShift.Id);
+            db.Entry(dbShift).CurrentValues.SetValues(newShift);
+            dbShift.Staff.Clear();
+            foreach (var worker in newShift.Staff)
+                dbShift.Staff.Add(db.Staff.Find(worker.Id));
             db.SaveChanges();
-        }        
-
-        public static List<Shift> GetShiftLog(DateTime begin, DateTime end)
-        {
-            using ApplicationContext db = new();
-            return (from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
-                    where shift.CreatedAt >= begin && shift.CreatedAt <= end
-                    orderby shift.CreatedAt descending, shift.Version descending
-                    group shift by shift.CreatedAt
-                          into gr
-                    let s = gr.FirstOrDefault()
-                    select s).ToList();
         }
 
-        public static List<Shift> GetShiftVersions(DateTime date)
+        public static void UpdateWorker(Worker newWorker)
         {
             using ApplicationContext db = new();
-            return (from s in db.Shifts.Include(s => s.User).AsEnumerable()
-                    where s.CreatedAt == date
-                    select s).ToList();
+            var worker = db.Staff.Find(newWorker.Id);
+            db.Entry(worker).CurrentValues.SetValues(newWorker);
+            db.SaveChanges();
         }
 
+        //public static void Update<TEntity>(TEntity entity) where TEntity : class
+        //{
+        //    using ApplicationContext db = new();
+
+        //    db.Entry(entity).State = EntityState.Modified;
+        //    db.SaveChanges();
+        //}
+
+        //public static void Insert<TEntity>(TEntity entity) where TEntity : class
+        //{
+        //    using ApplicationContext db = new();
+
+        //    db.Entry(entity).State = EntityState.Added;
+        //    db.SaveChanges();
+        //}
     }
 }

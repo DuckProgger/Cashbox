@@ -39,9 +39,5 @@ namespace Cashbox
         //}
 
         public static void RemoveCurrentSession() => DB.RemoveSession(Session.Id);
-
-        public static bool WorkerExists(Shift shift, int id) => shift.Staff.Exists(w => w.Id == id);
-
-
     }
 }
