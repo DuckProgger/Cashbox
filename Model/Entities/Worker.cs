@@ -17,11 +17,5 @@ namespace Cashbox.Model.Entities
         public List<Shift> Shifts { get; set; }
 
         public List<Salary> Salaries { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            Worker worker = obj as Worker;
-            return Name == worker.Name && IsActive == worker.IsActive;
-        }
     }
 }

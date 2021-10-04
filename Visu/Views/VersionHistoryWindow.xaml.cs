@@ -1,5 +1,6 @@
 ﻿using Cashbox.Model;
 using Cashbox.Model.Entities;
+using Cashbox.Model.Managers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,7 +30,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            Permissions = Permissions.GetAccesses(Manager.Session.UserId);
+            Permissions = Permissions.GetAccesses(SessionManager.Session.UserId);
             selectedDate = date;
             VersionHistory = new(DB.GetShiftVersions(selectedDate.Date));
             VersionHistoryView.ItemsSource = VersionHistory;

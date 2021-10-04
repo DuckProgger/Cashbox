@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Managers;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.ComponentModel;

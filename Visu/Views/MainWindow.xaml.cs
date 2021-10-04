@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Managers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,7 +51,7 @@ namespace Cashbox.Visu
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        protected override void OnClosing(CancelEventArgs e) => Manager.RemoveCurrentSession();
+        protected override void OnClosing(CancelEventArgs e) => SessionManager.RemoveCurrentSession();
 
         private void ChangeUser(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Managers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +17,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-
 namespace Cashbox.Visu
 {
     public partial class AuthorizationWindow : Window, INotifyPropertyChanged
@@ -32,6 +32,7 @@ namespace Cashbox.Visu
                 OnPropertyChanged(nameof(OkButtonVis));
             }
         }
+
         public MessageProvider ErrorMessage { get; } = new();
         public bool OkButtonVis => SelectedUser != null;
 
@@ -44,7 +45,7 @@ namespace Cashbox.Visu
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            Manager.InitSession(SelectedUser);
+            SessionManager.InitSession(SelectedUser);
             new MainWindow().Show();
             Close();
         }
@@ -81,6 +82,7 @@ namespace Cashbox.Visu
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));

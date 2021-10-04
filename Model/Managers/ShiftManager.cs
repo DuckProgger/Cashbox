@@ -3,7 +3,7 @@ using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.ObjectModel;
 
-namespace Cashbox.Model
+namespace Cashbox.Model.Managers
 {
     public class ShiftManager
     {
@@ -24,7 +24,7 @@ namespace Cashbox.Model
                 shift = DB.GetShift(date);
                 if (shift == null)
                 {
-                    shift = Shift.Create(DB.GetUser(Manager.Session.UserId));
+                    shift = Shift.Create(DB.GetUser(SessionManager.Session.UserId));
                     try
                     {
                         shift.StartDay = DB.GetPrevShift().EndDay;
@@ -73,17 +73,22 @@ namespace Cashbox.Model
 
         public void UpdateDB()
         {
-            Shift.User = DB.GetUser(Manager.Session.UserId);
+            Shift.User = DB.GetUser(SessionManager.Session.UserId);
             Shift.LastModified = DateTime.Now;
             DB.UpdateShift(Shift);
         }
 
         public void AddToDB()
         {
-            Shift.User = DB.GetUser(Manager.Session.UserId);
+            Shift.User = DB.GetUser(SessionManager.Session.UserId);
             Shift.LastModified = DateTime.Now;
             Shift.Version++;
             DB.CreateShift(Shift);
+        }
+
+        public static void RemoveFromDB(DateTime date)
+        {
+            DB.RemoveShift(date);
         }
 
         private bool WorkerExists(int id)

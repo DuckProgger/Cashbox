@@ -1,18 +1,14 @@
-﻿using Cashbox.Model;
+﻿using Cashbox.Exceptions;
+using Cashbox.Model;
 using Cashbox.Model.Entities;
+using Cashbox.Model.Managers;
 using Cashbox.Services;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Cashbox.Visu.ViewEntities;
 
 namespace Cashbox.Visu
 {
@@ -20,56 +16,54 @@ namespace Cashbox.Visu
     {
         #region privateProperties
 
-        private DateTime selectedShiftDate;
-        private int _salary;
-        private bool _buttonsVis;
-        private string _selectedWorker;
-        private DateTime _start;
-        private DateTime _end;
-        private bool _manualPeriodChecked;
+        private const string issueQuestion = "Выдать сотруднику ЗП?";
+        private const string removeQuestion = "Удалить выбранную смену?";
         private readonly IDialogService dialogService;
         private readonly IFileService<ShiftExcelItem>[] fileServices;
-        private string _dialogQuestion;
-        private const string removeQuestion = "Удалить выбранную смену?";
-        private const string issueQuestion = "Выдать сотруднику ЗП?";
-        private string _dialogConfirmButtonText;
         private readonly CollectionView view;
+        private string _dialogConfirmButtonText;
+        private string _dialogQuestion;
+        private DateTime _end;
+        private bool _manualPeriodChecked;
+        private string _selectedWorker;
+
+        private DateTime _start;
+        private DateTime selectedShiftDate;
 
         #endregion privateProperties
 
         #region publicProperties
 
-        public Permissions Permissions { get; private set; }
-        public ObservableCollection<Shift> Log { get; set; } = new();
-        public ObservableCollection<string> Staff { get; set; } = new();
-
-        public DateTime Start
+        public string DialogConfirmButtonText
         {
-            get => _start;
-            set
-            {
-                _start = value; OnPropertyChanged();
-            }
+            get => _dialogConfirmButtonText;
+            set { _dialogConfirmButtonText = value; OnPropertyChanged(); }
+        }
+
+        public string DialogQuestion
+        {
+            get => _dialogQuestion;
+            set { _dialogQuestion = value; OnPropertyChanged(); }
         }
 
         public DateTime End
         {
             get => _end;
-            set
-            {
-                _end = value; OnPropertyChanged();
-            }
+            set { _end = value; OnPropertyChanged(); }
         }
 
-        public int Salary
+        public MessageProvider ErrorMessage { get; } = new();
+        public bool ExportButtonVis => ShiftLogManager.ShiftLog?.Count > 0;
+
+        public bool ManualPeriodChecked
         {
-            get => _salary;
+            get => _manualPeriodChecked;
             set
-            {
-                _salary = value;
-                OnPropertyChanged();
-            }
+            { _manualPeriodChecked = value; OnPropertyChanged(); }
         }
+
+        public Permissions Permissions { get; private set; }
+        public bool SalaryButtonsVis => !string.IsNullOrEmpty(SelectedWorker);
 
         public string SelectedWorker
         {
@@ -83,40 +77,15 @@ namespace Cashbox.Visu
             }
         }
 
-        public bool ManualPeriodChecked
+        public ShiftLogManager ShiftLogManager { get; private set; }
+
+        public DateTime Start
         {
-            get => _manualPeriodChecked;
-            set
-            {
-                _manualPeriodChecked = value;
-                OnPropertyChanged();
-            }
+            get => _start;
+            set { _start = value; OnPropertyChanged(); }
         }
 
-        public string DialogQuestion
-        {
-            get => _dialogQuestion;
-            set
-            {
-                _dialogQuestion = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string DialogConfirmButtonText
-        {
-            get => _dialogConfirmButtonText;
-            set
-            {
-                _dialogConfirmButtonText = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public MessageProvider ErrorMessage { get; } = new();
         public MessageProvider StatusMessage { get; } = new();
-        public bool SalaryButtonsVis => !string.IsNullOrEmpty(SelectedWorker);
-        public bool ExportButtonVis => Log?.Count > 0;
 
         #endregion publicProperties
 
@@ -124,84 +93,108 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            Permissions = Permissions.GetAccesses(Manager.Session.UserId);
+            ShiftLogManager = new();
+            Permissions = Permissions.GetAccesses(SessionManager.Session.UserId);
             SetPrepaidPeriod(null, null);
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
             dialogService = new DefaultDialog(fileServices);
-            view = (CollectionView)CollectionViewSource.GetDefaultView(Log);
+            view = (CollectionView)CollectionViewSource.GetDefaultView(ShiftLogManager.ShiftLog);
             view.Filter = WorkerFilter;
         }
 
-        private bool WorkerFilter(object item) => string.IsNullOrEmpty(SelectedWorker) || (item as Shift).Staff.Find(w => w.Name == SelectedWorker) != null;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
 
         private void Button_GetLog(object sender, RoutedEventArgs e)
         {
-            UpdateLog();
-            UpdateStaffComboBox();
-            //SelectedWorker = Staff.Count > 0 ? Staff[0] : null; // раскомментить, если нужно, чтобы при обновлении журнала автоматически выбирался сотрудник в ComboBox
-        }
-
-        private void UpdateLog()
-        {
-            Log.Clear();
-            foreach (var item in DB.GetShiftLog(Start, End))
-                Log.Add(item);
+            ShiftLogManager.Update(Start, End);
             OnPropertyChanged(nameof(ExportButtonVis));
         }
 
-        private void UpdateStaffComboBox()
+        private void CalculateSalary_Click(object sender, RoutedEventArgs e)
         {
-            Staff.Clear();
-            foreach (var item in Log)
-            {
-                foreach (var worker in item.Staff)
-                    if (!Staff.Contains(worker.Name))
-                        Staff.Add(worker.Name);
-            }
+            Salary salary = ShiftLogManager.CalculateSalary();
+            MessageBoxCustom.Show($"Сотрудник {SelectedWorker} получит {salary.Money} руб." +
+                                 $" за период с {Formatter.FormatDate(salary.StartPeriod)} " +
+                                 $"по {Formatter.FormatDate(salary.EndPeriod)}",
+                                 MessageType.Info, MessageButtons.Ok);
         }
-
-        private void VersionHistory_Click(object sender, RoutedEventArgs e) => new VersionHistoryWindow(selectedShiftDate).Show();
-
-        private void WatchShift_Click(object sender, RoutedEventArgs e) => new PopupWindow(new ShiftView(selectedShiftDate, Mode.WatchOnly)).Show();
-
-        private void EditShift_Click(object sender, RoutedEventArgs e) => new PopupWindow(new ShiftView(selectedShiftDate, Mode.EditVersion)).Show();
 
         private void DialogOk_Click(object sender, RoutedEventArgs e)
         {
             switch (DialogQuestion)
             {
                 case removeQuestion:
-                    DB.RemoveShift(selectedShiftDate);
-                    UpdateLog();
+                    try
+                    {
+                        ShiftManager.RemoveFromDB(selectedShiftDate);
+                    }
+                    catch (Exception)
+                    {
+                        ErrorMessage.Message = "Не удалось удалить смену";
+                    }
+                    ShiftLogManager.Update(Start, End);
                     break;
 
                 case issueQuestion:
-                    IssueSalary();
-                    break;
-
-                default:
+                    try
+                    {
+                        Salary salary = ShiftLogManager.IssueSalary(SelectedWorker);
+                        MessageBoxCustom.Show($"Сотруднику {SelectedWorker} выдана ЗП в размере {salary.Money} руб." +
+                                            $" за период с {Formatter.FormatDate(salary.StartPeriod)} " +
+                                            $"по {Formatter.FormatDate(salary.EndPeriod)}",
+                                            MessageType.Info, MessageButtons.Ok);
+                    }
+                    catch (SalaryCountException ex)
+                    {
+                        MessageBoxCustom.Show($"Операция отклонена: {ex.Message}", MessageType.Error, MessageButtons.Ok);
+                    }
                     break;
             }
         }
 
-        private void ListViewItem_Selected(object sender, RoutedEventArgs e) => selectedShiftDate = ((sender as ListViewItem).Content as Shift).CreatedAt.Date;
-
-        private void CalculateSalary_Click(object sender, RoutedEventArgs e) => MessageBoxCustom.Show(Manager.CalculateSalary(Log.ToList()).ToString(), MessageType.Info, MessageButtons.Ok);
-
-        private void IssueSalary()
+        private void EditShift_Click(object sender, RoutedEventArgs e)
         {
-            var worker = DB.GetWorker(SelectedWorker);
-            // проверка не выдана ли уже зарплата
-            if (!IsValidSalaryCount(worker.Id, Start, End))
-                MessageBoxCustom.Show("Этот сотрудник уже получал ЗП за выбранный период", MessageType.Error, MessageButtons.Ok);
-            else
+            PopupWindow shiftWindow = new(new ShiftView(selectedShiftDate, Mode.EditVersion));
+            shiftWindow.Show();
+            shiftWindow.Closed += (s, e) => ShiftLogManager.Update(Start, End);
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            try
             {
-                int money = Manager.CalculateSalary(Log.ToList());
-                DB.Create(new Salary() { WorkerId = worker.Id, Money = money, StartPeriod = Start, EndPeriod = End });
-                MessageBoxCustom.Show($"Сотруднику {worker.Name} выдана ЗП в размере {money} руб." +
-                    $" за период с {Formatter.FormatDate(Start.Date)} по {Formatter.FormatDate(End.Date)}",
-                    MessageType.Info, MessageButtons.Ok);
+                if (dialogService.SaveFileDialog())
+                {
+                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, ShiftLogManager.GetExcelShiftCollection());
+                    StatusMessage.Message = $"Файл успешно экспортирован. Расположение {dialogService.FilePath}";
+                }
             }
+            catch (Exception)
+            {
+                ErrorMessage.Message = "Ошибка экспорта файла";
+            }
+        }
+
+        private void IssueSalary_Click(object sender, RoutedEventArgs e)
+        {
+            DialogQuestion = issueQuestion;
+            DialogConfirmButtonText = "Выдать";
+        }
+
+        private void ListViewItem_Selected(object sender, RoutedEventArgs e)
+        {
+            selectedShiftDate = ((sender as ListViewItem).Content as Shift).CreatedAt.Date;
+        }
+
+        private void RemoveShift_Click(object sender, RoutedEventArgs e)
+        {
+            DialogQuestion = removeQuestion;
+            DialogConfirmButtonText = "Удалить";
         }
 
         private void SetPrepaidPeriod(object sender, RoutedEventArgs e)
@@ -221,44 +214,19 @@ namespace Cashbox.Visu
             End = Formatter.ReturnToEndOfMonth(End);
         }
 
-        private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end) => DB.GetSalaries(workerId, start, end).Count == 0;
-
-        private void Export_Click(object sender, RoutedEventArgs e)
+        private void VersionHistory_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (dialogService.SaveFileDialog())
-                {
-                    List<ShiftExcelItem> collection = new();
-                    foreach (Shift item in Log)
-                        collection.Add(ShiftExcelItem.ConvertFromShift(item));
-                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, collection);
-                    StatusMessage.Message = $"Файл успешно экспортирован. Расположение {dialogService.FilePath}";
-                }
-            }
-            catch (Exception)
-            {
-                ErrorMessage.Message = "Ошибка экспорта файла";
-            }
+            new VersionHistoryWindow(selectedShiftDate).Show();
         }
 
-        private void RemoveShift_Click(object sender, RoutedEventArgs e)
+        private void WatchShift_Click(object sender, RoutedEventArgs e)
         {
-            DialogQuestion = removeQuestion;
-            DialogConfirmButtonText = "Удалить";
+            new PopupWindow(new ShiftView(selectedShiftDate, Mode.WatchOnly)).Show();
         }
 
-        private void IssueSalary_Click(object sender, RoutedEventArgs e)
+        private bool WorkerFilter(object item)
         {
-            DialogQuestion = issueQuestion;
-            DialogConfirmButtonText = "Выдать";
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+            return string.IsNullOrEmpty(SelectedWorker) || (item as Shift).Staff.Find(w => w.Name == SelectedWorker) != null;
         }
     }
 }
