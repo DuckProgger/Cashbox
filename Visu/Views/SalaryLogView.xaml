@@ -6,27 +6,27 @@
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
         xmlns:local="clr-namespace:Cashbox.Visu"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        d:DataContext="{d:DesignInstance Type=local:SalaryLogView}"               
+        d:DataContext="{d:DesignInstance Type=local:SalaryLogView}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto" 
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
         mc:Ignorable="d"
              Background="White"
         d:DesignHeight="400" d:DesignWidth="800">
     <UserControl.Resources>
-        <c:DateConverterToFirstDay x:Key="DateConverterFirstDay"/>
-        <c:DateConverterToLastDay x:Key="DateConverterLastDay"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <c:DateConverterToFirstDay x:Key="DateConverterFirstDay" />
+        <c:DateConverterToLastDay x:Key="DateConverterLastDay" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.7*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="0.7*" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <ListView Grid.Column="1"
-                  ItemsSource="{Binding SalaryLog}"                  >
+                  ItemsSource="{Binding SalaryLog}">
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
                     <GridViewColumn DisplayMemberBinding="{Binding Date}" Header="Дата" />
@@ -38,8 +38,8 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.7*"/>
-                <RowDefinition/>
+                <RowDefinition Height="0.7*" />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
             <!--Выбор даты-->
@@ -47,23 +47,23 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel>
-                            <TextBlock Text="Начало:" Margin="10"/>
-                            <DatePicker 
+                            <TextBlock Text="Начало:" Margin="10" />
+                            <DatePicker
                                         MinWidth="130"
                                         Margin="10, 0, 10, 0"
-                                        IsTodayHighlighted="True" 
+                                        IsTodayHighlighted="True"
                                 SelectedDate="{Binding Start, Converter={StaticResource DateConverterFirstDay}, UpdateSourceTrigger=PropertyChanged}">
                                 <!--<DatePicker.Resources>
-                                    <Style x:Key="DPS" TargetType="{x:Type DatePickerTextBox}" >
+                                    <Style x:Key="DPS" TargetType="{x:Type DatePickerTextBox}">
                                         <Setter Property="Control.Template">
                                             <Setter.Value>
                                                 <ControlTemplate>
-                                                    <TextBox x:Name="PART_TextBox" 
-                                 HorizontalContentAlignment="Stretch"                                  
-                                 VerticalContentAlignment="Stretch" 
+                                                    <TextBox x:Name="PART_TextBox"
+                                 HorizontalContentAlignment="Stretch"
+                                 VerticalContentAlignment="Stretch"
                                  Text="{Binding SelectedDate,
-                            Converter={StaticResource DateConverter}, 
-                            RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" 
+                            Converter={StaticResource DateConverter},
+                            RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}"
                                  BorderBrush="{DynamicResource BaseBorderBrush}" />
                                                 </ControlTemplate>
                                             </Setter.Value>
@@ -74,12 +74,12 @@
                         </StackPanel>
 
                         <StackPanel>
-                            <TextBlock Text="Конец:"  Margin="10"/>
-                            <DatePicker 
+                            <TextBlock Text="Конец:"  Margin="10" />
+                            <DatePicker
                                         MinWidth="130"
                                         Margin="10, 0, 10, 0"
                                         IsTodayHighlighted="True"
-                                SelectedDate="{Binding End, Converter={StaticResource DateConverterLastDay}, UpdateSourceTrigger=PropertyChanged}"/>
+                                SelectedDate="{Binding End, Converter={StaticResource DateConverterLastDay}, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                     </StackPanel>
 
@@ -87,36 +87,40 @@
                     <Button Grid.Row="1"
                     Click="Button_GetSalaryLog"
                     Content="Применить" Margin="5"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                    Style="{StaticResource MaterialDesignOutlinedButton}" />
                 </StackPanel>
-
             </GroupBox>
 
             <GroupBox Header="Заработная плата" Grid.Row="1">
                 <StackPanel Grid.Row="2">
-                    <!--<TextBlock Text="Выбор сотрудника:"/>-->
-                    <ComboBox ItemsSource="{Binding Staff}" 
-                          SelectedValue="{Binding SelectedWorkerName, UpdateSourceTrigger=PropertyChanged}"
-                          SelectionChanged="ComboBox_SelectionChanged" materialDesign:HintAssist.Hint="Выбор сотрудника:"/>
-                    <CheckBox Content="Объединять в месяц" IsChecked="{Binding CombinePerMonth, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Grid >
+                    <DockPanel>
+                        <!--<TextBlock Text="Выбор сотрудника:" />-->
+                        <ComboBox ItemsSource="{Binding Staff}"
+                                  DockPanel.Dock="Left"
+                                  SelectedValue="{Binding SelectedWorkerName, UpdateSourceTrigger=PropertyChanged}"
+                                  materialDesign:HintAssist.Hint="Выбор сотрудника:"
+                                  MinWidth="250"
+                                  IsEnabled="{Binding IsWorkersComboBoxEnabled}" />
+                        <CheckBox Content="Все" IsChecked="{Binding AllWorkers, UpdateSourceTrigger=PropertyChanged}"
+                                  DockPanel.Dock="Right" />
+                    </DockPanel>
+
+                    <CheckBox Content="Объединять в месяц" IsChecked="{Binding CombinePerMonth, UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock 
-                           Foreground="DarkRed" 
+                        <TextBlock
+                           Foreground="DarkRed"
                            TextAlignment="Center"
-                           DataContext="{Binding ErrorMessage}" 
-                           Text="{Binding Message}" 
-                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />   
+                           DataContext="{Binding ErrorMessage}"
+                           Text="{Binding Message}"
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </StackPanel>
             </GroupBox>
-
-
         </Grid>
     </Grid>
-
 </UserControl>
