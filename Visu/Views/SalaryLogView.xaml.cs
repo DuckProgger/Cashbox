@@ -32,11 +32,21 @@ namespace Cashbox.Visu
         private bool _combinePerMonth;
         private CollectionView salaryLogView;
         private ObservableCollection<SalaryViewItem> _salaryLog;
-        private bool _allWorkers;
+        private bool _allWorkers = true;
+        //private int _totalSalary;
 
         #endregion privateProperties
 
         #region publicProperties
+
+        public int TotalSalary => string.IsNullOrEmpty(SelectedWorkerName)
+            ? SalaryManager.GetTotalSalary(Start, End)
+            : SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
+
+        //{
+        //    get => _totalSalary;
+        //    set { _totalSalary = value; OnPropertyChanged(); }
+        //}
 
         public ObservableCollection<SalaryViewItem> SalaryLog
         {
@@ -46,7 +56,9 @@ namespace Cashbox.Visu
                 _salaryLog = value;
                 salaryLogView = (CollectionView)CollectionViewSource.GetDefaultView(_salaryLog);
                 salaryLogView.Filter = WorkerFilter;
+                salaryLogView?.Refresh();
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TotalSalary));
             }
         }
 
@@ -59,7 +71,13 @@ namespace Cashbox.Visu
         public bool AllWorkers
         {
             get => _allWorkers;
-            set { _allWorkers = value; OnPropertyChanged(nameof(IsWorkersComboBoxEnabled)); }
+            set
+            {
+                _allWorkers = value;
+                SelectedWorkerName = string.Empty;
+                OnPropertyChanged(nameof(IsWorkersComboBoxEnabled));
+                OnPropertyChanged(nameof(TotalSalary));
+            }
         }
 
         public DateTime Start
@@ -82,6 +100,10 @@ namespace Cashbox.Visu
                 _selectedWorkerName = value;
                 ErrorMessage.Message = string.Empty;
                 salaryLogView?.Refresh();
+                OnPropertyChanged(nameof(TotalSalary));
+                //if (!string.IsNullOrEmpty(SelectedWorkerName))
+                //    TotalSalary = SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
+                OnPropertyChanged();
             }
         }
 
@@ -122,9 +144,9 @@ namespace Cashbox.Visu
 
         private void UpdateSalaryLog()
         {
-            SalaryLog = AllWorkers
-                ? (new(SalaryManager.GetSalaryLog(Start, End, CombinePerMonth)))
-                : (new(SalaryManager.GetSalaryLog(SelectedWorkerName, Start, End, CombinePerMonth)));
+            SalaryLog = new(SalaryManager.GetSalaryLog(Start, End, CombinePerMonth));
+            //if (string.IsNullOrEmpty(SelectedWorkerName))
+            //TotalSalary = string.IsNullOrEmpty(SelectedWorkerName) ? totalSalary : SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
         }
 
         private void Button_GetSalaryLog(object sender, RoutedEventArgs e)

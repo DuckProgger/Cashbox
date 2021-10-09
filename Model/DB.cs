@@ -64,6 +64,22 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
+        public static int GetTotalSalary(int workerId, DateTime start, DateTime end)
+        {
+            using ApplicationContext db = new();
+            return (from s in db.Salaries
+                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date && s.WorkerId == workerId
+                    select s.Money).Sum();
+        }
+
+        public static int GetTotalSalary(DateTime start, DateTime end)
+        {
+            using ApplicationContext db = new();
+            return (from s in db.Salaries
+                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
+                    select s.Money).Sum();
+        }
+
         public static Shift GetShift(int id)
         {
             using ApplicationContext db = new();

@@ -14,16 +14,6 @@ namespace Cashbox.Model.Managers
 {
     public class SalaryManager : INotifyPropertyChanged
     {
-        private int _totalSalary;
-
-        public int TotalSalary
-        {
-            get => _totalSalary;
-            set { _totalSalary = value; OnPropertyChanged(); }
-        }
-
-        //public ObservableCollection<SalaryViewItem> SalaryLog { get; set; } = new();
-
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
@@ -31,30 +21,21 @@ namespace Cashbox.Model.Managers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public static List<SalaryViewItem> GetSalaryLog(DateTime startPeriod, DateTime endPeriod, bool combine)
+        public static int GetTotalSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
-            //SalaryLog.Clear();
-
-            List<Salary> salariesPerPeriod = DB.GetSalaries(startPeriod, endPeriod);
-            if (combine) // объединять в месяц
-                return FillSalaryLogWithCombine(salariesPerPeriod);
-            else
-                return GetSalaryLogWithoutCombine(salariesPerPeriod);
+            int workerId = DB.GetWorker(workerName)?.Id ?? throw new InvalidNameException("Работник не найден");
+            return DB.GetTotalSalary(workerId, startPeriod, endPeriod);
         }
 
-        public static List<SalaryViewItem> GetSalaryLog(string workerName, DateTime startPeriod, DateTime endPeriod, bool combine)
+        public static int GetTotalSalary(DateTime startPeriod, DateTime endPeriod)
         {
-            if (!IsValidWorkerSelected(workerName))
-                throw new InvalidNameException("Не выбран работник");
+            return DB.GetTotalSalary(startPeriod, endPeriod);
+        }
 
-            //SalaryLog.Clear();
-
-            Worker worker = DB.GetWorker(workerName);
-            List<Salary> salariesPerPeriod = DB.GetSalaries(worker.Id, startPeriod, endPeriod);
-            if (combine) // объединять в месяц
-                return FillSalaryLogWithCombine(salariesPerPeriod);
-            else
-                return GetSalaryLogWithoutCombine(salariesPerPeriod);
+        public static List<SalaryViewItem> GetSalaryLog(DateTime startPeriod, DateTime endPeriod, bool combine)
+        {
+            List<Salary> salariesPerPeriod = DB.GetSalaries(startPeriod, endPeriod);
+            return combine ? GetSalaryLogWithCombine(salariesPerPeriod) : GetSalaryLogWithoutCombine(salariesPerPeriod);
         }
 
         private static List<SalaryViewItem> GetSalaryLogWithoutCombine(List<Salary> salaries)
@@ -74,7 +55,7 @@ namespace Cashbox.Model.Managers
             return salaryLog;
         }
 
-        private static List<SalaryViewItem> FillSalaryLogWithCombine(List<Salary> salaries)
+        private static List<SalaryViewItem> GetSalaryLogWithCombine(List<Salary> salaries)
         {
             List<SalaryViewItem> salaryLog = new();
             // Создать словарь, где ключом является Id работника,
@@ -106,7 +87,5 @@ namespace Cashbox.Model.Managers
             }
             return salaryLog;
         }
-
-        private static bool IsValidWorkerSelected(string workerName) => workerName?.Length > 0;
     }
 }

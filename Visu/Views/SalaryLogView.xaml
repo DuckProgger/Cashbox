@@ -92,8 +92,8 @@
             </GroupBox>
 
             <GroupBox Header="Заработная плата" Grid.Row="1">
-                <StackPanel Grid.Row="2">
-                    <DockPanel>
+                <DockPanel Grid.Row="2">
+                    <DockPanel DockPanel.Dock="Top">
                         <!--<TextBlock Text="Выбор сотрудника:" />-->
                         <ComboBox ItemsSource="{Binding Staff}"
                                   DockPanel.Dock="Left"
@@ -105,8 +105,14 @@
                                   DockPanel.Dock="Right" />
                     </DockPanel>
 
-                    <CheckBox Content="Объединять в месяц" IsChecked="{Binding CombinePerMonth, UpdateSourceTrigger=PropertyChanged}" />
-                    <Grid>
+                    <CheckBox Content="Объединять в месяц" IsChecked="{Binding CombinePerMonth, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" />
+
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                        <TextBlock  Text="Итого: " />
+                        <TextBlock  Text="{Binding TotalSalary}" />
+                    </StackPanel>
+
+                    <Grid DockPanel.Dock="Bottom">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
@@ -119,7 +125,7 @@
                            Text="{Binding Message}"
                            Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
-                </StackPanel>
+                </DockPanel>
             </GroupBox>
         </Grid>
     </Grid>
