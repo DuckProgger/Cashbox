@@ -21,6 +21,36 @@ namespace Cashbox.Model.Managers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public static Salary GetSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
+        {
+            int workerId = DB.GetWorker(workerName)?.Id ?? throw new InvalidNameException("Работник не найден");
+
+            const double Percent = 0.075;
+            const int minDailySalary = 1000;
+
+            double salary = 0;
+            double dailySalary;
+
+            foreach (Shift shift in ShiftManager.GetShifts(startPeriod, endPeriod))
+            {
+                dailySalary = shift.Total * Percent;
+                if (dailySalary < minDailySalary)
+                    dailySalary = minDailySalary;
+                salary += dailySalary;
+            }
+
+            //List<Shift> list = ShiftLog.ToList();
+            //for (int i = 0; i < list.Count; i++)
+            //{
+            //    Shift shift = list[i];
+            //    dailySalary = shift.Total * Percent;
+            //    if (dailySalary < minDailySalary)
+            //        dailySalary = minDailySalary;
+            //    salary += dailySalary;
+            //}
+            return new Salary() { Money = (int)Math.Ceiling(salary), StartPeriod = startPeriod, EndPeriod = endPeriod };
+        }
+
         public static int GetTotalSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
             int workerId = DB.GetWorker(workerName)?.Id ?? throw new InvalidNameException("Работник не найден");

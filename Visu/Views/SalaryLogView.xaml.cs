@@ -33,20 +33,31 @@ namespace Cashbox.Visu
         private CollectionView salaryLogView;
         private ObservableCollection<SalaryViewItem> _salaryLog;
         private bool _allWorkers = true;
-        //private int _totalSalary;
 
         #endregion privateProperties
 
         #region publicProperties
 
-        public int TotalSalary => string.IsNullOrEmpty(SelectedWorkerName)
-            ? SalaryManager.GetTotalSalary(Start, End)
-            : SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
-
-        //{
-        //    get => _totalSalary;
-        //    set { _totalSalary = value; OnPropertyChanged(); }
-        //}
+        public int TotalSalary
+        {
+            get
+            {
+                try
+                {
+                    if (SalaryLog?.Count > 0)
+                        return string.IsNullOrEmpty(SelectedWorkerName)
+                         ? SalaryManager.GetTotalSalary(Start, End)
+                         : SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
+                    else
+                        return 0;
+                }
+                catch (InvalidNameException ex)
+                {
+                    ErrorMessage.Message = ex.Message;
+                    return 0;
+                }
+            }
+        }
 
         public ObservableCollection<SalaryViewItem> SalaryLog
         {
@@ -101,8 +112,6 @@ namespace Cashbox.Visu
                 ErrorMessage.Message = string.Empty;
                 salaryLogView?.Refresh();
                 OnPropertyChanged(nameof(TotalSalary));
-                //if (!string.IsNullOrEmpty(SelectedWorkerName))
-                //    TotalSalary = SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
                 OnPropertyChanged();
             }
         }
@@ -113,14 +122,7 @@ namespace Cashbox.Visu
             set
             {
                 _combinePerMonth = value;
-                try
-                {
-                    UpdateSalaryLog();
-                }
-                catch (InvalidNameException ex)
-                {
-                    ErrorMessage.Message = ex.Message;
-                }
+                GetSalaryLog();
             }
         }
 
@@ -142,23 +144,21 @@ namespace Cashbox.Visu
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        private void UpdateSalaryLog()
-        {
-            SalaryLog = new(SalaryManager.GetSalaryLog(Start, End, CombinePerMonth));
-            //if (string.IsNullOrEmpty(SelectedWorkerName))
-            //TotalSalary = string.IsNullOrEmpty(SelectedWorkerName) ? totalSalary : SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
-        }
-
-        private void Button_GetSalaryLog(object sender, RoutedEventArgs e)
+        private void GetSalaryLog()
         {
             try
             {
-                UpdateSalaryLog();
+                SalaryLog = new(SalaryManager.GetSalaryLog(Start, End, CombinePerMonth));
             }
             catch (InvalidNameException ex)
             {
                 ErrorMessage.Message = ex.Message;
             }
+        }
+
+        private void Button_GetSalaryLog(object sender, RoutedEventArgs e)
+        {
+            GetSalaryLog();
         }
 
         private bool WorkerFilter(object item)

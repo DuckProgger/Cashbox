@@ -4,7 +4,9 @@ using Cashbox.Model.Entities;
 using Cashbox.Model.Managers;
 using Cashbox.Services;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,12 +22,22 @@ namespace Cashbox.Visu
         private const string removeQuestion = "Удалить выбранную смену?";
         private readonly IDialogService dialogService;
         private readonly IFileService<ShiftExcelItem>[] fileServices;
-        private readonly CollectionView view;
+
+        //private readonly CollectionView view;
         private string _dialogConfirmButtonText;
+
         private string _dialogQuestion;
         private DateTime _end;
         private bool _manualPeriodChecked;
         private string _selectedWorker;
+
+        public int Salary
+
+
+        //private ObservableCollection<string> _staff;
+        private ObservableCollection<Shift> _shiftLog;
+
+        private CollectionView shiftLogView;
 
         private DateTime _start;
         private DateTime selectedShiftDate;
@@ -33,6 +45,27 @@ namespace Cashbox.Visu
         #endregion privateProperties
 
         #region publicProperties
+
+        public int Salary
+        {
+            get => _salary;
+            set { _salary = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<Shift> ShiftLog
+        {
+            get => _shiftLog ??= new();
+            set
+            {
+                _shiftLog = value;
+                shiftLogView = (CollectionView)CollectionViewSource.GetDefaultView(_shiftLog);
+                shiftLogView.Filter = WorkerFilter;
+                //shiftLogView?.Refresh();
+                OnPropertyChanged(nameof(Staff));
+            }
+        }
+
+        public ObservableCollection<string> Staff => new(StaffManager.GetStaffInShifts(ShiftLog.ToList()));
 
         public string DialogConfirmButtonText
         {
@@ -71,13 +104,14 @@ namespace Cashbox.Visu
             set
             {
                 _selectedWorker = value;
-                view.Refresh();
+                //view.Refresh();
+                shiftLogView?.Refresh();
                 OnPropertyChanged(nameof(SalaryButtonsVis));
                 //OnPropertyChanged(); // раскомментить, если нужно, чтобы при обновлении журнала автоматически выбирался сотрудник в ComboBox
             }
         }
 
-        public ShiftLogManager ShiftLogManager { get; private set; }
+        //public ShiftLogManager ShiftLogManager { get; private set; }
 
         public DateTime Start
         {
@@ -93,13 +127,13 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            ShiftLogManager = new();
+            //ShiftLogManager = new();
             Permissions = Permissions.GetAccesses(SessionManager.Session.UserId);
             SetPrepaidPeriod(null, null);
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
             dialogService = new DefaultDialog(fileServices);
-            view = (CollectionView)CollectionViewSource.GetDefaultView(ShiftLogManager.ShiftLog);
-            view.Filter = WorkerFilter;
+            //view = (CollectionView)CollectionViewSource.GetDefaultView(ShiftLogManager.ShiftLog);
+            //view.Filter = WorkerFilter;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -111,7 +145,8 @@ namespace Cashbox.Visu
 
         private void Button_GetLog(object sender, RoutedEventArgs e)
         {
-            ShiftLogManager.Update(Start, End);
+            //ShiftLogManager.Update(Start, End);
+            ShiftLog = new(ShiftManager.GetShifts(Start, End));
             OnPropertyChanged(nameof(ExportButtonVis));
         }
 

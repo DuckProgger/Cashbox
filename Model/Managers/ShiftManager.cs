@@ -1,6 +1,7 @@
 ﻿using Cashbox.Model.Entities;
 using Cashbox.Visu.ViewEntities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Cashbox.Model.Managers
@@ -9,14 +10,14 @@ namespace Cashbox.Model.Managers
     {
         public ShiftManager(DateTime date, int version = 0)
         {
-            Shift = GetShift(date, version);
-            Staff = GetWorkerItems();
+            //Shift = GetShift(date, version);
+            //Staff = GetWorkerItems();
         }
 
-        public Shift Shift { get; set; }
-        public ObservableCollection<WorkerViewItem> Staff { get; private set; }
+        //public Shift Shift { get; set; }
+        //public ObservableCollection<WorkerViewItem> Staff { get; private set; }
 
-        private static Shift GetShift(DateTime date, int version = 0)
+        public static Shift GetShift(DateTime date, int version = 0)
         {
             Shift shift;
             if (version == 0)
@@ -38,6 +39,22 @@ namespace Cashbox.Model.Managers
             else
                 shift = DB.GetShift(date, version);
             return shift;
+        }
+
+        public static List<Shift> GetShifts(DateTime startPeriod, DateTime endPeriod)
+        {
+            List<Shift> shifts = new();
+            foreach (Shift shift in DB.GetShifts(startPeriod, endPeriod))
+                shifts.Add(shift);
+            return shifts;
+        }
+
+        public static List<Shift> GetShifts(string workerName, DateTime startPeriod, DateTime endPeriod)
+        {
+            List<Shift> shifts = new();
+            foreach (Shift shift in DB.GetShifts(startPeriod, endPeriod))
+                shifts.Add(shift);
+            return shifts;
         }
 
         private ObservableCollection<WorkerViewItem> GetWorkerItems()
