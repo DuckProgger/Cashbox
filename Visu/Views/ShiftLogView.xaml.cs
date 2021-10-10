@@ -30,9 +30,10 @@ namespace Cashbox.Visu
         private DateTime _end;
         private bool _manualPeriodChecked;
         private string _selectedWorker;
+        private DateTime memStart;
+        private DateTime memEnd;
 
-        public int Salary
-
+        //public int Salary
 
         //private ObservableCollection<string> _staff;
         private ObservableCollection<Shift> _shiftLog;
@@ -46,13 +47,13 @@ namespace Cashbox.Visu
 
         #region publicProperties
 
-        public int Salary
-        {
-            get => _salary;
-            set { _salary = value; OnPropertyChanged(); }
-        }
+        //public int Salary
+        //{
+        //    get => _salary;
+        //    set { _salary = value; OnPropertyChanged(); }
+        //}
 
-        public ObservableCollection<Shift> ShiftLog
+        public ObservableCollection<Shift> Shifts
         {
             get => _shiftLog ??= new();
             set
@@ -65,7 +66,7 @@ namespace Cashbox.Visu
             }
         }
 
-        public ObservableCollection<string> Staff => new(StaffManager.GetStaffInShifts(ShiftLog.ToList()));
+        public ObservableCollection<string> Staff => new(StaffManager.GetStaffInShifts(Shifts.ToList()));
 
         public string DialogConfirmButtonText
         {
@@ -86,7 +87,7 @@ namespace Cashbox.Visu
         }
 
         public MessageProvider ErrorMessage { get; } = new();
-        public bool ExportButtonVis => ShiftLogManager.ShiftLog?.Count > 0;
+        public bool ExportButtonVis => Shifts?.Count > 0;
 
         public bool ManualPeriodChecked
         {
@@ -146,16 +147,18 @@ namespace Cashbox.Visu
         private void Button_GetLog(object sender, RoutedEventArgs e)
         {
             //ShiftLogManager.Update(Start, End);
-            ShiftLog = new(ShiftManager.GetShifts(Start, End));
+            UpdateShifts();
             OnPropertyChanged(nameof(ExportButtonVis));
+            memStart = Start;
+            memEnd = End;
         }
 
         private void CalculateSalary_Click(object sender, RoutedEventArgs e)
         {
-            Salary salary = ShiftLogManager.CalculateSalary();
+            Salary salary = SalaryManager.CalculateSalary(SelectedWorker, memStart, memEnd);
             MessageBoxCustom.Show($"Сотрудник {SelectedWorker} получит {salary.Money} руб." +
-                                 $" за период с {Formatter.FormatDate(salary.StartPeriod)} " +
-                                 $"по {Formatter.FormatDate(salary.EndPeriod)}",
+                                 $" за период с {Formatter.FormatDate(memStart)} " +
+                                 $"по {Formatter.FormatDate(memEnd)}",
                                  MessageType.Info, MessageButtons.Ok);
         }
 
@@ -166,19 +169,19 @@ namespace Cashbox.Visu
                 case removeQuestion:
                     try
                     {
-                        ShiftManager.RemoveFromDB(selectedShiftDate);
+                        ShiftManager.Remove(selectedShiftDate);
                     }
                     catch (Exception)
                     {
                         ErrorMessage.Message = "Не удалось удалить смену";
                     }
-                    ShiftLogManager.Update(Start, End);
+                    UpdateShifts();
                     break;
 
                 case issueQuestion:
                     try
                     {
-                        Salary salary = ShiftLogManager.IssueSalary(SelectedWorker);
+                        Salary salary = SalaryManager.AddSalary(SelectedWorker, memStart, memEnd);
                         MessageBoxCustom.Show($"Сотруднику {SelectedWorker} выдана ЗП в размере {salary.Money} руб." +
                                             $" за период с {Formatter.FormatDate(salary.StartPeriod)} " +
                                             $"по {Formatter.FormatDate(salary.EndPeriod)}",
@@ -196,7 +199,12 @@ namespace Cashbox.Visu
         {
             PopupWindow shiftWindow = new(new ShiftView(selectedShiftDate, Mode.EditVersion));
             shiftWindow.Show();
-            shiftWindow.Closed += (s, e) => ShiftLogManager.Update(Start, End);
+            shiftWindow.Closed += (s, e) => UpdateShifts();
+        }
+
+        private void UpdateShifts()
+        {
+            Shifts = new(ShiftManager.GetShifts(Start, End));
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)

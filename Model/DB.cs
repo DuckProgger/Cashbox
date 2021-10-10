@@ -80,9 +80,6 @@ namespace Cashbox.Model
                     select s.Money).Sum();
         }
 
-        public static Shift GetShifts(int id)
-
-
         public static Shift GetShift(int id)
         {
             using ApplicationContext db = new();
@@ -131,11 +128,11 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
-        public static List<Shift> GetShifts(string workerName, DateTime begin, DateTime end)
+        public static List<Shift> GetShifts(int workerId, DateTime begin, DateTime end)
         {
             using ApplicationContext db = new();
             return (from shift in db.Shifts.Include(s => s.Staff).Include(s => s.User).AsEnumerable()
-                    where shift.CreatedAt >= begin && shift.CreatedAt <= end && shift.Staff.Find(w => w.Name == workerName)
+                    where shift.CreatedAt >= begin && shift.CreatedAt <= end && shift.Staff.Exists(w => w.Id == workerId)
                     orderby shift.CreatedAt descending, shift.Version descending
                     group shift by shift.CreatedAt
                           into gr

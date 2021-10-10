@@ -8,15 +8,6 @@ namespace Cashbox.Model.Managers
 {
     public class ShiftManager
     {
-        public ShiftManager(DateTime date, int version = 0)
-        {
-            //Shift = GetShift(date, version);
-            //Staff = GetWorkerItems();
-        }
-
-        //public Shift Shift { get; set; }
-        //public ObservableCollection<WorkerViewItem> Staff { get; private set; }
-
         public static Shift GetShift(DateTime date, int version = 0)
         {
             Shift shift;
@@ -57,16 +48,16 @@ namespace Cashbox.Model.Managers
             return shifts;
         }
 
-        private ObservableCollection<WorkerViewItem> GetWorkerItems()
+        public static List<WorkerViewItem> GetWorkerItems(Shift shift)
         {
-            ObservableCollection<WorkerViewItem> workers = new();
+            List<WorkerViewItem> workers = new();
             foreach (Worker worker in DB.GetStaff())
             {
                 if (worker.IsActive)
                 {
                     WorkerViewItem workerItem = new() { Name = worker.Name };
                     // Поставить галочки работникам, которые были в смене.
-                    if (WorkerExists(worker.Id))
+                    if (WorkerExists(shift, worker.Id))
                         workerItem.Checked = true;
                     workers.Add(workerItem);
                 }
@@ -74,18 +65,18 @@ namespace Cashbox.Model.Managers
             return workers;
         }
 
-        public void AddWorker(string name)
+        public static void AddWorker(Shift shift, string name)
         {
             Worker worker = DB.GetWorker(name);
-            if (!WorkerExists(worker.Id))
-                Shift.Staff.Add(worker);
+            if (!WorkerExists(shift, worker.Id))
+                shift.Staff.Add(worker);
         }
 
-        public void RemoveWorker(string name)
+        public static void RemoveWorker(Shift shift, string name)
         {
             Worker worker = DB.GetWorker(name);
-            if (WorkerExists(worker.Id))
-                Shift.Staff.RemoveAt(Shift.Staff.FindIndex(w => w.Id == worker.Id));
+            if (WorkerExists(shift, worker.Id))
+                shift.Staff.RemoveAt(shift.Staff.FindIndex(w => w.Id == worker.Id));
         }
 
         public void UpdateDB()
@@ -103,14 +94,14 @@ namespace Cashbox.Model.Managers
             DB.CreateShift(Shift);
         }
 
-        public static void RemoveFromDB(DateTime date)
+        public static void Remove(DateTime date)
         {
             DB.RemoveShift(date);
         }
 
-        private bool WorkerExists(int id)
+        private static bool WorkerExists(Shift shift, int id)
         {
-            return Shift?.Staff?.Exists(w => w.Id == id) ?? false;
+            return shift?.Staff?.Exists(w => w.Id == id) ?? false;
         }
 
         public bool IsValidStaffList()

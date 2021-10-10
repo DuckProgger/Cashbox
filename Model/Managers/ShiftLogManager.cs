@@ -94,9 +94,9 @@ namespace Cashbox.Model.Managers
         //    }
         //}
 
-        private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end)
-        {
-            return DB.GetSalaries(workerId, start, end).Count == 0;
-        }
+        //private static bool IsValidSalaryCount(int workerId, DateTime start, DateTime end)
+        //{
+        //    return DB.GetSalaries(workerId, start, end).Count == 0;
+        //}
     }
 }

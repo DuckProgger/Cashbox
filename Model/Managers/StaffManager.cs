@@ -1,4 +1,5 @@
-﻿using Cashbox.Model.Entities;
+﻿using Cashbox.Exceptions;
+using Cashbox.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,6 +29,11 @@ namespace Cashbox.Model.Managers
             foreach (Worker worker in DB.GetStaff())
                 staff.Add(worker.Name);
             return staff;
+        }
+
+        public static Worker GetWorker(string workerName)
+        {
+            return DB.GetWorker(workerName) ?? throw new InvalidNameException("Работник не найден");
         }
     }
 }

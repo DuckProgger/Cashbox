@@ -21,9 +21,21 @@ namespace Cashbox.Model.Managers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public static Salary GetSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
+        public static Salary AddSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
-            int workerId = DB.GetWorker(workerName)?.Id ?? throw new InvalidNameException("Работник не найден");
+            int workerId = DB.GetWorker(workerName).Id;
+            // проверка не выдана ли уже зарплата
+            if (DB.GetSalaries(workerId, startPeriod, endPeriod).Count > 0)
+                throw new SalaryCountException($"Cотрудник {workerName} уже получал ЗП" +
+                                               $" за период с {Formatter.FormatDate(startPeriod)} " +
+                                               $"по {Formatter.FormatDate(endPeriod)}");
+            Salary salary = CalculateSalary(workerName, startPeriod, endPeriod);
+            return DB.Create(salary);
+        }
+
+        public static Salary CalculateSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
+        {
+            Worker worker = StaffManager.GetWorker(workerName);
 
             const double Percent = 0.075;
             const int minDailySalary = 1000;
@@ -38,22 +50,18 @@ namespace Cashbox.Model.Managers
                     dailySalary = minDailySalary;
                 salary += dailySalary;
             }
-
-            //List<Shift> list = ShiftLog.ToList();
-            //for (int i = 0; i < list.Count; i++)
-            //{
-            //    Shift shift = list[i];
-            //    dailySalary = shift.Total * Percent;
-            //    if (dailySalary < minDailySalary)
-            //        dailySalary = minDailySalary;
-            //    salary += dailySalary;
-            //}
-            return new Salary() { Money = (int)Math.Ceiling(salary), StartPeriod = startPeriod, EndPeriod = endPeriod };
+            return new Salary()
+            {
+                Money = (int)Math.Ceiling(salary),
+                StartPeriod = startPeriod,
+                EndPeriod = endPeriod,
+                WorkerId = worker.Id
+            };
         }
 
         public static int GetTotalSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
-            int workerId = DB.GetWorker(workerName)?.Id ?? throw new InvalidNameException("Работник не найден");
+            int workerId = StaffManager.GetWorker(workerName).Id;
             return DB.GetTotalSalary(workerId, startPeriod, endPeriod);
         }
 
