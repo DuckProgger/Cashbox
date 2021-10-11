@@ -3,6 +3,7 @@ using Cashbox.Model.Entities;
 using Cashbox.Model.Managers;
 using Cashbox.Visu.ViewEntities;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -16,33 +17,49 @@ namespace Cashbox.Visu
 {
     public partial class ShiftView : UserControl, INotifyPropertyChanged
     {
+        #region privateFields
+
         private readonly SolidColorBrush redBackground = new(Color.FromRgb(245, 94, 83));
-
         private readonly Mode viewMode;
-
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
-
-        private string _differenceText;
         private Shift _shift;
+
+        #endregion privateFields
 
         public ShiftView(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
-            //ShiftManager = new(date, version);
             Shift = ShiftManager.GetShift(date, version);
+            Staff = ShiftManager.GetWorkerViewItems(Shift);
             DataContext = this;
             viewMode = mode;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #region publicProperties
+
+        public List<WorkerViewItem> Staff { get; set; }
+
         public string DifferenceText
         {
-            get => _differenceText;
-            set
+            get
             {
-                _differenceText = value;
-                OnPropertyChanged();
+                if (Shift.Difference > 0)
+                {
+                    DifferenceBorder.Background = redBackground;
+                    return "Недостача:";
+                }
+                else if (Shift.Difference < 0)
+                {
+                    DifferenceBorder.Background = redBackground;
+                    return "Излишек:";
+                }
+                else
+                {
+                    DifferenceBorder.Background = whiteBackground;
+                    return "Расхождение:";
+                }
             }
         }
 
@@ -50,9 +67,9 @@ namespace Cashbox.Visu
 
         public bool EnableEntries => viewMode != Mode.WatchOnly;
         public MessageProvider ErrorMessage { get; } = new();
-
-        //public ShiftManager ShiftManager { get; private set; }
         public MessageProvider StatusMessage { get; } = new();
+
+        #endregion publicProperties
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -136,22 +153,7 @@ namespace Cashbox.Visu
             // Переместить курсор в конец
             textBox.SelectionStart = textBox.Text.Length;
 
-            // Установить фон в поле Расхождения
-            if (Shift.Difference > 0)
-            {
-                DifferenceText = "Недостача:";
-                DifferenceBorder.Background = redBackground;
-            }
-            else if (Shift.Difference < 0)
-            {
-                DifferenceText = "Излишек:";
-                DifferenceBorder.Background = redBackground;
-            }
-            else
-            {
-                DifferenceText = "Расхождение:";
-                DifferenceBorder.Background = whiteBackground;
-            }
+            OnPropertyChanged(nameof(DifferenceText));
         }
     }
 }

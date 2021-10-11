@@ -43,7 +43,7 @@ namespace Cashbox.Model.Managers
             double salary = 0;
             double dailySalary;
 
-            foreach (Shift shift in ShiftManager.GetShifts(startPeriod, endPeriod))
+            foreach (Shift shift in ShiftManager.GetShifts(workerName, startPeriod, endPeriod))
             {
                 dailySalary = shift.Total * Percent;
                 if (dailySalary < minDailySalary)

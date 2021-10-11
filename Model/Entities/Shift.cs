@@ -22,23 +22,23 @@ namespace Cashbox.Model.Entities
         public int Id { get; set; }
 
         /// <summary>
-        /// Версия смены/
+        /// Версия смены.
         /// </summary>
         public int Version { get; set; }
 
         /// <summary>
-        /// Дата создания/
+        /// Дата создания.
         /// </summary>
         [Column(TypeName = "date")]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
-        /// Дата и время последнего изменения/
+        /// Дата и время последнего изменения.
         /// </summary>
         public DateTime LastModified { get; set; }
 
         /// <summary>
-        /// Наличные/
+        /// Наличные.
         /// </summary>
         public int Cash
         {
@@ -52,7 +52,7 @@ namespace Cashbox.Model.Entities
         }
 
         /// <summary>
-        /// Терминал/
+        /// Терминал.
         /// </summary>
         public int Terminal
         {
@@ -66,7 +66,7 @@ namespace Cashbox.Model.Entities
         }
 
         /// <summary>
-        /// Расходы/
+        /// Расходы.
         /// </summary>
         public int Expenses
         {
@@ -79,7 +79,7 @@ namespace Cashbox.Model.Entities
         }
 
         /// <summary>
-        /// Сумма на начало дня/
+        /// Сумма на начало дня.
         /// </summary>
         public int StartDay
         {
@@ -92,7 +92,7 @@ namespace Cashbox.Model.Entities
         }
 
         /// <summary>
-        /// Сумма на конец дня/
+        /// Сумма на конец дня.
         /// </summary>
         public int EndDay
         {
@@ -105,7 +105,7 @@ namespace Cashbox.Model.Entities
         }
 
         /// <summary>
-        /// Сдано денег/
+        /// Сдано денег.
         /// </summary>
         public int HandedOver
         {
@@ -118,7 +118,7 @@ namespace Cashbox.Model.Entities
         }
 
         /// <summary>
-        /// Общая выручка/
+        /// Общая выручка.
         /// </summary>
         public int Total => Cash + Terminal;
 
@@ -152,30 +152,5 @@ namespace Cashbox.Model.Entities
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-
-        //public Shift Copy()
-        //{
-        //    Shift shift = (Shift)MemberwiseClone();
-        //    shift.Id = default;
-        //    //shift.User = new User() { Id = User.Id, Name = User.Name };
-        //    //shift.Staff = Staff != null ? new(Staff) : new();
-        //    return shift;
-        //}
-
-        //public Shift Copy()
-        //{
-        //    return new Shift
-        //    {
-        //        Version = Version,
-        //        CreatedAt = CreatedAt,
-        //        Cash = Cash,
-        //        Terminal = Terminal,
-        //        Expenses = Expenses,
-        //        StartDay = StartDay,
-        //        EndDay = EndDay,
-        //        HandedOver = HandedOver,
-        //        Comment = Comment
-        //    };
-        //}
     }
 }

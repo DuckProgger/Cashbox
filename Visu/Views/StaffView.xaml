@@ -5,27 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cashbox.Visu"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:StaffView}"          
+        d:DataContext="{d:DesignInstance Type=local:StaffView}"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto" 
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
         d:DesignHeight="420" d:DesignWidth="400">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid Background="AliceBlue">
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.3*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="1.2*"/>
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1.2*" />
         </Grid.RowDefinitions>
 
-        <TextBox Text="{Binding SearchEntry, UpdateSourceTrigger=PropertyChanged}" 
-                 materialDesign:HintAssist.Hint="Поиск" Cursor="IBeam"/>
+        <TextBox Text="{Binding SearchEntry, UpdateSourceTrigger=PropertyChanged}"
+                 materialDesign:HintAssist.Hint="Поиск" Cursor="IBeam" />
 
         <DataGrid     Grid.Row="1"
                       Margin="10"
@@ -43,19 +43,19 @@
                         <DataTemplate>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="0.2*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="0.2*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <CheckBox IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}"
                                               Grid.Column="0"
                                               Width="20"
                                               Margin="2"
                                               Checked="CheckBox_Checked"
-                                              Unchecked="CheckBox_Unchecked"/>
+                                              Unchecked="CheckBox_Unchecked" />
                                 <TextBlock Text="{Binding Name}"
                                                Grid.Column="1"
                                                Margin="2"
-                                               Padding="0"/>
+                                               Padding="0" />
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -65,21 +65,19 @@
 
         <GroupBox Header="Добавить сотрудника:" Grid.Row="2">
             <StackPanel>
-                <TextBox Text="{Binding NewWorkerName}" 
-                         Height="30" 
+                <TextBox Text="{Binding NewWorkerName, UpdateSourceTrigger=PropertyChanged}"
+                         Height="30"
                          materialDesign:HintAssist.Hint="Имя"
-                         TextChanged="NewWorkerNameField_TextChanged"
                          Padding="5"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam"/>
-                <TextBlock 
-                           Foreground="DarkRed" 
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Cursor="IBeam" />
+                <TextBlock
+                           Foreground="DarkRed"
                            TextAlignment="Center"
-                           DataContext="{Binding ErrorMessage}" 
-                           Text="{Binding Message}" 
+                           DataContext="{Binding ErrorMessage}"
+                           Text="{Binding Message}"
                            Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <Button Content="Добавить" Click="AddWorker_Click"/>
+                <Button Content="Добавить" Click="AddWorker_Click" />
             </StackPanel>
-
         </GroupBox>
     </Grid>
 </UserControl>

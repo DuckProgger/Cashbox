@@ -1,8 +1,8 @@
 ﻿using Cashbox.Model.Entities;
+using Cashbox.Visu;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Cashbox.Model.Managers
 {
@@ -42,8 +42,9 @@ namespace Cashbox.Model.Managers
 
         public static List<Shift> GetShifts(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
+            int workerId = StaffManager.GetWorker(workerName).Id;
             List<Shift> shifts = new();
-            foreach (Shift shift in DB.GetShifts(startPeriod, endPeriod))
+            foreach (Shift shift in DB.GetShifts(workerId, startPeriod, endPeriod))
                 shifts.Add(shift);
             return shifts;
         }
@@ -77,7 +78,7 @@ namespace Cashbox.Model.Managers
             DB.CreateShift(shift);
         }
 
-        public static void Remove(DateTime date)
+        public static void RemoveFromDB(DateTime date)
         {
             DB.RemoveShift(date);
         }
@@ -107,6 +108,15 @@ namespace Cashbox.Model.Managers
                 }
             }
             return workers;
+        }
+
+        public static List<ShiftExcelItem> GetExcelShiftCollection(DateTime startPeriod, DateTime endPeriod)
+        {
+            List<Shift> shifts = DB.GetShifts(startPeriod, endPeriod);
+            List<ShiftExcelItem> collection = new();
+            foreach (Shift item in shifts)
+                collection.Add(ShiftExcelItem.ConvertFromShift(item));
+            return collection;
         }
     }
 }

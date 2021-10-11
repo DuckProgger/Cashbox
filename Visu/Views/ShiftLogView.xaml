@@ -55,7 +55,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <ListView   Grid.Column="1"
-                        ItemsSource="{Binding ShiftLogManager.ShiftLog}">
+                        ItemsSource="{Binding Shifts}">
                 <ListView.View>
                     <GridView AllowsColumnReorder="True">
                         <GridViewColumn DisplayMemberBinding="{Binding CreatedAt, Converter={StaticResource DateConverter}}" Header="Дата" />
@@ -128,7 +128,7 @@
                     <!--Расчёт ЗП-->
                     <StackPanel Grid.Row="2">
                         <TextBlock Text="Выбор сотрудника:" />
-                        <ComboBox ItemsSource="{Binding ShiftLogManager.Staff}"
+                        <ComboBox ItemsSource="{Binding Staff}"
                           SelectedValue="{Binding SelectedWorker, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Click="CalculateSalary_Click"
                         Content="Предварительный расчёт"

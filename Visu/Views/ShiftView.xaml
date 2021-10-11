@@ -83,7 +83,7 @@
                 <DataGrid Name="WorkersTable"
                       Margin="10"
                       Background="AliceBlue"
-                      ItemsSource="{Binding ShiftManager.Staff}"
+                      ItemsSource="{Binding Staff}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="5"
@@ -125,7 +125,7 @@
                      materialDesign:HintAssist.HintOpacity="100"
                      BorderBrush="Gray"
                      KeyDown="Comment_KeyDown"
-                     Text="{Binding ShiftManager.Shift.Comment}"
+                     Text="{Binding Shift.Comment}"
                      IsEnabled="{Binding EnableEntries}" />
             </Grid>
 
@@ -172,7 +172,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding ShiftManager.Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
                              IsEnabled="{Binding EnableEntries}" />
@@ -183,7 +183,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding ShiftManager.Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}" Cursor="IBeam" />
@@ -194,7 +194,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding ShiftManager.Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
                              IsEnabled="{Binding EnableEntries}" />
@@ -205,7 +205,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Text="{Binding ShiftManager.Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
                                  LostFocus="TextBox_LostFocus"
                                  TextChanged="TextBox_TextChanged"
                                  IsEnabled="{Binding EnableEntries}"
@@ -217,7 +217,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding ShiftManager.Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}" />
@@ -228,7 +228,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding ShiftManager.Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
                              LostFocus="TextBox_LostFocus"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}" />
@@ -244,7 +244,7 @@
                         <TextBlock Text="Выручка:"
                            FontSize="15"
                            Style="{StaticResource MyTextBlock}" />
-                        <TextBlock Text="{Binding ShiftManager.Shift.Total}"
+                        <TextBlock Text="{Binding Shift.Total}"
                                Style="{StaticResource MyTextBlock2}" />
                     </StackPanel>
                     <Border x:Name="DifferenceBorder"
@@ -255,7 +255,7 @@
                             <TextBlock Text="{Binding DifferenceText}"
                                    FontSize="15"
                                    Style="{StaticResource MyTextBlock}" />
-                            <TextBlock Text="{Binding ShiftManager.Shift.Difference, Converter={StaticResource DifferenceConverter}}"
+                            <TextBlock Text="{Binding Shift.Difference, Converter={StaticResource DifferenceConverter}}"
                                Style="{StaticResource MyTextBlock2}" />
                         </StackPanel>
                     </Border>

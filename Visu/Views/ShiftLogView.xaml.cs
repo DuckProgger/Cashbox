@@ -22,24 +22,15 @@ namespace Cashbox.Visu
         private const string removeQuestion = "Удалить выбранную смену?";
         private readonly IDialogService dialogService;
         private readonly IFileService<ShiftExcelItem>[] fileServices;
-
-        //private readonly CollectionView view;
         private string _dialogConfirmButtonText;
-
         private string _dialogQuestion;
         private DateTime _end;
         private bool _manualPeriodChecked;
         private string _selectedWorker;
         private DateTime memStart;
         private DateTime memEnd;
-
-        //public int Salary
-
-        //private ObservableCollection<string> _staff;
-        private ObservableCollection<Shift> _shiftLog;
-
-        private CollectionView shiftLogView;
-
+        private ObservableCollection<Shift> _shifts;
+        private CollectionView shiftsView;
         private DateTime _start;
         private DateTime selectedShiftDate;
 
@@ -47,21 +38,16 @@ namespace Cashbox.Visu
 
         #region publicProperties
 
-        //public int Salary
-        //{
-        //    get => _salary;
-        //    set { _salary = value; OnPropertyChanged(); }
-        //}
-
         public ObservableCollection<Shift> Shifts
         {
-            get => _shiftLog ??= new();
+            get => _shifts ??= new();
             set
             {
-                _shiftLog = value;
-                shiftLogView = (CollectionView)CollectionViewSource.GetDefaultView(_shiftLog);
-                shiftLogView.Filter = WorkerFilter;
+                _shifts = value;
+                shiftsView = (CollectionView)CollectionViewSource.GetDefaultView(_shifts);
+                shiftsView.Filter = WorkerFilter;
                 OnPropertyChanged(nameof(Staff));
+                OnPropertyChanged();
             }
         }
 
@@ -104,12 +90,10 @@ namespace Cashbox.Visu
             set
             {
                 _selectedWorker = value;
-                shiftLogView?.Refresh();
+                shiftsView?.Refresh();
                 OnPropertyChanged(nameof(SalaryButtonsVis));
             }
         }
-
-        //public ShiftLogManager ShiftLogManager { get; private set; }
 
         public DateTime Start
         {
@@ -125,13 +109,10 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            //ShiftLogManager = new();
             Permissions = Permissions.GetAccesses(SessionManager.Session.UserId);
             SetPrepaidPeriod(null, null);
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
             dialogService = new DefaultDialog(fileServices);
-            //view = (CollectionView)CollectionViewSource.GetDefaultView(ShiftLogManager.ShiftLog);
-            //view.Filter = WorkerFilter;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -143,7 +124,6 @@ namespace Cashbox.Visu
 
         private void Button_GetLog(object sender, RoutedEventArgs e)
         {
-            //ShiftLogManager.Update(Start, End);
             UpdateShifts();
             OnPropertyChanged(nameof(ExportButtonVis));
             memStart = Start;
@@ -166,13 +146,13 @@ namespace Cashbox.Visu
                 case removeQuestion:
                     try
                     {
-                        ShiftManager.Remove(selectedShiftDate);
+                        ShiftManager.RemoveFromDB(selectedShiftDate);
+                        UpdateShifts();
                     }
                     catch (Exception)
                     {
                         ErrorMessage.Message = "Не удалось удалить смену";
                     }
-                    UpdateShifts();
                     break;
 
                 case issueQuestion:
@@ -210,7 +190,7 @@ namespace Cashbox.Visu
             {
                 if (dialogService.SaveFileDialog())
                 {
-                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, ShiftLogManager.GetExcelShiftCollection());
+                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, ShiftManager.GetExcelShiftCollection(memStart, memEnd));
                     StatusMessage.Message = $"Файл успешно экспортирован. Расположение {dialogService.FilePath}";
                 }
             }
