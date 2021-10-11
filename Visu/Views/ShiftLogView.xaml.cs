@@ -81,7 +81,6 @@ namespace Cashbox.Visu
             { _manualPeriodChecked = value; OnPropertyChanged(); }
         }
 
-        public Permissions Permissions { get; private set; }
         public bool SalaryButtonsVis => !string.IsNullOrEmpty(SelectedWorker);
 
         public string SelectedWorker
@@ -109,7 +108,6 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            Permissions = Permissions.GetAccesses(SessionManager.Session.UserId);
             SetPrepaidPeriod(null, null);
             fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
             dialogService = new DefaultDialog(fileServices);

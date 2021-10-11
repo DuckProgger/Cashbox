@@ -31,9 +31,9 @@
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top">
                     <Button Click="OpenShiftView" Cursor="Hand" Margin="10" Content="Смена" />
-                    <Button Click="OpenLogView" Cursor="Hand" Grid.Row="1" Margin="10" Content="Журнал смен" />
-                    <Button Click="OpenSalaryLogView" Cursor="Hand" Grid.Row="1" Margin="10" Content="Журнал зарплат" />
-                    <Button Click="OpenStaffView" Cursor="Hand" Grid.Row="2" Margin="10" Content="Сотрудники" />
+                    <Button Click="OpenLogView" Cursor="Hand" Grid.Row="1" Margin="10" Content="Журнал смен" IsEnabled="{Binding IsAdmin}" />
+                    <Button Click="OpenSalaryLogView" Cursor="Hand" Grid.Row="1" Margin="10" Content="Журнал зарплат" IsEnabled="{Binding IsAdmin}" />
+                    <Button Click="OpenStaffView" Cursor="Hand" Grid.Row="2" Margin="10" Content="Сотрудники" IsEnabled="{Binding IsAdmin}" />
                 </StackPanel>
                 <Button DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Click="ChangeUser" Cursor="Hand" Grid.Row="3" Margin="10" Content="Смена пользователя" />
             </DockPanel>

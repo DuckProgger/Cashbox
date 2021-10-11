@@ -24,13 +24,11 @@ namespace Cashbox.Visu
         private int selectedVersion;
 
         public ObservableCollection<Shift> VersionHistory { get; set; }
-        public Permissions Permissions { get; private set; }
 
         public VersionHistoryWindow(DateTime date)
         {
             InitializeComponent();
             DataContext = this;
-            Permissions = Permissions.GetAccesses(SessionManager.Session.UserId);
             selectedDate = date;
             VersionHistory = new(DB.GetShiftVersions(selectedDate.Date));
             VersionHistoryView.ItemsSource = VersionHistory;

@@ -15,5 +15,10 @@ namespace Cashbox.Model.Managers
         public static void InitSession(string userName) => Session = DB.CreateSession(userName);
 
         public static void RemoveCurrentSession() => DB.RemoveSession(Session.Id);
+
+        public static Permissions GetPermissions()
+        {
+            return Permissions.GetAccesses(Session.UserId);
+        }
     }
 }
