@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace Cashbox.Model.Managers
 {
-    public class ShiftManager
+    public static class ShiftManager
     {
         public static Shift GetShift(DateTime date, int version = 0)
         {
@@ -48,7 +48,51 @@ namespace Cashbox.Model.Managers
             return shifts;
         }
 
-        public static List<WorkerViewItem> GetWorkerItems(Shift shift)
+        public static void AddWorker(this Shift shift, string name)
+        {
+            Worker worker = DB.GetWorker(name);
+            if (!WorkerExists(shift, worker.Id))
+                shift.Staff.Add(worker);
+        }
+
+        public static void RemoveWorker(this Shift shift, string name)
+        {
+            Worker worker = DB.GetWorker(name);
+            if (WorkerExists(shift, worker.Id))
+                shift.Staff.RemoveAt(shift.Staff.FindIndex(w => w.Id == worker.Id));
+        }
+
+        public static void UpdateDB(Shift shift)
+        {
+            shift.User = DB.GetUser(SessionManager.Session.UserId);
+            shift.LastModified = DateTime.Now;
+            DB.UpdateShift(shift);
+        }
+
+        public static void AddToDB(Shift shift)
+        {
+            shift.User = DB.GetUser(SessionManager.Session.UserId);
+            shift.LastModified = DateTime.Now;
+            shift.Version++;
+            DB.CreateShift(shift);
+        }
+
+        public static void Remove(DateTime date)
+        {
+            DB.RemoveShift(date);
+        }
+
+        private static bool WorkerExists(Shift shift, int id)
+        {
+            return shift?.Staff?.Exists(w => w.Id == id) ?? false;
+        }
+
+        public static bool ValidateShift(Shift shift)
+        {
+            return shift.Staff.Count > 0;
+        }
+
+        public static List<WorkerViewItem> GetWorkerViewItems(Shift shift)
         {
             List<WorkerViewItem> workers = new();
             foreach (Worker worker in DB.GetStaff())
@@ -63,50 +107,6 @@ namespace Cashbox.Model.Managers
                 }
             }
             return workers;
-        }
-
-        public static void AddWorker(Shift shift, string name)
-        {
-            Worker worker = DB.GetWorker(name);
-            if (!WorkerExists(shift, worker.Id))
-                shift.Staff.Add(worker);
-        }
-
-        public static void RemoveWorker(Shift shift, string name)
-        {
-            Worker worker = DB.GetWorker(name);
-            if (WorkerExists(shift, worker.Id))
-                shift.Staff.RemoveAt(shift.Staff.FindIndex(w => w.Id == worker.Id));
-        }
-
-        public void UpdateDB()
-        {
-            Shift.User = DB.GetUser(SessionManager.Session.UserId);
-            Shift.LastModified = DateTime.Now;
-            DB.UpdateShift(Shift);
-        }
-
-        public void AddToDB()
-        {
-            Shift.User = DB.GetUser(SessionManager.Session.UserId);
-            Shift.LastModified = DateTime.Now;
-            Shift.Version++;
-            DB.CreateShift(Shift);
-        }
-
-        public static void Remove(DateTime date)
-        {
-            DB.RemoveShift(date);
-        }
-
-        private static bool WorkerExists(Shift shift, int id)
-        {
-            return shift?.Staff?.Exists(w => w.Id == id) ?? false;
-        }
-
-        public bool IsValidStaffList()
-        {
-            return Shift.Staff.Count > 0;
         }
     }
 }

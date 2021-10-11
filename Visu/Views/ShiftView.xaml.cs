@@ -1,4 +1,5 @@
 ﻿using Cashbox.Model;
+using Cashbox.Model.Entities;
 using Cashbox.Model.Managers;
 using Cashbox.Visu.ViewEntities;
 using System;
@@ -22,11 +23,13 @@ namespace Cashbox.Visu
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
 
         private string _differenceText;
+        private Shift _shift;
 
         public ShiftView(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
-            ShiftManager = new(date, version);
+            //ShiftManager = new(date, version);
+            Shift = ShiftManager.GetShift(date, version);
             DataContext = this;
             viewMode = mode;
         }
@@ -43,9 +46,12 @@ namespace Cashbox.Visu
             }
         }
 
+        public Shift Shift { get => _shift; set => _shift = value; }
+
         public bool EnableEntries => viewMode != Mode.WatchOnly;
         public MessageProvider ErrorMessage { get; } = new();
-        public ShiftManager ShiftManager { get; private set; }
+
+        //public ShiftManager ShiftManager { get; private set; }
         public MessageProvider StatusMessage { get; } = new();
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
@@ -55,7 +61,7 @@ namespace Cashbox.Visu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!ShiftManager.IsValidStaffList())
+            if (!ShiftManager.ValidateShift(Shift))
                 ErrorMessage.Message = "В смене нет работников";
             else
                 MDDialogHost.OpenDialogCommand.Execute(null, null);
@@ -65,13 +71,13 @@ namespace Cashbox.Visu
         {
             ErrorMessage.Message = string.Empty;
             string selectedName = ((WorkerViewItem)(sender as CheckBox).DataContext).Name;
-            ShiftManager.AddWorker(selectedName);
+            Shift.AddWorker(selectedName);
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             string selectedName = ((WorkerViewItem)(sender as CheckBox).DataContext).Name;
-            ShiftManager.RemoveWorker(selectedName);
+            Shift.RemoveWorker(selectedName);
         }
 
         private void Comment_KeyDown(object sender, KeyEventArgs e)
@@ -95,11 +101,11 @@ namespace Cashbox.Visu
                         break;
 
                     case Mode.EditVersion:
-                        ShiftManager.UpdateDB();
+                        ShiftManager.UpdateDB(Shift);
                         break;
 
                     case Mode.NewVersion:
-                        ShiftManager.AddToDB();
+                        ShiftManager.AddToDB(Shift);
                         break;
 
                     default:
@@ -131,12 +137,12 @@ namespace Cashbox.Visu
             textBox.SelectionStart = textBox.Text.Length;
 
             // Установить фон в поле Расхождения
-            if (ShiftManager.Shift.Difference > 0)
+            if (Shift.Difference > 0)
             {
                 DifferenceText = "Недостача:";
                 DifferenceBorder.Background = redBackground;
             }
-            else if (ShiftManager.Shift.Difference < 0)
+            else if (Shift.Difference < 0)
             {
                 DifferenceText = "Излишек:";
                 DifferenceBorder.Background = redBackground;

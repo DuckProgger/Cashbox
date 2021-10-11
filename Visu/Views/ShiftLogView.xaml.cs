@@ -61,7 +61,6 @@ namespace Cashbox.Visu
                 _shiftLog = value;
                 shiftLogView = (CollectionView)CollectionViewSource.GetDefaultView(_shiftLog);
                 shiftLogView.Filter = WorkerFilter;
-                //shiftLogView?.Refresh();
                 OnPropertyChanged(nameof(Staff));
             }
         }
@@ -105,10 +104,8 @@ namespace Cashbox.Visu
             set
             {
                 _selectedWorker = value;
-                //view.Refresh();
                 shiftLogView?.Refresh();
                 OnPropertyChanged(nameof(SalaryButtonsVis));
-                //OnPropertyChanged(); // раскомментить, если нужно, чтобы при обновлении журнала автоматически выбирался сотрудник в ComboBox
             }
         }
 

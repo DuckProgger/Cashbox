@@ -1,5 +1,6 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model.Entities;
+using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
