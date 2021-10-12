@@ -109,7 +109,6 @@ namespace Cashbox.Visu
             set
             {
                 _selectedWorkerName = value;
-                ErrorMessage.Message = string.Empty;
                 salariesView?.Refresh();
                 OnPropertyChanged(nameof(TotalSalary));
                 OnPropertyChanged();
@@ -126,7 +125,7 @@ namespace Cashbox.Visu
             }
         }
 
-        public MessageProvider ErrorMessage { get; } = new();
+        public MessageProvider ErrorMessage { get; } = new(true);
 
         #endregion publicProperties
 

@@ -33,7 +33,7 @@ namespace Cashbox.Visu
             }
         }
 
-        public MessageProvider ErrorMessage { get; } = new();
+        public MessageProvider ErrorMessage { get; } = new(true);
         public bool OkButtonVis => SelectedUser != null;
 
         public AuthorizationWindow()
@@ -62,7 +62,7 @@ namespace Cashbox.Visu
             }
             catch (Exception)
             {
-                ErrorMessage.Message = "Ошибка подключения к БД.";
+                ErrorMessage.Message = "Ошибка подключения к БД";
             }
         }
 

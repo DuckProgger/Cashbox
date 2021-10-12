@@ -68,8 +68,8 @@
                 <ListView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Открыть" Click="WatchShift_Click" />
-                        <MenuItem Header="Редактировать" Click="EditShift_Click" IsEnabled="{Binding Permissions.IsAdmin}" />
-                        <MenuItem Header="Удалить" IsEnabled="{Binding Permissions.IsAdmin}" Click="RemoveShift_Click" Command="{x:Static md:DialogHost.OpenDialogCommand}" />
+                        <MenuItem Header="Редактировать" Click="EditShift_Click" />
+                        <MenuItem Header="Удалить" Click="RemoveShift_Click" Command="{x:Static md:DialogHost.OpenDialogCommand}" />
                         <MenuItem Header="История версий" Click="VersionHistory_Click" />
                     </ContextMenu>
                 </ListView.ContextMenu>

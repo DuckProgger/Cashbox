@@ -17,6 +17,7 @@
         d:DesignHeight="400" d:DesignWidth="450">
     <UserControl.Resources>
         <c:DifferenceConverter x:Key="DifferenceConverter" />
+        <c:MoneyConverter x:Key="MoneyConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="MaterialDesignOutlinedTextBox"
                BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
@@ -45,6 +46,12 @@
         <md:DialogHost.DialogContent>
             <StackPanel Margin="20" MinWidth="300">
                 <TextBlock Text="Сохранить смену?" />
+                <TextBlock Foreground="DarkRed"
+                           TextAlignment="Center"
+                           DataContext="{Binding WarningMessage}"
+                           Text="{Binding Message}"
+                           Visibility="{Binding HasMessage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <Grid Margin="0,10,0,-10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -172,9 +179,9 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged}"
-                             LostFocus="TextBox_LostFocus"
-                             TextChanged="TextBox_TextChanged" Cursor="IBeam"
+                             Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
+                             TextChanged="TextBox_TextChanged"
+                             Cursor="IBeam"
                              IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
 
@@ -183,8 +190,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged}"
-                             LostFocus="TextBox_LostFocus"
+                             Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}" Cursor="IBeam" />
                     </StackPanel>
@@ -194,8 +200,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged}"
-                             LostFocus="TextBox_LostFocus"
+                             Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
                              IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
@@ -205,11 +210,10 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                 Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged}"
-                                 LostFocus="TextBox_LostFocus"
+                                 Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                                  TextChanged="TextBox_TextChanged"
                                  IsEnabled="{Binding EnableEntries}"
-                                 IsReadOnly="True" />
+                                 IsReadOnly="{Binding StartDayFieldReadOnly}" Cursor="IBeam" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -217,8 +221,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged}"
-                             LostFocus="TextBox_LostFocus"
+                             Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>
@@ -228,8 +231,7 @@
                            Style="{StaticResource MyTextBlock}" />
                         <TextBox Padding="5"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                             Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged}"
-                             LostFocus="TextBox_LostFocus"
+                             Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
                              IsEnabled="{Binding EnableEntries}" />
                     </StackPanel>

@@ -71,7 +71,7 @@ namespace Cashbox.Visu
             set { _end = value; OnPropertyChanged(); }
         }
 
-        public MessageProvider ErrorMessage { get; } = new();
+        public MessageProvider ErrorMessage { get; } = new(true);
         public bool ExportButtonVis => Shifts?.Count > 0;
 
         public bool ManualPeriodChecked
@@ -100,7 +100,7 @@ namespace Cashbox.Visu
             set { _start = value; OnPropertyChanged(); }
         }
 
-        public MessageProvider StatusMessage { get; } = new();
+        public MessageProvider StatusMessage { get; } = new(true);
 
         #endregion publicProperties
 

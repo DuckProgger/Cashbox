@@ -23,6 +23,8 @@ namespace Cashbox.Visu
         private readonly Mode viewMode;
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
         private Shift _shift;
+        private int memStartDay;
+        private bool startDayChanged;
 
         #endregion privateFields
 
@@ -33,6 +35,7 @@ namespace Cashbox.Visu
             Staff = ShiftManager.GetWorkerViewItems(Shift);
             DataContext = this;
             viewMode = mode;
+            memStartDay = Shift.StartDay;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -66,8 +69,10 @@ namespace Cashbox.Visu
         public Shift Shift { get => _shift; set => _shift = value; }
 
         public bool EnableEntries => viewMode != Mode.WatchOnly;
-        public MessageProvider ErrorMessage { get; } = new();
-        public MessageProvider StatusMessage { get; } = new();
+        public bool StartDayFieldReadOnly => viewMode != Mode.EditVersion;
+        public MessageProvider ErrorMessage { get; } = new(true);
+        public MessageProvider WarningMessage { get; } = new();
+        public MessageProvider StatusMessage { get; } = new(true);
 
         #endregion publicProperties
 
@@ -81,7 +86,12 @@ namespace Cashbox.Visu
             if (!ShiftManager.ValidateShift(Shift))
                 ErrorMessage.Message = "В смене нет работников";
             else
+            {
+                WarningMessage.Message = startDayChanged
+                    ? "\nВнимание! Поле \"Начало дня\" не совпадает с полем \"Конец дня\" прошлой смены"
+                    : string.Empty;
                 MDDialogHost.OpenDialogCommand.Execute(null, null);
+            }
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -129,8 +139,6 @@ namespace Cashbox.Visu
                         break;
                 }
                 StatusMessage.Message = "Смена успешно сохранена.";
-                await Task.Delay(3000);
-                StatusMessage.Message = string.Empty;
             }
             catch (Exception)
             {
@@ -138,22 +146,10 @@ namespace Cashbox.Visu
             }
         }
 
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (textBox.Text?.Length == 0)
-                textBox.Text = "0";
-        }
-
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // Отформатировать введенный текст
-            TextBox textBox = sender as TextBox;
-            textBox.Text = Formatter.Format(textBox.Text, Formatter.Type.MoneyEnter);
-            // Переместить курсор в конец
-            textBox.SelectionStart = textBox.Text.Length;
-
             OnPropertyChanged(nameof(DifferenceText));
+            startDayChanged = memStartDay != Shift.StartDay;
         }
     }
 }
