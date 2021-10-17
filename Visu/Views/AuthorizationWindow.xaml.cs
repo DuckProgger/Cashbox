@@ -50,11 +50,11 @@ namespace Cashbox.Visu
             Close();
         }
 
-        private async void GetUsersAsync()
+        private /*async*/ void GetUsersAsync()
         {
             try
             {
-                Users.ItemsSource = await DB.GetUserNamesAsync();
+                Users.ItemsSource = /*await*/ DB.GetUserNamesAsync();
             }
             catch (InvalidOperationException ex)
             {

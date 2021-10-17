@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Cashbox.Model.Entities
 {
-    public class Shift : INotifyPropertyChanged
+    public class Shift : INotifyPropertyChanged, IEntity
     {
         #region privateFields
 

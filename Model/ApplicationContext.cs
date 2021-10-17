@@ -1,9 +1,11 @@
 ﻿using Cashbox.Model.Entities;
+using Cashbox.Model.Log;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.IO;
-
+using System.Threading.Tasks;
 
 namespace Cashbox.Model
 {
@@ -15,12 +17,18 @@ namespace Cashbox.Model
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Salary> Salaries { get; set; }
 
+        // устанавливаем фабрику логгера
+        private static readonly ILoggerFactory myLoggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddProvider(new LoggerProvider());    // указываем наш провайдер логгирования
+        });
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
-                .UseSqlServer(GetConnectionString()/*, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)*/)
-                //.UseLazyLoadingProxies()
-                .EnableSensitiveDataLogging();
+                .UseSqlServer(GetConnectionString())
+                .EnableSensitiveDataLogging()
+                .UseLoggerFactory(myLoggerFactory);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,7 +36,6 @@ namespace Cashbox.Model
             modelBuilder.Entity<User>(UserConfigure);
             modelBuilder.Entity<Permissions>(PermissionsConfigure);
             modelBuilder.Entity<Shift>(ShiftConfigure);
-            //modelBuilder.Entity<Worker>(WorkerConfigure);
         }
 
         private void UserConfigure(EntityTypeBuilder<User> builder)
@@ -56,16 +63,6 @@ namespace Cashbox.Model
               .HasDefaultValueSql("GETDATE()");
         }
 
-
-        //private void WorkerConfigure(EntityTypeBuilder<Worker> builder)
-        //{
-        //    builder
-        //        .HasOne(w => w.User)
-        //        .WithMany(u => u.Staff)
-        //        .HasForeignKey(k => k.Id);
-        //}
-
-
         private static string GetConnectionString()
         {
             ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -82,6 +79,11 @@ namespace Cashbox.Model
         public override void Dispose()
         {
             base.Dispose();
+        }
+
+        public override async ValueTask DisposeAsync()
+        {
+            await base.DisposeAsync();
         }
     }
 }

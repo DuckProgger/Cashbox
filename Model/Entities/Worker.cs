@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cashbox.Model.Entities
 {
-    public class Worker
+    public class Worker : IEntity
     {
         public int Id { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using Cashbox.Model;
 using Cashbox.Model.Entities;
+using Cashbox.Model.Log;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,11 @@ namespace Cashbox.Model.Managers
     {
         public static Session Session { get; private set; }
 
-        public static void InitSession(string userName) => Session = DB.CreateSession(userName);
+        public static void InitSession(string userName)
+        {
+            Session = DB.CreateSession(userName);
+            Logger.Log(Session, MessageType.Create);
+        }
 
         public static void RemoveCurrentSession() => DB.RemoveSession(Session.Id);
 

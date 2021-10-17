@@ -170,11 +170,11 @@ namespace Cashbox.Model
                     select u).FirstOrDefault();
         }
 
-        public static async Task<List<string>> GetUserNamesAsync()
+        public static /*async Task<*/List<string>/*>*/ GetUserNamesAsync()
         {
             using ApplicationContext db = new();
-            var userNames = await (from user in db.Users
-                                   select user.Name).ToListAsync();
+            var userNames = /*await*/ (from user in db.Users
+                                       select user.Name).ToList/*Async*/();
             return userNames;
         }
 

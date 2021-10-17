@@ -1,4 +1,6 @@
 ﻿using Cashbox.Model.Entities;
+using Cashbox.Model.Log;
+using Cashbox.Model.Log.Entities;
 using Cashbox.Visu;
 using Cashbox.Visu.ViewEntities;
 using System;
@@ -76,6 +78,7 @@ namespace Cashbox.Model.Managers
             shift.LastModified = DateTime.Now;
             shift.Version++;
             DB.CreateShift(shift);
+            Logger.Log(shift, Log.MessageType.Create);
         }
 
         public static void RemoveFromDB(DateTime date)
@@ -110,12 +113,12 @@ namespace Cashbox.Model.Managers
             return workers;
         }
 
-        public static List<ShiftExcelItem> GetExcelShiftCollection(DateTime startPeriod, DateTime endPeriod)
+        public static List<ShiftLogItem> GetExcelShiftCollection(DateTime startPeriod, DateTime endPeriod)
         {
             List<Shift> shifts = DB.GetShifts(startPeriod, endPeriod);
-            List<ShiftExcelItem> collection = new();
+            List<ShiftLogItem> collection = new();
             foreach (Shift item in shifts)
-                collection.Add(ShiftExcelItem.ConvertFromShift(item));
+                collection.Add(new ShiftLogItem(item));
             return collection;
         }
     }

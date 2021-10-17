@@ -1,6 +1,7 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model;
 using Cashbox.Model.Entities;
+using Cashbox.Model.Log.Entities;
 using Cashbox.Model.Managers;
 using Cashbox.Services;
 using System;
@@ -21,7 +22,7 @@ namespace Cashbox.Visu
         private const string issueQuestion = "Выдать сотруднику ЗП?";
         private const string removeQuestion = "Удалить выбранную смену?";
         private readonly IDialogService dialogService;
-        private readonly IFileService<ShiftExcelItem>[] fileServices;
+        private readonly IFileService<ShiftLogItem>[] fileServices;
         private string _dialogConfirmButtonText;
         private string _dialogQuestion;
         private DateTime _end;
@@ -109,7 +110,7 @@ namespace Cashbox.Visu
             InitializeComponent();
             DataContext = this;
             SetPrepaidPeriod(null, null);
-            fileServices = new IFileService<ShiftExcelItem>[] { new ExcelFileService<ShiftExcelItem>() };
+            fileServices = new IFileService<ShiftLogItem>[] { new ExcelFileService<ShiftLogItem>() };
             dialogService = new DefaultDialog(fileServices);
         }
 

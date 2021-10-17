@@ -118,7 +118,7 @@ namespace Cashbox.Visu
             }
         }
 
-        private async void SaveShift(object sender, RoutedEventArgs e)
+        private void SaveShift(object sender, RoutedEventArgs e)
         {
             try
             {
