@@ -1,6 +1,6 @@
 ﻿using Cashbox.Model.Entities;
-using Cashbox.Model.Log;
-using Cashbox.Model.Log.Entities;
+using Cashbox.Model.Logging;
+using Cashbox.Model.Logging.Entities;
 using Cashbox.Visu;
 using Cashbox.Visu.ViewEntities;
 using System;
@@ -78,7 +78,7 @@ namespace Cashbox.Model.Managers
             shift.LastModified = DateTime.Now;
             shift.Version++;
             DB.CreateShift(shift);
-            Logger.Log(shift, Log.MessageType.Create);
+            Logger.Log(shift, Logging.MessageType.Create);
         }
 
         public static void RemoveFromDB(DateTime date)

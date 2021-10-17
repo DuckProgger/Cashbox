@@ -1,5 +1,5 @@
 ﻿using Cashbox.Model.Entities;
-using Cashbox.Model.Log;
+using Cashbox.Model.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;

@@ -1,6 +1,6 @@
 ﻿using Cashbox.Model;
 using Cashbox.Model.Entities;
-using Cashbox.Model.Log;
+using Cashbox.Model.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

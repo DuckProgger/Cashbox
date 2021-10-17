@@ -1,7 +1,7 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model;
 using Cashbox.Model.Entities;
-using Cashbox.Model.Log.Entities;
+using Cashbox.Model.Logging.Entities;
 using Cashbox.Model.Managers;
 using Cashbox.Services;
 using System;
