@@ -1,11 +1,5 @@
-﻿using Cashbox.Model;
-using Cashbox.Model.Entities;
+﻿using Cashbox.Model.Entities;
 using Cashbox.Model.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.Model.Managers
 {
@@ -19,7 +13,11 @@ namespace Cashbox.Model.Managers
             Logger.Log(Session, MessageType.Create);
         }
 
-        public static void RemoveCurrentSession() => DB.RemoveSession(Session.Id);
+        public static void RemoveCurrentSession()
+        {
+            DB.RemoveSession(Session.Id);
+            Logger.Log(Session, MessageType.Delete);
+        }
 
         public static Permissions GetPermissions()
         {

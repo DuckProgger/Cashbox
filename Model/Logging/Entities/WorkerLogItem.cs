@@ -1,27 +1,26 @@
 ﻿using Cashbox.Model.Entities;
-using Cashbox.Model.Managers;
 using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Cashbox.Model.Logging.Entities
 {
-    public class SessionLogItem : ILogItem
+    public class WorkerLogItem : ILogItem
     {
-        public SessionLogItem(Session entity)
+        public WorkerLogItem(Worker worker)
         {
-            UserName = UserManager.GetUser(entity.UserId).Name;
+            Name = worker.Name;
         }
 
-        [Description("Пользователь")]
-        public string UserName { get; set; }
+        [Description("Имя")]
+        public string Name { get; set; }
 
         public int GetMessageId(MessageType messageType)
         {
             return messageType switch
             {
-                MessageType.Create => 4,
-                MessageType.Update => 5,
-                MessageType.Delete => 6,
+                MessageType.Create => 7,
+                MessageType.Update => 8,
+                MessageType.Delete => 9,
                 _ => 0
             };
         }

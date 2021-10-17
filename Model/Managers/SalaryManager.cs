@@ -1,14 +1,12 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model.Entities;
+using Cashbox.Model.Logging;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.Model.Managers
 {
@@ -30,7 +28,9 @@ namespace Cashbox.Model.Managers
                                                $" за период с {Formatter.FormatDate(startPeriod)} " +
                                                $"по {Formatter.FormatDate(endPeriod)}");
             Salary salary = CalculateSalary(workerName, startPeriod, endPeriod);
-            return DB.Create(salary);
+            Salary newSalary = DB.Create(salary);
+            Logger.Log(newSalary, MessageType.Create);
+            return newSalary;
         }
 
         public static Salary CalculateSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
@@ -81,7 +81,7 @@ namespace Cashbox.Model.Managers
             // Так как объединять в месяц не нужно, то просто перебираем список зарплат
             // за выбранный период и выводим его на экран
             List<SalaryViewItem> salaryLog = new();
-            foreach (var salary in salaries)
+            foreach (Salary salary in salaries)
             {
                 salaryLog.Add(new()
                 {
@@ -101,26 +101,26 @@ namespace Cashbox.Model.Managers
             Dictionary<int, List<Salary>> workersSalariesDict = new();
 
             // Сгруппировать список смен за выбранный период по Id работников
-            var workersSalaries = from s in salaries
-                                  group s by s.WorkerId;
+            IEnumerable<IGrouping<int, Salary>> workersSalaries = from s in salaries
+                                                                  group s by s.WorkerId;
 
             // Заполнить словарь этими группами. Ключ группы совпадает с ключом словаря.
-            foreach (var workerSalariesGroup in workersSalaries)
+            foreach (IGrouping<int, Salary> workerSalariesGroup in workersSalaries)
                 workersSalariesDict.Add(workerSalariesGroup.Key, workerSalariesGroup.ToList());
 
             // Сгруппировать смены каждого работника по месяцам, суммировать общий
             // заработок за месяц и вывести на экран
-            foreach (var dictItem in workersSalariesDict)
+            foreach (KeyValuePair<int, List<Salary>> dictItem in workersSalariesDict)
             {
-                foreach (var salaryItem in from s in dictItem.Value
-                                           group s by s.StartPeriod.Month
+                foreach (SalaryViewItem salaryItem in from s in dictItem.Value
+                                                      group s by s.StartPeriod.Month
                                             into sg
-                                           select new SalaryViewItem()
-                                           {
-                                               Name = DB.GetWorker(dictItem.Key).Name, // ключ словаря - это Id работника
-                                               Salary = sg.Sum(s => s.Money),
-                                               Date = Formatter.FormatMonth(sg.Key) // получившийся ключ группы - это номер месяца
-                                           })
+                                                      select new SalaryViewItem()
+                                                      {
+                                                          Name = DB.GetWorker(dictItem.Key).Name, // ключ словаря - это Id работника
+                                                          Salary = sg.Sum(s => s.Money),
+                                                          Date = Formatter.FormatMonth(sg.Key) // получившийся ключ группы - это номер месяца
+                                                      })
                     salaryLog.Add(salaryItem);
             }
             return salaryLog;

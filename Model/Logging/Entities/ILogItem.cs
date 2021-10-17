@@ -9,6 +9,8 @@ namespace Cashbox.Model.Logging.Entities
 {
     public interface ILogItem
     {
-        //public ILogItem ConvertFromEntity(IEntity entity);
+        public int GetMessageId(MessageType messageType);
+
+        public Dictionary<string, object> GetPropertiesInfo();
     }
 }

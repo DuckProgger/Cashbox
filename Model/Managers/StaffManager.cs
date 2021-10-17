@@ -1,5 +1,6 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model.Entities;
+using Cashbox.Model.Logging;
 using Cashbox.Visu.ViewEntities;
 using System.Collections.Generic;
 
@@ -28,6 +29,11 @@ namespace Cashbox.Model.Managers
         public static Worker GetWorker(string name)
         {
             return DB.GetWorker(name) ?? throw new InvalidNameException("Работник не найден");
+        }
+
+        public static Worker GetWorker(int id)
+        {
+            return DB.GetWorker(id) ?? throw new InvalidNameException("Работник не найден");
         }
 
         public static void ActivateWorker(string name)
@@ -66,6 +72,7 @@ namespace Cashbox.Model.Managers
                 throw new InvalidNameException("Такой работник уже есть в базе");
             Worker newWorker = new() { Name = name, IsActive = true };
             DB.Create(newWorker);
+            Logger.Log(newWorker, MessageType.Create);
         }
 
         private static bool IsEmptyName(string name) => string.IsNullOrEmpty(name);

@@ -140,7 +140,7 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
-        public static List<Shift> GetShiftVersions(DateTime date)
+        public static List<Shift> GetShifts(DateTime date)
         {
             using ApplicationContext db = new();
             return (from s in db.Shifts.Include(s => s.User).AsEnumerable()
@@ -197,23 +197,24 @@ namespace Cashbox.Model
             db.SaveChanges();
         }
 
-        public static void RemoveShift(DateTime date, int version = 0)
+        public static void RemoveShifts(DateTime date)
         {
             using ApplicationContext db = new();
-            if (version == 0)
-            {
-                var shiftsId = (from s in db.Shifts
-                                where date.Date == s.CreatedAt
-                                select s.Id).ToList();
-                foreach (var id in shiftsId)
-                    db.Shifts.Remove(db.Shifts.Find(id));
-            }
-            else
-            {
-                int shiftId = GetShiftId(date, version);
-                db.Shifts.Remove(db.Shifts.Find(shiftId));
-            }
+            var shiftsId = (from s in db.Shifts
+                            where date.Date == s.CreatedAt
+                            select s.Id).ToList();
+            foreach (var id in shiftsId)
+                db.Shifts.Remove(db.Shifts.Find(id));
             db.SaveChanges();
+        }
+
+        public static Shift RemoveShift(DateTime date, int version)
+        {
+            using ApplicationContext db = new();
+            int shiftId = GetShiftId(date, version);
+            var entry = db.Shifts.Remove(db.Shifts.Find(shiftId));
+            db.SaveChanges();
+            return entry.Entity;
         }
 
         public static void UpdateShift(Shift newShift)

@@ -1,16 +1,10 @@
-﻿using Cashbox.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Cashbox.Model.Entities;
+using Cashbox.Model.Logging.Entities;
+using Cashbox.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.ComponentModel;
-using Cashbox.Model.Entities;
-using Cashbox.Model.Logging.Entities;
 
 namespace Cashbox.Model.Logging
 {
@@ -23,50 +17,16 @@ namespace Cashbox.Model.Logging
             StringBuilder stringBuilder = new();
             stringBuilder.Append($"{DateTime.Now}: ");
 
-            ILogItem logItem = GetLogItem(entity);
-            Dictionary<string, object> propsInfo = null;
+            ILogItem logItem = entity.ConvertToLogItem();
 
-            switch (type)
-            {
-                case MessageType.Create:
-                    switch (logItem)
-                    {
-                        case ShiftLogItem item:
-                            stringBuilder.Append(XmlService.GetMessageText(1));
-                            propsInfo = Util.GetPropertiesInfo(item);
-                            break;
+            int messageId = logItem.GetMessageId(type);
+            string messageText = XmlService.GetMessageText(messageId);
+            stringBuilder.Append(messageText);
 
-                        case SessionLogItem item:
-                            stringBuilder.Append(XmlService.GetMessageText(2));
-                            propsInfo = Util.GetPropertiesInfo(item);
-                            break;
-
-                        default:
-                            break;
-                    }
-                    break;
-
-                case MessageType.Update:
-                    break;
-
-                case MessageType.Delete:
-                    break;
-            }
-
-            foreach (var prop in propsInfo)
+            foreach (KeyValuePair<string, object> prop in logItem.GetPropertiesInfo())
                 stringBuilder.Append($"{prop.Key} = {prop.Value} ");
-            stringBuilder.Append('\n');
+            stringBuilder.Append("\n\n");
             File.AppendAllText("log.txt", stringBuilder.ToString());
-        }
-
-        private static ILogItem GetLogItem(IEntity entity)
-        {
-            return entity switch
-            {
-                Shift shift => new ShiftLogItem(shift),
-                Session session => new SessionLogItem(session),
-                _ => throw new NotImplementedException(),
-            };
         }
     }
 }

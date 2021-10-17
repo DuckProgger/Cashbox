@@ -36,19 +36,18 @@ namespace Cashbox.Model.Managers
 
         public static List<Shift> GetShifts(DateTime startPeriod, DateTime endPeriod)
         {
-            List<Shift> shifts = new();
-            foreach (Shift shift in DB.GetShifts(startPeriod, endPeriod))
-                shifts.Add(shift);
-            return shifts;
+            return DB.GetShifts(startPeriod, endPeriod);
         }
 
         public static List<Shift> GetShifts(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
             int workerId = StaffManager.GetWorker(workerName).Id;
-            List<Shift> shifts = new();
-            foreach (Shift shift in DB.GetShifts(workerId, startPeriod, endPeriod))
-                shifts.Add(shift);
-            return shifts;
+            return DB.GetShifts(workerId, startPeriod, endPeriod);
+        }
+
+        public static List<Shift> GetShifts(DateTime date)
+        {
+            return DB.GetShifts(date);
         }
 
         public static void AddWorker(this Shift shift, string name)
@@ -70,6 +69,7 @@ namespace Cashbox.Model.Managers
             shift.User = DB.GetUser(SessionManager.Session.UserId);
             shift.LastModified = DateTime.Now;
             DB.UpdateShift(shift);
+            Logger.Log(shift, Logging.MessageType.Update);
         }
 
         public static void AddToDB(Shift shift)
@@ -83,7 +83,15 @@ namespace Cashbox.Model.Managers
 
         public static void RemoveFromDB(DateTime date)
         {
-            DB.RemoveShift(date);
+            var removedShift = DB.GetShift(date);
+            DB.RemoveShifts(date);
+            Logger.Log(removedShift, Logging.MessageType.Delete);
+        }
+
+        public static void RemoveFromDB(DateTime date, int version)
+        {
+            var removedShift = DB.RemoveShift(date, version);
+            Logger.Log(removedShift, Logging.MessageType.Delete);
         }
 
         private static bool WorkerExists(Shift shift, int id)

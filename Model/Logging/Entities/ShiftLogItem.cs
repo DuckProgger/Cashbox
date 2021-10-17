@@ -76,52 +76,20 @@ namespace Cashbox.Model.Logging.Entities
         [Description("Комментарий")]
         public string Comment { get; set; }
 
-        //public static ShiftLogItem ConvertFromShift(Shift shift)
-        //{
-        //    return new()
-        //    {
-        //        Cash = shift.Cash,
-        //        Comment = shift.Comment,
-        //        CreatedAt = Formatter.FormatDate(shift.CreatedAt),
-        //        Difference = shift.Difference,
-        //        EndDay = shift.EndDay,
-        //        Expenses = shift.Expenses,
-        //        HandedOver = shift.HandedOver,
-        //        LastModified = shift.LastModified.ToString(),
-        //        StartDay = shift.StartDay,
-        //        Terminal = shift.Terminal,
-        //        Total = shift.Total,
-        //        Version = shift.Version
-        //    };
-        //}
+        public int GetMessageId(MessageType messageType)
+        {
+            return messageType switch
+            {
+                MessageType.Create => 1,
+                MessageType.Update => 2,
+                MessageType.Delete => 3,
+                _ => 0
+            };
+        }
 
-        //public ILogItem ConvertFromEntity(IEntity entity)
-        //{
-        //    Shift shift = entity as Shift;
-        //    return new ShiftLogItem()
-        //    {
-        //        Cash = shift.Cash,
-        //        Comment = shift.Comment,
-        //        CreatedAt = Formatter.FormatDate(shift.CreatedAt),
-        //        Difference = shift.Difference,
-        //        EndDay = shift.EndDay,
-        //        Expenses = shift.Expenses,
-        //        HandedOver = shift.HandedOver,
-        //        LastModified = shift.LastModified.ToString(),
-        //        StartDay = shift.StartDay,
-        //        Terminal = shift.Terminal,
-        //        Total = shift.Total,
-        //        Version = shift.Version
-        //    };
-        //}
-
-        //public Dictionary<string, object> GetPropertiesInfo(ILogItem obj)
-        //{
-        //    Dictionary<string, object> dict = new();
-        //    var props = typeof(ShiftLogItem).GetProperties();
-        //    foreach (var prop in props)
-        //        dict.Add(Util.GetDescription<ShiftLogItem>(prop.Name), prop.GetValue(obj));
-        //    return dict;
-        //}
+        public Dictionary<string, object> GetPropertiesInfo()
+        {
+            return Util.GetPropertiesInfo(this);
+        }
     }
 }

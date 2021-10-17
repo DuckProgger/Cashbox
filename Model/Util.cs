@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cashbox.Model.Entities;
+using Cashbox.Model.Logging.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.Model
 {
-    public class Util
+    public static class Util
     {
         public static string GetDescription<T>(string propertyName)
         {
@@ -23,6 +25,18 @@ namespace Cashbox.Model
             foreach (var prop in props)
                 dict.Add(GetDescription<T>(prop.Name), prop.GetValue(obj));
             return dict;
+        }
+
+        public static ILogItem ConvertToLogItem(this IEntity entity)
+        {
+            return entity switch
+            {
+                Shift shift => new ShiftLogItem(shift),
+                Session session => new SessionLogItem(session),
+                Worker worker => new WorkerLogItem(worker),
+                Salary salary => new SalaryLogItem(salary),
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }

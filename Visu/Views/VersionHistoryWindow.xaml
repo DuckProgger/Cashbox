@@ -6,17 +6,18 @@
         xmlns:c="clr-namespace:Cashbox.Visu.Converters"
         xmlns:local="clr-namespace:Cashbox.Visu"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        d:DataContext="{d:DesignInstance Type=local:VersionHistoryWindow}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto" 
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
         ResizeMode="CanMinimize"
         mc:Ignorable="d"
          WindowStartupLocation="CenterScreen"
         Title="VersionHistoryWindow" Height="300" Width="400">
     <Window.Resources>
-        <c:DateTimeConverter x:Key="DateTimeConverter"/>
+        <c:DateTimeConverter x:Key="DateTimeConverter" />
     </Window.Resources>
     <md:DialogHost>
         <md:DialogHost.DialogContent>
@@ -28,21 +29,21 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <Button Content="Отмена" 
-                            Style="{StaticResource MaterialDesignFlatAccentButton}" 
-                            IsCancel="True" 
-                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
-                    <Button Content="Удалить" 
-                            Grid.Column="1" 
-                            Style="{StaticResource MaterialDesignFlatButton}" 
+                    <Button Content="Отмена"
+                            Style="{StaticResource MaterialDesignFlatAccentButton}"
+                            IsCancel="True"
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}" />
+                    <Button Content="Удалить"
+                            Grid.Column="1"
+                            Style="{StaticResource MaterialDesignFlatButton}"
                             IsDefault="True" Click="Remove_Click"
-                            Command="{x:Static md:DialogHost.CloseDialogCommand}"/>
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}" />
                 </Grid>
             </StackPanel>
         </md:DialogHost.DialogContent>
         <Grid>
-            <ListView Name="VersionHistoryView"                  
-                  Grid.Column="1">
+            <ListView  ItemsSource="{Binding VersionHistory}"
+                Grid.Column="1">
                 <ListView.View>
                     <GridView AllowsColumnReorder="True">
                         <GridViewColumn DisplayMemberBinding="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" Header="Изменён" />
@@ -52,9 +53,9 @@
                 </ListView.View>
                 <ListView.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Открыть" Click="WatchShift_Click"/>
-                        <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" IsEnabled="{Binding Permissions.IsAdmin}"/>
-                        <MenuItem Header="Удалить" Command="{x:Static md:DialogHost.OpenDialogCommand}" IsEnabled="{Binding Permissions.IsAdmin}"/>
+                        <MenuItem Header="Открыть" Click="WatchShift_Click" />
+                        <MenuItem Header="Редактировать" Click="EditShift_Click" Name="EditMenu" />
+                        <MenuItem Header="Удалить" Command="{x:Static md:DialogHost.OpenDialogCommand}" />
                     </ContextMenu>
                 </ListView.ContextMenu>
                 <ListView.ItemContainerStyle>

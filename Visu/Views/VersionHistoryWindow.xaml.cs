@@ -1,37 +1,32 @@
-﻿using Cashbox.Model;
-using Cashbox.Model.Entities;
+﻿using Cashbox.Model.Entities;
 using Cashbox.Model.Managers;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
-    public partial class VersionHistoryWindow : Window
+    public partial class VersionHistoryWindow : Window, INotifyPropertyChanged
     {
         private readonly DateTime selectedDate;
         private int selectedVersion;
+        private ObservableCollection<Shift> _versionHistory;
 
-        public ObservableCollection<Shift> VersionHistory { get; set; }
+        public ObservableCollection<Shift> VersionHistory
+        {
+            get => _versionHistory ??= new();
+            set { _versionHistory = value; OnPropertyChanged(); }
+        }
 
         public VersionHistoryWindow(DateTime date)
         {
             InitializeComponent();
             DataContext = this;
             selectedDate = date;
-            VersionHistory = new(DB.GetShiftVersions(selectedDate.Date));
-            VersionHistoryView.ItemsSource = VersionHistory;
+            VersionHistory = new(ShiftManager.GetShifts(selectedDate.Date));
         }
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
@@ -51,15 +46,15 @@ namespace Cashbox.Visu
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            DB.RemoveShift(selectedDate.Date, selectedVersion);
-            UpdateVersionHistory();
+            ShiftManager.RemoveFromDB(selectedDate.Date, selectedVersion);
+            VersionHistory = new(ShiftManager.GetShifts(selectedDate.Date));
         }
 
-        private void UpdateVersionHistory()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
-            VersionHistory.Clear();
-            foreach (var item in DB.GetShiftVersions(selectedDate.Date))
-                VersionHistory.Add(item);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

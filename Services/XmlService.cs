@@ -30,16 +30,6 @@ namespace Cashbox.Services
             {
                 throw;
             }
-            //XmlSerializer serializer = new(typeof(string));
-            //try
-            //{
-            //    using FileStream fs = new FileStream("people.xml", FileMode.Open);
-            //    serializer.Deserialize
-            //}
-            //catch (Exception)
-            //{
-            //    throw;
-            //}
         }
     }
 }
