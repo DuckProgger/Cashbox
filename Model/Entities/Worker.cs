@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Cashbox.Model.Logging.Entities;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Cashbox.Model.Entities
 {
-    public class Worker : IEntity
+    public class Worker : ILogged
     {
         public int Id { get; set; }
 
@@ -17,5 +18,10 @@ namespace Cashbox.Model.Entities
         public List<Shift> Shifts { get; set; }
 
         public List<Salary> Salaries { get; set; }
+
+        public ILogItem ConvertToLogItem()
+        {
+            return new WorkerLogItem(this);
+        }
     }
 }

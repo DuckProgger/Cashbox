@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cashbox.Model.Logging.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Cashbox.Model.Entities
 {
-    public class Shift : INotifyPropertyChanged, IEntity
+    public class Shift : INotifyPropertyChanged, ILogged
     {
         #region privateFields
 
@@ -151,6 +152,11 @@ namespace Cashbox.Model.Entities
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public ILogItem ConvertToLogItem()
+        {
+            return new ShiftLogItem(this);
         }
     }
 }

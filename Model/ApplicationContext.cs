@@ -23,6 +23,11 @@ namespace Cashbox.Model
             builder.AddProvider(new LoggerProvider());    // указываем наш провайдер логгирования
         });
 
+        public ApplicationContext()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder

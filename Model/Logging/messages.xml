@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>
+	<message>
+		<id>1</id>
+		<text>Создана смена</text>
+	</message>
+	<message>
+		<id>2</id>
+		<text>Изменена смена</text>
+	</message>
+	<message>
+		<id>3</id>
+		<text>Удалена смена</text>
+	</message>
+	<message>
+		<id>4</id>
+		<text>Запущена сессия</text>
+	</message>
+	<message>
+		<id>6</id>
+		<text>Выход из сессии</text>
+	</message>
+	<message>
+		<id>7</id>
+		<text>Добавлен работник</text>
+	</message>
+	<message>
+		<id>8</id>
+		<text>Изменён работник</text>
+	</message>
+	<message>
+		<id>9</id>
+		<text>Удалён работник</text>
+	</message>
+	<message>
+		<id>10</id>
+		<text>Выдана зарплата</text>
+	</message>
+	<message>
+		<id>11</id>
+		<text>Изменена зарплата</text>
+	</message>
+	<message>
+		<id>12</id>
+		<text>Удалена зарплата</text>
+	</message>
+</messages>

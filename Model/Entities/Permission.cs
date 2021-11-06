@@ -1,6 +1,6 @@
 ﻿namespace Cashbox.Model.Entities
 {
-    public class Permissions : IEntity
+    public class Permissions
     {
         public int Id { get; set; }
         public bool IsAdmin { get; set; }

@@ -12,7 +12,7 @@ namespace Cashbox.Model.Logging
 
     public class Logger
     {
-        public static void Log(IEntity entity, MessageType type)
+        public static void Log(ILogged entity, MessageType type)
         {
             StringBuilder stringBuilder = new();
             stringBuilder.Append($"{DateTime.Now}: ");

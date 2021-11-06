@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Cashbox.Model.Logging.Entities;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cashbox.Model.Entities
 {
-    public class User : IEntity
+    public class User
     {
         public int Id { get; set; }
 
@@ -14,5 +15,6 @@ namespace Cashbox.Model.Entities
 
         //public List<Worker> Staff { get; set; }
         public List<Shift> Shifts { get; set; }
+       
     }
 }
