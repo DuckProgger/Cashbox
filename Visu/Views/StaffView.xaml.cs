@@ -1,4 +1,4 @@
-﻿using Cashbox.Model.Managers;
+﻿using Cashbox.Model.Entities;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.ObjectModel;
@@ -58,7 +58,7 @@ namespace Cashbox.Visu
 
         private void UpdateStaff()
         {
-            Staff = new(StaffManager.GetAllWorkersViewItems());
+            Staff = new(Worker.GetAllWorkersViewItems());
         }
 
         private bool WorkersFilter(object item)
@@ -69,20 +69,20 @@ namespace Cashbox.Visu
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             string selectedName = ((WorkerViewItem)(sender as CheckBox).DataContext).Name;
-            StaffManager.ActivateWorker(selectedName);
+            Worker.Activate(selectedName);
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             string selectedName = ((WorkerViewItem)(sender as CheckBox).DataContext).Name;
-            StaffManager.DeactivateWorker(selectedName);
+            Worker.Deactivate(selectedName);
         }
 
         private void AddWorker_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                StaffManager.AddNewWorker(NewWorkerName);
+                Worker.AddNew(NewWorkerName);
                 UpdateStaff();
                 NewWorkerName = string.Empty;
             }

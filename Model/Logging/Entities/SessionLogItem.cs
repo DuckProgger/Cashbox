@@ -1,5 +1,4 @@
 ﻿using Cashbox.Model.Entities;
-using Cashbox.Model.Managers;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -9,7 +8,7 @@ namespace Cashbox.Model.Logging.Entities
     {
         public SessionLogItem(Session entity)
         {
-            UserName = UserManager.GetUser(entity.UserId).Name;
+            UserName = User.Get(entity.UserId).Name;
         }
 
         [Description("Пользователь")]

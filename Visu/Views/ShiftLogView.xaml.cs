@@ -2,7 +2,6 @@
 using Cashbox.Model;
 using Cashbox.Model.Entities;
 using Cashbox.Model.Logging.Entities;
-using Cashbox.Model.Managers;
 using Cashbox.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -52,7 +51,7 @@ namespace Cashbox.Visu
             }
         }
 
-        public ObservableCollection<string> Staff => new(StaffManager.GetStaffInShifts(Shifts.ToList()));
+        public ObservableCollection<string> Staff => new(Worker.GetStaffInShifts(Shifts.ToList()));
 
         public string DialogConfirmButtonText
         {
@@ -131,7 +130,7 @@ namespace Cashbox.Visu
 
         private void CalculateSalary_Click(object sender, RoutedEventArgs e)
         {
-            Salary salary = SalaryManager.CalculateSalary(SelectedWorker, memStart, memEnd);
+            Salary salary = Salary.CalculateSalary(SelectedWorker, memStart, memEnd);
             MessageBoxCustom.Show($"Сотрудник {SelectedWorker} получит {salary.Money} руб." +
                                  $" за период с {Formatter.FormatDate(memStart)} " +
                                  $"по {Formatter.FormatDate(memEnd)}",
@@ -145,7 +144,7 @@ namespace Cashbox.Visu
                 case removeQuestion:
                     try
                     {
-                        ShiftManager.RemoveFromDB(selectedShiftDate);
+                        Shift.RemoveFromDB(selectedShiftDate);
                         UpdateShifts();
                     }
                     catch (Exception)
@@ -157,7 +156,7 @@ namespace Cashbox.Visu
                 case issueQuestion:
                     try
                     {
-                        Salary salary = SalaryManager.AddSalary(SelectedWorker, memStart, memEnd);
+                        Salary salary = Salary.AddSalary(SelectedWorker, memStart, memEnd);
                         MessageBoxCustom.Show($"Сотруднику {SelectedWorker} выдана ЗП в размере {salary.Money} руб." +
                                             $" за период с {Formatter.FormatDate(salary.StartPeriod)} " +
                                             $"по {Formatter.FormatDate(salary.EndPeriod)}",
@@ -180,7 +179,7 @@ namespace Cashbox.Visu
 
         private void UpdateShifts()
         {
-            Shifts = new(ShiftManager.GetShifts(Start, End));
+            Shifts = new(Shift.GetShifts(Start, End));
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
@@ -189,7 +188,7 @@ namespace Cashbox.Visu
             {
                 if (dialogService.SaveFileDialog())
                 {
-                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, ShiftManager.GetExcelShiftCollection(memStart, memEnd));
+                    fileServices[dialogService.SelectedFormat - 1].SaveFile(dialogService.FilePath, Shift.GetExcelShiftCollection(memStart, memEnd));
                     StatusMessage.Message = $"Файл успешно экспортирован. Расположение {dialogService.FilePath}";
                 }
             }

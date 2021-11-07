@@ -1,21 +1,11 @@
 ﻿using Cashbox.Model;
-using Cashbox.Model.Managers;
+using Cashbox.Model.Entities;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
@@ -45,7 +35,7 @@ namespace Cashbox.Visu
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SessionManager.InitSession(SelectedUser);
+            Session.InitSession(SelectedUser);
             new MainWindow().Show();
             Close();
         }

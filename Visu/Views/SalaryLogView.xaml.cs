@@ -1,24 +1,14 @@
-﻿using Cashbox.Model;
+﻿using Cashbox.Exceptions;
+using Cashbox.Model;
 using Cashbox.Model.Entities;
+using Cashbox.Visu.ViewEntities;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Cashbox.Visu.ViewEntities;
-using Cashbox.Model.Managers;
-using Cashbox.Exceptions;
 
 namespace Cashbox.Visu
 {
@@ -45,11 +35,15 @@ namespace Cashbox.Visu
                 try
                 {
                     if (Salaries?.Count > 0)
+                    {
                         return string.IsNullOrEmpty(SelectedWorkerName)
-                         ? SalaryManager.GetTotalSalary(Start, End)
-                         : SalaryManager.GetTotalSalary(SelectedWorkerName, Start, End);
+                         ? Salary.GetTotal(Start, End)
+                         : Salary.GetTotal(SelectedWorkerName, Start, End);
+                    }
                     else
+                    {
                         return 0;
+                    }
                 }
                 catch (InvalidNameException ex)
                 {
@@ -133,7 +127,7 @@ namespace Cashbox.Visu
         {
             InitializeComponent();
             DataContext = this;
-            Staff = new(StaffManager.GetAllStaff());
+            Staff = new(Worker.GetAllStaff());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -147,7 +141,7 @@ namespace Cashbox.Visu
         {
             try
             {
-                Salaries = new(SalaryManager.GetSalaryLog(Start, End, CombinePerMonth));
+                Salaries = new(Salary.GetSalaryLog(Start, End, CombinePerMonth));
             }
             catch (InvalidNameException ex)
             {

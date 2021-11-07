@@ -1,5 +1,4 @@
 ﻿using Cashbox.Model.Entities;
-using Cashbox.Model.Managers;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -26,7 +25,7 @@ namespace Cashbox.Visu
             InitializeComponent();
             DataContext = this;
             selectedDate = date;
-            VersionHistory = new(ShiftManager.GetShifts(selectedDate.Date));
+            VersionHistory = new(Shift.GetShifts(selectedDate.Date));
         }
 
         private void ListViewItem_Selected(object sender, RoutedEventArgs e)
@@ -46,8 +45,8 @@ namespace Cashbox.Visu
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            ShiftManager.RemoveFromDB(selectedDate.Date, selectedVersion);
-            VersionHistory = new(ShiftManager.GetShifts(selectedDate.Date));
+            Shift.RemoveFromDB(selectedDate.Date, selectedVersion);
+            VersionHistory = new(Shift.GetShifts(selectedDate.Date));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

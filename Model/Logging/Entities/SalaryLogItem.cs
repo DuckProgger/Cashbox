@@ -1,5 +1,4 @@
 ﻿using Cashbox.Model.Entities;
-using Cashbox.Model.Managers;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -12,7 +11,7 @@ namespace Cashbox.Model.Logging.Entities
             Money = salary.Money;
             StartPeriod = Formatter.FormatDate(salary.StartPeriod);
             EndPeriod = Formatter.FormatDate(salary.EndPeriod);
-            WorkerName = StaffManager.GetWorker(salary.WorkerId).Name;
+            WorkerName = Worker.GetWorker(salary.WorkerId).Name;
         }
 
         [Description("Сумма")]

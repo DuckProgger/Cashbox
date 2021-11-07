@@ -1,21 +1,10 @@
-﻿using Cashbox.Model;
-using Cashbox.Model.Managers;
+﻿using Cashbox.Model.Entities;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Cashbox.Visu
 {
@@ -46,14 +35,17 @@ namespace Cashbox.Visu
             }
         }
 
-        public bool IsAdmin => SessionManager.GetPermissions().IsAdmin;
+        public bool IsAdmin => Session.GetPermissions().IsAdmin;
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        protected override void OnClosing(CancelEventArgs e) => SessionManager.RemoveCurrentSession();
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Session.RemoveCurrentSession();
+        }
 
         private void ChangeUser(object sender, RoutedEventArgs e)
         {
@@ -72,12 +64,24 @@ namespace Cashbox.Visu
                 (sender as Expander).IsExpanded = false;
         }
 
-        private void OpenLogView(object sender, RoutedEventArgs e) => CurrentView = logView;
+        private void OpenLogView(object sender, RoutedEventArgs e)
+        {
+            CurrentView = logView;
+        }
 
-        private void OpenSalaryLogView(object sender, RoutedEventArgs e) => CurrentView = salaryLogView;
+        private void OpenSalaryLogView(object sender, RoutedEventArgs e)
+        {
+            CurrentView = salaryLogView;
+        }
 
-        private void OpenShiftView(object sender, RoutedEventArgs e) => CurrentView = new ShiftView(DateTime.Today, Mode.NewVersion);
+        private void OpenShiftView(object sender, RoutedEventArgs e)
+        {
+            CurrentView = new ShiftView(DateTime.Today, Mode.NewVersion);
+        }
 
-        private void OpenStaffView(object sender, RoutedEventArgs e) => CurrentView = staffView;
+        private void OpenStaffView(object sender, RoutedEventArgs e)
+        {
+            CurrentView = staffView;
+        }
     }
 }

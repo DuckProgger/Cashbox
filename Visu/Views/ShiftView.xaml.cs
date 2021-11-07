@@ -1,12 +1,9 @@
-﻿using Cashbox.Model;
-using Cashbox.Model.Entities;
-using Cashbox.Model.Managers;
+﻿using Cashbox.Model.Entities;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -23,7 +20,7 @@ namespace Cashbox.Visu
         private readonly Mode viewMode;
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
         private Shift _shift;
-        private int memStartDay;
+        private readonly int memStartDay;
         private bool startDayChanged;
 
         #endregion privateFields
@@ -31,8 +28,8 @@ namespace Cashbox.Visu
         public ShiftView(DateTime date, Mode mode, int version = 0)
         {
             InitializeComponent();
-            Shift = ShiftManager.GetShift(date, version);
-            Staff = ShiftManager.GetWorkerViewItems(Shift);
+            Shift = Shift.GetShift(date, version);
+            Staff = Shift.GetWorkerViewItems(Shift);
             DataContext = this;
             viewMode = mode;
             memStartDay = Shift.StartDay;
@@ -83,8 +80,10 @@ namespace Cashbox.Visu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!ShiftManager.ValidateShift(Shift))
+            if (!Shift.Validate(Shift))
+            {
                 ErrorMessage.Message = "В смене нет работников";
+            }
             else
             {
                 WarningMessage.Message = startDayChanged
@@ -128,11 +127,11 @@ namespace Cashbox.Visu
                         break;
 
                     case Mode.EditVersion:
-                        ShiftManager.UpdateDB(Shift);
+                        Shift.UpdateDB(Shift);
                         break;
 
                     case Mode.NewVersion:
-                        ShiftManager.AddToDB(Shift);
+                        Shift.AddToDB(Shift);
                         break;
 
                     default:
