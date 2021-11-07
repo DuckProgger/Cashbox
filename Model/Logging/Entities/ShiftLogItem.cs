@@ -12,22 +12,6 @@ namespace Cashbox.Model.Logging.Entities
     [EpplusTable(PrintHeaders = false, AutofitColumns = true)]
     public class ShiftLogItem : ILogItem
     {
-        public ShiftLogItem(Shift entity)
-        {
-            Cash = entity.Cash;
-            Comment = entity.Comment;
-            CreatedAt = Formatter.FormatDate(entity.CreatedAt);
-            Difference = entity.Difference;
-            EndDay = entity.EndDay;
-            Expenses = entity.Expenses;
-            HandedOver = entity.HandedOver;
-            LastModified = entity.LastModified.ToString();
-            StartDay = entity.StartDay;
-            Terminal = entity.Terminal;
-            Total = entity.Total;
-            Version = entity.Version;
-        }
-
         [EpplusTableColumn(Order = 0)]
         [Description("Версия смены")]
         public int Version { get; set; }
@@ -90,6 +74,25 @@ namespace Cashbox.Model.Logging.Entities
         public Dictionary<string, object> GetPropertiesInfo()
         {
             return Util.GetPropertiesInfo(this);
+        }
+
+        public static implicit operator ShiftLogItem(Shift entity)
+        {
+            return new()
+            {
+                Cash = entity.Cash,
+                Comment = entity.Comment,
+                CreatedAt = Formatter.FormatDate(entity.CreatedAt),
+                Difference = entity.Difference,
+                EndDay = entity.EndDay,
+                Expenses = entity.Expenses,
+                HandedOver = entity.HandedOver,
+                LastModified = entity.LastModified.ToString(),
+                StartDay = entity.StartDay,
+                Terminal = entity.Terminal,
+                Total = entity.Total,
+                Version = entity.Version
+            };
         }
     }
 }

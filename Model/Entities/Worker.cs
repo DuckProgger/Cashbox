@@ -13,14 +13,11 @@ namespace Cashbox.Model.Entities
 
         [Required]
         public string Name { get; set; }
-        public bool IsActive { get; set; }     
+        public bool IsActive { get; set; }
         public List<Shift> Shifts { get; set; }
         public List<Salary> Salaries { get; set; }
 
-        public ILogItem ConvertToLogItem()
-        {
-            return new WorkerLogItem(this);
-        }
+        public ILogItem ConvertToLogItem() => (WorkerLogItem)this;
 
         public static List<string> GetStaffInShifts(List<Shift> shifts)
         {

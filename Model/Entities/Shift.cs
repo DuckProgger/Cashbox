@@ -151,10 +151,7 @@ namespace Cashbox.Model.Entities
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        public ILogItem ConvertToLogItem()
-        {
-            return new ShiftLogItem(this);
-        }
+        public ILogItem ConvertToLogItem() => (ShiftLogItem)this;
 
         private static Shift Create(User user)
         {
@@ -280,7 +277,7 @@ namespace Cashbox.Model.Entities
             List<Shift> shifts = DB.GetShifts(startPeriod, endPeriod);
             List<ShiftLogItem> collection = new();
             foreach (Shift item in shifts)
-                collection.Add(new ShiftLogItem(item));
+                collection.Add(item);
             return collection;
         }
     }

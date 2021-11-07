@@ -23,10 +23,7 @@ namespace Cashbox.Model.Entities
         public int WorkerId { get; set; }
         public Worker Worker { get; set; }
 
-        public ILogItem ConvertToLogItem()
-        {
-            return new SalaryLogItem(this);
-        }
+        public ILogItem ConvertToLogItem() => (SalaryLogItem)this;
 
         public static Salary AddSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
         {

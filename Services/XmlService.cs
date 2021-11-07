@@ -1,12 +1,10 @@
 ﻿using Cashbox.Exceptions;
+using Cashbox.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace Cashbox.Services
 {
@@ -14,13 +12,29 @@ namespace Cashbox.Services
     {
         public static string GetMessageText(int id)
         {
+            IEnumerable<XElement> items = GetXmlList("messages", "messages", "message");
+            return (from xe in items
+                    where int.Parse(xe.Element("id").Value) == id
+                    select xe.Element("text").Value).First();
+        }
+
+        public static IEnumerable<User> GetDefaultUsers()
+        {
+            IEnumerable<XElement> items = GetXmlList("DefaultUsers", "users", "user");
+            return (from xe in items
+                    select new User()
+                    {
+                        Name = xe.Element("name").Value,
+                        Permissions = new() { IsAdmin = bool.Parse(xe.Element("isAdmin").Value) }
+                    });
+        }
+
+        public static IEnumerable<XElement> GetXmlList(string fileName, string listName, string nodeNames)
+        {
             try
             {
-                XDocument xdoc = XDocument.Load("messages.xml");
-                var e = xdoc.Element("messages").Elements("message");
-                return (from xe in xdoc.Element("messages").Elements("message")
-                        where int.Parse(xe.Element("id").Value) == id
-                        select xe.Element("text").Value).First();
+                XDocument xdoc = XDocument.Load($"{fileName}.xml");
+                return xdoc.Element(listName).Elements(nodeNames);
             }
             catch (FileNotFoundException)
             {

@@ -6,14 +6,6 @@ namespace Cashbox.Model.Logging.Entities
 {
     public class SalaryLogItem : ILogItem
     {
-        public SalaryLogItem(Salary salary)
-        {
-            Money = salary.Money;
-            StartPeriod = Formatter.FormatDate(salary.StartPeriod);
-            EndPeriod = Formatter.FormatDate(salary.EndPeriod);
-            WorkerName = Worker.GetWorker(salary.WorkerId).Name;
-        }
-
         [Description("Сумма")]
         public int Money { get; set; }
 
@@ -40,6 +32,17 @@ namespace Cashbox.Model.Logging.Entities
         public Dictionary<string, object> GetPropertiesInfo()
         {
             return Util.GetPropertiesInfo(this);
+        }
+
+        public static implicit operator SalaryLogItem(Salary entity)
+        {
+            return new SalaryLogItem()
+            {
+                Money = entity.Money,
+                StartPeriod = Formatter.FormatDate(entity.StartPeriod),
+                EndPeriod = Formatter.FormatDate(entity.EndPeriod),
+                WorkerName = Worker.GetWorker(entity.WorkerId).Name
+            };
         }
     }
 }

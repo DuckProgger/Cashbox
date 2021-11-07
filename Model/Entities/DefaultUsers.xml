@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<users>
+	<user>
+		<name>Администратор</name>
+		<isAdmin>true</isAdmin>
+	</user>
+	<user>
+		<name>Продавец</name>
+		<isAdmin>false</isAdmin>
+	</user>
+</users>

@@ -6,11 +6,6 @@ namespace Cashbox.Model.Logging.Entities
 {
     public class WorkerLogItem : ILogItem
     {
-        public WorkerLogItem(Worker worker)
-        {
-            Name = worker.Name;
-        }
-
         [Description("Имя")]
         public string Name { get; set; }
 
@@ -28,6 +23,14 @@ namespace Cashbox.Model.Logging.Entities
         public Dictionary<string, object> GetPropertiesInfo()
         {
             return Util.GetPropertiesInfo(this);
+        }
+
+        public static implicit operator WorkerLogItem(Worker entity)
+        {
+            return new()
+            {
+                Name = entity.Name
+            };
         }
     }
 }

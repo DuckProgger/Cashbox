@@ -1,5 +1,6 @@
 ﻿using Cashbox.Model;
 using Cashbox.Model.Entities;
+using Cashbox.Services;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -40,11 +41,11 @@ namespace Cashbox.Visu
             Close();
         }
 
-        private /*async*/ void GetUsersAsync()
+        private async void GetUsersAsync()
         {
             try
             {
-                Users.ItemsSource = /*await*/ DB.GetUserNamesAsync();
+                Users.ItemsSource = await User.GetUserNamesAsync();
             }
             catch (InvalidOperationException ex)
             {

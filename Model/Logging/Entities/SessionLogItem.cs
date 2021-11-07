@@ -6,11 +6,6 @@ namespace Cashbox.Model.Logging.Entities
 {
     public class SessionLogItem : ILogItem
     {
-        public SessionLogItem(Session entity)
-        {
-            UserName = User.Get(entity.UserId).Name;
-        }
-
         [Description("Пользователь")]
         public string UserName { get; set; }
 
@@ -28,6 +23,14 @@ namespace Cashbox.Model.Logging.Entities
         public Dictionary<string, object> GetPropertiesInfo()
         {
             return Util.GetPropertiesInfo(this);
+        }
+
+        public static implicit operator SessionLogItem(Session entity)
+        {
+            return new()
+            {
+                UserName = User.Get(entity.UserId).Name
+            };
         }
     }
 }

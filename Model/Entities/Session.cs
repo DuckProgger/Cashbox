@@ -9,11 +9,7 @@ namespace Cashbox.Model.Entities
         public int UserId { get; set; }
         public static Session Current { get; private set; }
 
-
-        public ILogItem ConvertToLogItem()
-        {
-            return new SessionLogItem(this);
-        }
+        public ILogItem ConvertToLogItem() => (SessionLogItem)this;
 
         public static void InitSession(string userName)
         {
