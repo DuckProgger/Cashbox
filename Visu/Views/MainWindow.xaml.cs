@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Cashbox.Visu
 {
-    public enum Mode : int { WatchOnly, EditVersion, NewVersion }
+    //public enum Mode : int { WatchOnly, EditVersion, NewVersion }
 
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
@@ -76,7 +76,7 @@ namespace Cashbox.Visu
 
         private void OpenShiftView(object sender, RoutedEventArgs e)
         {
-            CurrentView = new ShiftView(DateTime.Today, Mode.NewVersion);
+            CurrentView = new ShiftView(DateTime.Today, new NewVersionMode());
         }
 
         private void OpenStaffView(object sender, RoutedEventArgs e)

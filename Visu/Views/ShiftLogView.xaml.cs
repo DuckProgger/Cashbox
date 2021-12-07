@@ -172,7 +172,7 @@ namespace Cashbox.Visu
 
         private void EditShift_Click(object sender, RoutedEventArgs e)
         {
-            PopupWindow shiftWindow = new(new ShiftView(selectedShiftDate, Mode.EditVersion));
+            PopupWindow shiftWindow = new(new ShiftView(selectedShiftDate, new EditVersionMode()));
             shiftWindow.Show();
             shiftWindow.Closed += (s, e) => UpdateShifts();
         }
@@ -239,7 +239,7 @@ namespace Cashbox.Visu
 
         private void WatchShift_Click(object sender, RoutedEventArgs e)
         {
-            new PopupWindow(new ShiftView(selectedShiftDate, Mode.WatchOnly)).Show();
+            new PopupWindow(new ShiftView(selectedShiftDate, new WatchOnlyMode())).Show();
         }
 
         private bool WorkerFilter(object item)

@@ -97,7 +97,7 @@
                       materialDesign:DataGridAssist.CornerRadius="5"
                       BorderThickness="1"
                       BorderBrush="Gray"
-                      IsEnabled="{Binding EnableEntries}">
+                      IsEnabled="{Binding ViewMode.EnableEntries}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Сотрудники">
                             <DataGridTemplateColumn.CellTemplate>
@@ -133,7 +133,7 @@
                      BorderBrush="Gray"
                      KeyDown="Comment_KeyDown"
                      Text="{Binding Shift.Comment}"
-                     IsEnabled="{Binding EnableEntries}" />
+                     IsEnabled="{Binding ViewMode.EnableEntries}" />
             </Grid>
 
             <Button Grid.Column="0"
@@ -143,7 +143,7 @@
                      Cursor="Hand"
 
                     Click="Button_Click"
-                    IsEnabled="{Binding EnableEntries}" />
+                    IsEnabled="{Binding ViewMode.EnableEntries}" />
 
             <Grid Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
@@ -182,7 +182,7 @@
                              Text="{Binding Shift.Cash, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
                              Cursor="IBeam"
-                             IsEnabled="{Binding EnableEntries}" />
+                             IsEnabled="{Binding ViewMode.EnableEntries}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -192,7 +192,7 @@
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.Terminal, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}" Cursor="IBeam" />
+                             IsEnabled="{Binding ViewMode.EnableEntries}" Cursor="IBeam" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -202,7 +202,7 @@
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.Expenses, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged" Cursor="IBeam"
-                             IsEnabled="{Binding EnableEntries}" />
+                             IsEnabled="{Binding ViewMode.EnableEntries}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -212,8 +212,8 @@
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                  Text="{Binding Shift.StartDay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                                  TextChanged="TextBox_TextChanged"
-                                 IsEnabled="{Binding EnableEntries}"
-                                 IsReadOnly="{Binding StartDayFieldReadOnly}" Cursor="IBeam" />
+                                 IsEnabled="{Binding ViewMode.EnableEntries}"
+                                 IsReadOnly="{Binding ViewMode.StartDayFieldReadOnly}" Cursor="IBeam" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -223,7 +223,7 @@
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.EndDay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}" />
+                             IsEnabled="{Binding ViewMode.EnableEntries}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
@@ -233,7 +233,7 @@
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              Text="{Binding Shift.HandedOver, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MoneyConverter}}"
                              TextChanged="TextBox_TextChanged"
-                             IsEnabled="{Binding EnableEntries}" />
+                             IsEnabled="{Binding ViewMode.EnableEntries}" />
                     </StackPanel>
                 </StackPanel>
 

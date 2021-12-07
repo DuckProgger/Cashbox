@@ -17,7 +17,6 @@ namespace Cashbox.Visu
         #region privateFields
 
         private readonly SolidColorBrush redBackground = new(Color.FromRgb(245, 94, 83));
-        private readonly Mode viewMode;
         private readonly SolidColorBrush whiteBackground = new(Colors.White);
         private Shift _shift;
         private readonly int memStartDay;
@@ -25,13 +24,13 @@ namespace Cashbox.Visu
 
         #endregion privateFields
 
-        public ShiftView(DateTime date, Mode mode, int version = 0)
+        public ShiftView(DateTime date, IOpenMode mode, int version = 0)
         {
             InitializeComponent();
             Shift = Shift.GetShift(date, version);
             Staff = Shift.GetWorkerViewItems(Shift);
             DataContext = this;
-            viewMode = mode;
+            ViewMode = mode;
             memStartDay = Shift.StartDay;
         }
 
@@ -40,7 +39,6 @@ namespace Cashbox.Visu
         #region publicProperties
 
         public List<WorkerViewItem> Staff { get; set; }
-
         public string DifferenceText
         {
             get
@@ -62,11 +60,8 @@ namespace Cashbox.Visu
                 }
             }
         }
-
         public Shift Shift { get => _shift; set => _shift = value; }
-
-        public bool EnableEntries => viewMode != Mode.WatchOnly;
-        public bool StartDayFieldReadOnly => viewMode != Mode.EditVersion;
+        public IOpenMode ViewMode { get; private set; }
         public MessageProvider ErrorMessage { get; } = new(true);
         public MessageProvider WarningMessage { get; } = new();
         public MessageProvider StatusMessage { get; } = new(true);
@@ -121,22 +116,7 @@ namespace Cashbox.Visu
         {
             try
             {
-                switch (viewMode)
-                {
-                    case Mode.WatchOnly:
-                        break;
-
-                    case Mode.EditVersion:
-                        Shift.UpdateDB(Shift);
-                        break;
-
-                    case Mode.NewVersion:
-                        Shift.AddToDB(Shift);
-                        break;
-
-                    default:
-                        break;
-                }
+                ViewMode.SaveShift(Shift);
                 StatusMessage.Message = "Смена успешно сохранена.";
             }
             catch (Exception)
@@ -149,6 +129,46 @@ namespace Cashbox.Visu
         {
             OnPropertyChanged(nameof(DifferenceText));
             startDayChanged = memStartDay != Shift.StartDay;
+        }
+    }
+
+    public interface IOpenMode
+    {
+        public void SaveShift(Shift shift);
+        public bool EnableEntries { get; }
+        public bool StartDayFieldReadOnly { get; }
+    }
+
+    public class WatchOnlyMode : IOpenMode
+    {
+        public bool EnableEntries => false;
+        public bool StartDayFieldReadOnly => true;
+
+        public void SaveShift(Shift shift)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class EditVersionMode : IOpenMode
+    {
+        public bool EnableEntries => true;
+        public bool StartDayFieldReadOnly => false;
+
+        public void SaveShift(Shift shift)
+        {
+            Shift.UpdateDB(shift);
+        }
+    }
+
+    public class NewVersionMode : IOpenMode
+    {
+        public bool EnableEntries => true;
+        public bool StartDayFieldReadOnly => true;
+
+        public void SaveShift(Shift shift)
+        {
+            Shift.AddToDB(shift);
         }
     }
 }
