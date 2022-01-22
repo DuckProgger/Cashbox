@@ -1,4 +1,5 @@
 ﻿using Cashbox.Exceptions;
+using Cashbox.Model.Repositories;
 using Cashbox.Services;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,19 +18,19 @@ namespace Cashbox.Model.Entities
 
         public static User Get(int id)
         {
-            return DB.GetUser(id) ?? throw new InvalidNameException("Пользователь не найден");
+            return UserRepo.GetUser(id) ?? throw new InvalidNameException("Пользователь не найден");
         }
 
         public static async Task<List<string>> GetUserNamesAsync()
         {
-            var userNames = await DB.GetUserNamesAsync();
+            var userNames = await UserRepo.GetUserNamesAsync();
             if (userNames.Count == 0)
             {
                 List<string> defaultList = new();
                 var defaultUsers = XmlService.GetDefaultUsers();
                 foreach (User user in defaultUsers)
                 {
-                    DB.Create(user);
+                    CommonRepo.Create(user);
                     defaultList.Add(user.Name);
                 }
                 return defaultList;

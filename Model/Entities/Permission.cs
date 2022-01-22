@@ -1,4 +1,6 @@
-﻿namespace Cashbox.Model.Entities
+﻿using Cashbox.Model.Repositories;
+
+namespace Cashbox.Model.Entities
 {
     public class Permissions
     {
@@ -9,7 +11,7 @@
 
         public static Permissions GetAccesses(int userId)
         {
-            var user = DB.GetUser(userId);
+            var user = UserRepo.GetUser(userId);
             return user.Permissions;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model.Logging;
 using Cashbox.Model.Logging.Entities;
+using Cashbox.Model.Repositories;
 using Cashbox.Visu.ViewEntities;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -32,39 +33,39 @@ namespace Cashbox.Model.Entities
         public static List<string> GetAllStaff()
         {
             List<string> staff = new();
-            foreach (Worker worker in DB.GetStaff())
+            foreach (Worker worker in WorkerRepo.GetStaff())
                 staff.Add(worker.Name);
             return staff;
         }
 
         public static Worker Get(string name)
         {
-            return DB.GetWorker(name) ?? throw new InvalidNameException("Работник не найден");
+            return WorkerRepo.GetWorker(name) ?? throw new InvalidNameException("Работник не найден");
         }
 
         public static Worker GetWorker(int id)
         {
-            return DB.GetWorker(id) ?? throw new InvalidNameException("Работник не найден");
+            return WorkerRepo.GetWorker(id) ?? throw new InvalidNameException("Работник не найден");
         }
 
         public static void Activate(string name)
         {
             Worker worker = Get(name);
             worker.IsActive = true;
-            DB.UpdateWorker(worker);
+            WorkerRepo.UpdateWorker(worker);
         }
 
         public static void Deactivate(string name)
         {
             Worker worker = Get(name);
             worker.IsActive = false;
-            DB.UpdateWorker(worker);
+            WorkerRepo.UpdateWorker(worker);
         }
 
         public static List<WorkerViewItem> GetAllWorkersViewItems()
         {
             List<WorkerViewItem> workers = new();
-            foreach (Worker worker in DB.GetStaff())
+            foreach (Worker worker in WorkerRepo.GetStaff())
             {
                 WorkerViewItem workerItem = new() { Name = worker.Name };
                 // Поставить галочки действующим работникам.
@@ -82,12 +83,12 @@ namespace Cashbox.Model.Entities
             else if (IsDublicate(name))
                 throw new InvalidNameException("Такой работник уже есть в базе");
             Worker newWorker = new() { Name = name, IsActive = true };
-            DB.Create(newWorker);
+            CommonRepo.Create(newWorker);
             Logger.Log(newWorker, MessageType.Create);
         }
 
         private static bool IsEmptyName(string name) => string.IsNullOrEmpty(name);
 
-        private static bool IsDublicate(string name) => DB.GetWorker(name) != null;
+        private static bool IsDublicate(string name) => WorkerRepo.GetWorker(name) != null;
     }
 }

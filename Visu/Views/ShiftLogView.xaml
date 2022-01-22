@@ -15,7 +15,7 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         mc:Ignorable="d"
-        Background="AliceBlue"
+        Background="White"
         d:DesignHeight="450" d:DesignWidth="1100">
     <!--<Window.DataContext>
         <local:LogWindow />

@@ -1,5 +1,6 @@
 ﻿using Cashbox.Model.Logging;
 using Cashbox.Model.Logging.Entities;
+using Cashbox.Model.Repositories;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.Generic;
@@ -163,13 +164,13 @@ namespace Cashbox.Model.Entities
             Shift shift;
             if (version == 0)
             {
-                shift = DB.GetShift(date);
+                shift = ShiftRepo.GetShift(date);
                 if (shift == null)
                 {
-                    shift = Create(DB.GetUser(Session.Current.UserId));
+                    shift = Create(UserRepo.GetUser(Session.Current.UserId));
                     try
                     {
-                        shift.StartDay = DB.GetPrevShift().EndDay;
+                        shift.StartDay = ShiftRepo.GetPrevShift().EndDay;
                     }
                     catch (InvalidOperationException)
                     {
@@ -179,7 +180,7 @@ namespace Cashbox.Model.Entities
             }
             else
             {
-                shift = DB.GetShift(date, version);
+                shift = ShiftRepo.GetShift(date, version);
             }
 
             return shift;
@@ -187,61 +188,61 @@ namespace Cashbox.Model.Entities
 
         public static List<Shift> GetShifts(DateTime startPeriod, DateTime endPeriod)
         {
-            return DB.GetShifts(startPeriod, endPeriod);
+            return ShiftRepo.GetShifts(startPeriod, endPeriod);
         }
 
         public static List<Shift> GetShifts(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
             int workerId = Worker.Get(workerName).Id;
-            return DB.GetShifts(workerId, startPeriod, endPeriod);
+            return ShiftRepo.GetShifts(workerId, startPeriod, endPeriod);
         }
 
         public static List<Shift> GetShifts(DateTime date)
         {
-            return DB.GetShifts(date);
+            return ShiftRepo.GetShifts(date);
         }
 
         public void AddWorker(string name)
         {
-            Worker worker = DB.GetWorker(name);
+            Worker worker = WorkerRepo.GetWorker(name);
             if (!Exists(this, worker.Id))
                 Staff.Add(worker);
         }
 
         public void RemoveWorker(string name)
         {
-            Worker worker = DB.GetWorker(name);
+            Worker worker = WorkerRepo.GetWorker(name);
             if (Exists(this, worker.Id))
                 Staff.RemoveAt(Staff.FindIndex(w => w.Id == worker.Id));
         }
 
         public static void UpdateDB(Shift shift)
         {
-            shift.User = DB.GetUser(Session.Current.UserId);
+            shift.User = UserRepo.GetUser(Session.Current.UserId);
             shift.LastModified = DateTime.Now;
-            DB.UpdateShift(shift);
+            ShiftRepo.UpdateShift(shift);
             Logger.Log(shift, MessageType.Update);
         }
 
         public static void AddToDB(Shift shift)
         {
-            shift.User = DB.GetUser(Session.Current.UserId);
+            shift.User = UserRepo.GetUser(Session.Current.UserId);
             shift.LastModified = DateTime.Now;
             shift.Version++;
-            DB.CreateShift(shift);
+            ShiftRepo.CreateShift(shift);
             Logger.Log(shift, MessageType.Create);
         }
 
         public static void RemoveFromDB(DateTime date)
         {
-            Shift removedShift = DB.GetShift(date);
-            DB.RemoveShifts(date);
+            Shift removedShift = ShiftRepo.GetShift(date);
+            ShiftRepo.RemoveShifts(date);
             Logger.Log(removedShift, MessageType.Delete);
         }
 
         public static void RemoveFromDB(DateTime date, int version)
         {
-            Shift removedShift = DB.RemoveShift(date, version);
+            Shift removedShift = ShiftRepo.RemoveShift(date, version);
             Logger.Log(removedShift, MessageType.Delete);
         }
 
@@ -258,7 +259,7 @@ namespace Cashbox.Model.Entities
         public static List<WorkerViewItem> GetWorkerViewItems(Shift shift)
         {
             List<WorkerViewItem> workers = new();
-            foreach (Worker worker in DB.GetStaff())
+            foreach (Worker worker in WorkerRepo.GetStaff())
             {
                 if (worker.IsActive)
                 {
@@ -274,7 +275,7 @@ namespace Cashbox.Model.Entities
 
         public static List<ShiftLogItem> GetExcelShiftCollection(DateTime startPeriod, DateTime endPeriod)
         {
-            List<Shift> shifts = DB.GetShifts(startPeriod, endPeriod);
+            List<Shift> shifts = ShiftRepo.GetShifts(startPeriod, endPeriod);
             List<ShiftLogItem> collection = new();
             foreach (Shift item in shifts)
                 collection.Add(item);

@@ -4,30 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cashbox.Model
+namespace Cashbox.Model.Repositories
 {
-    public static class DB
+    public static class ShiftRepo
     {
-        public static T Create<T>(T entity) where T : class
-        {
-            using ApplicationContext db = new();
-            var createdEntity = db.Set<T>().Add(entity);
-            db.SaveChanges();
-            return createdEntity.Entity;
-        }
-
-        public static Session CreateSession(string userName)
-        {
-            using ApplicationContext db = new();
-            var user = GetUser(userName);
-            var session = db.Sessions.Add(new() { UserId = user.Id });
-            db.SaveChanges();
-            return session.Entity;
-        }
-
         public static void CreateShift(Shift newShift)
         {
             using ApplicationContext db = new();
@@ -46,38 +28,6 @@ namespace Cashbox.Model
             return (from s in db.Shifts
                     orderby s.CreatedAt descending, s.Version descending
                     select s).First();
-        }
-
-        public static List<Salary> GetSalaries(int workerId, DateTime start, DateTime end)
-        {
-            using ApplicationContext db = new();
-            return (from s in db.Salaries
-                    where s.WorkerId == workerId && s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
-                    select s).ToList();
-        }
-
-        public static List<Salary> GetSalaries(DateTime start, DateTime end)
-        {
-            using ApplicationContext db = new();
-            return (from s in db.Salaries
-                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
-                    select s).ToList();
-        }
-
-        public static int GetTotalSalary(int workerId, DateTime start, DateTime end)
-        {
-            using ApplicationContext db = new();
-            return (from s in db.Salaries
-                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date && s.WorkerId == workerId
-                    select s.Money).Sum();
-        }
-
-        public static int GetTotalSalary(DateTime start, DateTime end)
-        {
-            using ApplicationContext db = new();
-            return (from s in db.Salaries
-                    where s.StartPeriod >= start.Date && s.EndPeriod <= end.Date
-                    select s.Money).Sum();
         }
 
         public static Shift GetShift(int id)
@@ -148,54 +98,6 @@ namespace Cashbox.Model
                     select s).ToList();
         }
 
-        public static List<Worker> GetStaff()
-        {
-            using ApplicationContext db = new();
-            return db.Staff.OrderBy(w => w.Name).ToList();
-        }
-
-        public static User GetUser(string userName)
-        {
-            using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions)
-                    where u.Name == userName
-                    select u).FirstOrDefault();
-        }
-
-        public static User GetUser(int userId)
-        {
-            using ApplicationContext db = new();
-            return (from u in db.Users.Include(u => u.Permissions)
-                    where u.Id == userId
-                    select u).FirstOrDefault();
-        }
-
-        public static async Task<List<string>> GetUserNamesAsync()
-        {
-            using ApplicationContext db = new();
-            return await (from user in db.Users
-                          select user.Name).ToListAsync();
-        }
-
-        public static Worker GetWorker(string name)
-        {
-            using ApplicationContext db = new();
-            return db.Staff.FirstOrDefault(w => w.Name == name);
-        }
-
-        public static Worker GetWorker(int id)
-        {
-            using ApplicationContext db = new();
-            return db.Staff.FirstOrDefault(w => w.Id == id);
-        }
-
-        public static void RemoveSession(int id)
-        {
-            using ApplicationContext db = new();
-            db.Sessions.Remove(db.Sessions.Find(id));
-            db.SaveChanges();
-        }
-
         public static void RemoveShifts(DateTime date)
         {
             using ApplicationContext db = new();
@@ -226,29 +128,5 @@ namespace Cashbox.Model
                 dbShift.Staff.Add(db.Staff.Find(worker.Id));
             db.SaveChanges();
         }
-
-        public static void UpdateWorker(Worker newWorker)
-        {
-            using ApplicationContext db = new();
-            var worker = db.Staff.Find(newWorker.Id);
-            db.Entry(worker).CurrentValues.SetValues(newWorker);
-            db.SaveChanges();
-        }
-
-        //public static void Update<TEntity>(TEntity entity) where TEntity : class
-        //{
-        //    using ApplicationContext db = new();
-
-        //    db.Entry(entity).State = EntityState.Modified;
-        //    db.SaveChanges();
-        //}
-
-        //public static void Insert<TEntity>(TEntity entity) where TEntity : class
-        //{
-        //    using ApplicationContext db = new();
-
-        //    db.Entry(entity).State = EntityState.Added;
-        //    db.SaveChanges();
-        //}
     }
 }

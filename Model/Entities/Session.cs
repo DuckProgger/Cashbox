@@ -1,5 +1,6 @@
 ﻿using Cashbox.Model.Logging;
 using Cashbox.Model.Logging.Entities;
+using Cashbox.Model.Repositories;
 
 namespace Cashbox.Model.Entities
 {
@@ -13,13 +14,13 @@ namespace Cashbox.Model.Entities
 
         public static void InitSession(string userName)
         {
-            Current = DB.CreateSession(userName);
+            Current = SessionRepo.CreateSession(userName);
             Logger.Log(Current, MessageType.Create);
         }
 
         public static void RemoveCurrentSession()
         {
-            DB.RemoveSession(Current.Id);
+            SessionRepo.RemoveSession(Current.Id);
             Logger.Log(Current, MessageType.Delete);
         }
 

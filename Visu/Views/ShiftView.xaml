@@ -14,6 +14,7 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
+         Background="White"
         d:DesignHeight="400" d:DesignWidth="450">
     <UserControl.Resources>
         <c:DifferenceConverter x:Key="DifferenceConverter" />
@@ -71,7 +72,7 @@
             </StackPanel>
         </md:DialogHost.DialogContent>
 
-        <Grid Background="AliceBlue">
+        <Grid >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -88,8 +89,8 @@
                 </Grid.RowDefinitions>
 
                 <DataGrid Name="WorkersTable"
+                          Background="White"
                       Margin="10"
-                      Background="AliceBlue"
                       ItemsSource="{Binding Staff}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"

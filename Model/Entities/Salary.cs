@@ -1,6 +1,7 @@
 ﻿using Cashbox.Exceptions;
 using Cashbox.Model.Logging;
 using Cashbox.Model.Logging.Entities;
+using Cashbox.Model.Repositories;
 using Cashbox.Visu.ViewEntities;
 using System;
 using System.Collections.Generic;
@@ -27,14 +28,14 @@ namespace Cashbox.Model.Entities
 
         public static Salary AddSalary(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
-            int workerId = DB.GetWorker(workerName).Id;
+            int workerId = WorkerRepo.GetWorker(workerName).Id;
             // проверка не выдана ли уже зарплата
-            if (DB.GetSalaries(workerId, startPeriod, endPeriod).Count > 0)
+            if (SalaryRepo.GetSalaries(workerId, startPeriod, endPeriod).Count > 0)
                 throw new SalaryCountException($"Cотрудник {workerName} уже получал ЗП" +
                                                $" за период с {Formatter.FormatDate(startPeriod)} " +
                                                $"по {Formatter.FormatDate(endPeriod)}");
             Salary salary = CalculateSalary(workerName, startPeriod, endPeriod);
-            Salary newSalary = DB.Create(salary);
+            Salary newSalary = CommonRepo.Create(salary);
             Logger.Log(newSalary, MessageType.Create);
             return newSalary;
         }
@@ -68,17 +69,17 @@ namespace Cashbox.Model.Entities
         public static int GetTotal(string workerName, DateTime startPeriod, DateTime endPeriod)
         {
             int workerId = Worker.Get(workerName).Id;
-            return DB.GetTotalSalary(workerId, startPeriod, endPeriod);
+            return SalaryRepo.GetTotalSalary(workerId, startPeriod, endPeriod);
         }
 
         public static int GetTotal(DateTime startPeriod, DateTime endPeriod)
         {
-            return DB.GetTotalSalary(startPeriod, endPeriod);
+            return SalaryRepo.GetTotalSalary(startPeriod, endPeriod);
         }
 
         public static List<SalaryViewItem> GetSalaryLog(DateTime startPeriod, DateTime endPeriod, bool combine)
         {
-            List<Salary> salariesPerPeriod = DB.GetSalaries(startPeriod, endPeriod);
+            List<Salary> salariesPerPeriod = SalaryRepo.GetSalaries(startPeriod, endPeriod);
             return combine ? GetSalaryLogWithCombine(salariesPerPeriod) : GetSalaryLogWithoutCombine(salariesPerPeriod);
         }
 
@@ -91,7 +92,7 @@ namespace Cashbox.Model.Entities
             {
                 salaryLog.Add(new()
                 {
-                    Name = DB.GetWorker(salary.WorkerId).Name,
+                    Name = WorkerRepo.GetWorker(salary.WorkerId).Name,
                     Salary = salary.Money,
                     Date = Formatter.FormatDatePeriod(salary.StartPeriod, salary.EndPeriod)
                 });
@@ -116,7 +117,7 @@ namespace Cashbox.Model.Entities
                    into sg
                    select new SalaryViewItem()
                    {
-                       Name = DB.GetWorker(workerSalaries.Key).Name, // ключ словаря - это Id работника
+                       Name = WorkerRepo.GetWorker(workerSalaries.Key).Name, // ключ словаря - это Id работника
                        Salary = sg.Sum(s => s.Money),
                        Date = Formatter.FormatMonth(sg.Key) // получившийся ключ группы - это номер месяца
                    };
